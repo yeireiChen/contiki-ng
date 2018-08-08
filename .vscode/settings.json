@@ -2,6 +2,7 @@
     "files.associations": {
         "slip.h": "c",
         "rpl-private.h": "c",
-        "coap.h": "c"
+        "coap.h": "c",
+        "rpl.h": "c"
     }
 }

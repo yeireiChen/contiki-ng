@@ -42,9 +42,6 @@
 #include "net/ipv6/uip-ds6.h"
 #include "net/routing/rpl-classic/rpl.h"
 #include "net/routing/rpl-classic/rpl-private.h"
-#if RPL_WITH_NON_STORING
-#include "net/rpl/rpl-ns.h"
-#endif /* RPL_WITH_NON_STORING */
 #include "net/netstack.h"
 #include "dev/button-sensor.h"
 #include "dev/slip.h"
