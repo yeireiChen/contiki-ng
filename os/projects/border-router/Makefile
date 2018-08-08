@@ -1,7 +1,7 @@
 CONTIKI_PROJECT=border-router
 all: $(CONTIKI_PROJECT) 
 
-CONTIKI=../..
+CONTIKI=../../..
 
 
 MODULES += os/net/mac/tsch
@@ -12,7 +12,6 @@ MODULES += os/net/mac/tsch
 CFLAGS += -DPROJECT_CONF_H=\"project-conf.h\"
 PROJECT_SOURCEFILES += slip-bridge.c
 
-APPS += orchestra
 
 #Simple built-in webserver is the default.
 #Override with make WITH_WEBSERVER=0 for no webserver.

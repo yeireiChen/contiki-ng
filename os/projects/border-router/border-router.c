@@ -38,10 +38,10 @@
 #include "contiki.h"
 #include "contiki-lib.h"
 #include "contiki-net.h"
-#include "net/ip/uip.h"
+#include "net/ipv6/uip.h"
 #include "net/ipv6/uip-ds6.h"
-#include "net/rpl/rpl.h"
-#include "net/rpl/rpl-private.h"
+#include "net/routing/rpl-classic/rpl.h"
+#include "net/routing/rpl-classic/rpl-private.h"
 #if RPL_WITH_NON_STORING
 #include "net/rpl/rpl-ns.h"
 #endif /* RPL_WITH_NON_STORING */
@@ -62,7 +62,7 @@
 #endif
 
 #define DEBUG DEBUG_NONE
-#include "net/ip/uip-debug.h"
+#include "net/ipv6/uip-debug.h"
 
 static uip_ipaddr_t prefix;
 static uint8_t prefix_set;

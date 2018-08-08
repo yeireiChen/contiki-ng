@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "slip.h": "c",
+        "rpl-private.h": "c",
+        "coap.h": "c"
+    }
+}

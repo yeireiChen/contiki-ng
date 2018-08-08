@@ -43,10 +43,10 @@
 #include "contiki-net.h"
 #include "rest-engine.h"
 
-#include "net/rpl/rpl.h"
-#include "net/rpl/rpl-private.h"
+#include "net/routing/rpl-classic/rpl.h"
+#include "net/routing/rpl-classic/rpl-private.h"
 #if RPL_WITH_NON_STORING
-#include "net/rpl/rpl-ns.h"
+#include "net/routing/rpl-classic/rpl-ns.h"
 #endif /* RPL_WITH_NON_STORING */
 
 #if PLATFORM_HAS_BUTTON

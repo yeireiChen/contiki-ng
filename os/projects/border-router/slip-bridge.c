@@ -38,7 +38,7 @@
  *         Nicolas Tsiftes <nvt@sics.se>
  */
 
-#include "net/ip/uip.h"
+#include "net/ipv6/uip.h"
 #include "net/ipv6/uip-ds6.h"
 #include "dev/slip.h"
 #include "dev/uart1.h"
@@ -48,7 +48,7 @@
 #define UIP_UDP_BUF       ((struct uip_udp_hdr *)&uip_buf[UIP_LLIPH_LEN])
 
 #define DEBUG DEBUG_FULL
-#include "net/ip/uip-debug.h"
+#include "net/ipv6/uip-debug.h"
 
 void set_prefix_64(uip_ipaddr_t *);
 
@@ -101,7 +101,7 @@ init(void)
   slip_set_input_callback(slip_input_callback);
 }
 /*---------------------------------------------------------------------------*/
-#include "core/net/mac/tsch/tsch-private.h"
+#include "net/mac/tsch/tsch-asn.h"
 extern struct tsch_asn_t tsch_current_asn;
 
 // #include "apps/er-coap/er-coap.h"

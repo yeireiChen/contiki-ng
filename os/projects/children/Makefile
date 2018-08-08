@@ -5,6 +5,8 @@ CONTIKI=../..
 
 
 MODULES += os/net/mac/tsch
+MODULES += os/net/app-layer/coap
+
 CFLAGS += -DPROJECT_CONF_H=\"project-conf.h\"
 
 CONTIKI_WITH_IPV6 = 1

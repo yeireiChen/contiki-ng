@@ -6,13 +6,11 @@
  */
 
 #include <string.h>
-#include "rest-engine.h"
-#include "er-coap.h"
+#include "coap-engine.h"
 
 
-#include "core/net/rpl/rpl.h"
-#include "core/net/link-stats.h"
-
+#include "net/routing/rpl-classic/rpl.h"
+#include "net/link-stats.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -31,7 +29,7 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 static void res_periodic_handler(void);
 
-PERIODIC_RESOURCE(res_bcollect,
+PERIODIC_RESOURCE(res_bcollect_2,
                   "title=\"Binary collect\";obs",
                   res_get_handler,
                   res_post_handler,
@@ -56,7 +54,7 @@ static uint32_t packet_counter = 0;
 
 static uint8_t packet_priority = 0;
 
-#include "core/net/mac/tsch/tsch-private.h"
+#include "os/net/mac/tsch/tsch-asn.h"
 extern struct tsch_asn_t tsch_current_asn;
 
 
@@ -118,9 +116,9 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
   struct link_stats *parent_link_stats;
 
 
-  PRINTF("I am B_collect res_get hanlder!\n");
+  PRINTF("I am B_collect_2 res_get hanlder!\n");
   REST.set_header_content_type(response, REST.type.APPLICATION_OCTET_STREAM);
-  REST.set_header_max_age(response, res_bcollect.periodic->period / CLOCK_SECOND);
+  REST.set_header_max_age(response,res_bcollect_2.periodic->period / CLOCK_SECOND);
 
   
 
@@ -224,6 +222,6 @@ res_periodic_handler()
     PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
         
     /* Notify the registered observers which will trigger the res_get_handler to create the response. */
-    REST.notify_subscribers(&res_bcollect);
+    REST.notify_subscribers(&res_bcollect_2);
   }
 }

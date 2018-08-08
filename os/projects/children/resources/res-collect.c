@@ -6,8 +6,8 @@
  */
 
 #include <string.h>
-#include "rest-engine.h"
-#include "er-coap.h"
+//#include "rest-engine.h"
+#include "coap-engine.h"
 #include "sys/clock.h"
 
 #define DEBUG 0
