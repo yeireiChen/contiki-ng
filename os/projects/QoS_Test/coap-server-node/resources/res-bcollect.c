@@ -56,7 +56,7 @@ static uint32_t packet_counter = 0;
 
 static uint8_t packet_priority = 0;
 
-#include "net/mac/tsch/tsch-ans.h"
+#include "net/mac/tsch/tsch.h"
 extern struct tsch_asn_t tsch_current_asn;
 
 
@@ -119,7 +119,7 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
 
 
   PRINTF("I am B_collect res_get hanlder!\n");
-  coap_set_header_content_format(response, REST.type.APPLICATION_OCTET_STREAM);
+  coap_set_header_content_format(response,APPLICATION_OCTET_STREAM);
   coap_set_header_max_age(response, res_bcollect.periodic->period / CLOCK_SECOND);
 
   
