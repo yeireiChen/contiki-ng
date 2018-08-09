@@ -35,21 +35,6 @@
 #ifndef __TSCH_PROJECT_CONF_H__
 #define __TSCH_PROJECT_CONF_H__
 
-/*******************************************************/
-/********************* Enable TSCH *********************/
-/*******************************************************/
-
-/* Netstack layers */
-#undef NETSTACK_CONF_MAC
-#define NETSTACK_CONF_MAC     tschmac_driver
-#undef NETSTACK_CONF_RDC
-#define NETSTACK_CONF_RDC     nordc_driver
-#undef NETSTACK_CONF_FRAMER
-#define NETSTACK_CONF_FRAMER  framer_802154
-
-/* IEEE802.15.4 frame version */
-#undef FRAME802154_CONF_VERSION
-#define FRAME802154_CONF_VERSION FRAME802154_IEEE802154E_2015
 
 
 /*******************************************************/
