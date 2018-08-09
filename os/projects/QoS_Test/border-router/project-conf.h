@@ -43,6 +43,10 @@
 #define UIP_CONF_TCP 1
 #endif
 
+#include "../00-common/tsch-project-conf.h"
 
+/* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
+#undef TSCH_CONF_AUTOSTART
+#define TSCH_CONF_AUTOSTART 0
 
 #endif /* PROJECT_CONF_H_ */
