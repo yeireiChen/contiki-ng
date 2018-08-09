@@ -46,6 +46,9 @@
 /* Declare and auto-start this file's process */
 PROCESS(contiki_ng_br, "Contiki-NG Border Router");
 AUTOSTART_PROCESSES(&contiki_ng_br);
+PROCESS(node_process, "RPL Node");
+AUTOSTART_PROCESSES(&node_process);
+
 
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(contiki_ng_br, ev, data)
@@ -64,25 +67,15 @@ PROCESS_THREAD(contiki_ng_br, ev, data)
 
 
 /*---------------------------------------------------------------------------*/
-PROCESS(node_process, "RPL Node");
-AUTOSTART_PROCESSES(&node_process);
 
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(node_process, ev, data)
 {
-  int is_coordinator;
+
 
   PROCESS_BEGIN();
-
-  is_coordinator = 1;
-
-#if CONTIKI_TARGET_COOJA
-  is_coordinator = (node_id == 1);
-#endif
-
-  if(is_coordinator) {
-    NETSTACK_ROUTING.root_start();
-  }
+  /*-----start the root automatic----*/
+  NETSTACK_ROUTING.root_start();
   NETSTACK_MAC.on();
 
 #if WITH_PERIODIC_ROUTES_PRINT
