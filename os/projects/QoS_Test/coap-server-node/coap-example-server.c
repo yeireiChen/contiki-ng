@@ -93,16 +93,16 @@ PROCESS_THREAD(er_example_server, ev, data)
    * WARNING: Activating twice only means alternate path, not two instances!
    * All static variables are the same for each URI path.
    */
-  rest_activate_resource(&res_hello, "test/hello");
+  coap_activate_resource(&res_hello, "test/hello");
   coap_activate_resource(&res_separate, "test/separate");
-  rest_activate_resource(&res_push, "test/push");
+  coap_activate_resource(&res_push, "test/push");
   #if PLATFORM_HAS_BUTTON
   coap_activate_resource(&res_event, "sensors/button");
   #endif /* PLATFORM_HAS_BUTTON */
-  rest_activate_resource(&res_toggle, "actuators/toggle");
-  rest_activate_resource(&res_collect, "g/collect");
-  rest_activate_resource(&res_bcollect, "g/bcollect");
-  rest_activate_resource(&res_bcollect_2, "g/bcollect_2");
+  coap_activate_resource(&res_toggle, "actuators/toggle");
+  coap_activate_resource(&res_collect, "g/collect");
+  coap_activate_resource(&res_bcollect, "g/bcollect");
+  coap_activate_resource(&res_bcollect_2, "g/bcollect_2");
 
 
   /* Define application-specific events here. */
