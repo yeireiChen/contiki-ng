@@ -45,9 +45,8 @@
 
 /* Declare and auto-start this file's process */
 PROCESS(contiki_ng_br, "Contiki-NG Border Router");
-AUTOSTART_PROCESSES(&contiki_ng_br);
 PROCESS(node_process, "RPL Node");
-AUTOSTART_PROCESSES(&node_process);
+AUTOSTART_PROCESSES(&contiki_ng_br,&node_process);
 
 
 /*---------------------------------------------------------------------------*/
@@ -74,7 +73,7 @@ PROCESS_THREAD(node_process, ev, data)
 
 
   PROCESS_BEGIN();
-  /*-----start the root automatic----*/
+  /*-----start the root automatically----*/
   NETSTACK_ROUTING.root_start();
   NETSTACK_MAC.on();
 
