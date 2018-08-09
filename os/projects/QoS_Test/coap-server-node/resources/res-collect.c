@@ -59,10 +59,10 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
    * This would be a TODO in the corresponding files in contiki/apps/erbium/!
    */
   PRINTF("I am collect res_get hanlder!\n");
-  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
-  REST.set_header_max_age(response, res_collect.periodic->period / CLOCK_SECOND);
+  coap_set_header_content_format(response, TEXT_PLAIN);
+  coap_set_header_max_age(response, res_collect.periodic->period / CLOCK_SECOND);
 
-  REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "[Collect] ec: %lu, et: %lu, lc, %lu, pc: %lu", event_counter, event_threshold, event_threshold_last_change,packet_counter));
+  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "[Collect] ec: %lu, et: %lu, lc, %lu, pc: %lu", event_counter, event_threshold, event_threshold_last_change,packet_counter));
 
   /* The REST.subscription_handler() will be called for observable resources by the REST framework. */
 }
@@ -74,13 +74,13 @@ res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t prefer
 {
   const char *threshold_c = NULL;
   int threshold = -1;
-  if(REST.get_query_variable(request, "threshold", &threshold_c)) {
+  if(coap_get_query_variable(request, "threshold", &threshold_c)) {
     threshold = (int8_t)atoi(threshold_c);
   }
 
   if(threshold < 1) {
     /* Threashold is too smaill ignore it! */
-    REST.set_response_status(response, REST.status.BAD_REQUEST);
+    coap_set_status_code(response, BAD_REQUEST_4_00);
   } else {
     /* Update to new threshold */
     event_threshold = threshold;
@@ -156,6 +156,6 @@ res_periodic_handler()
     
 
     /* Notify the registered observers which will trigger the res_get_handler to create the response. */
-    REST.notify_subscribers(&res_collect);
+    coap_notify_observers(&res_collect);
   }
 }

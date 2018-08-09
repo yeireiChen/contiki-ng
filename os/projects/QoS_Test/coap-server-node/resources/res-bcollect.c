@@ -56,7 +56,7 @@ static uint32_t packet_counter = 0;
 
 static uint8_t packet_priority = 0;
 
-#include "os/net/mac/tsch/tsch-ans.h"
+#include "net/mac/tsch/tsch-ans.h"
 extern struct tsch_asn_t tsch_current_asn;
 
 
@@ -119,8 +119,8 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
 
 
   PRINTF("I am B_collect res_get hanlder!\n");
-  REST.set_header_content_type(response, REST.type.APPLICATION_OCTET_STREAM);
-  REST.set_header_max_age(response, res_bcollect.periodic->period / CLOCK_SECOND);
+  coap_set_header_content_format(response, REST.type.APPLICATION_OCTET_STREAM);
+  coap_set_header_max_age(response, res_bcollect.periodic->period / CLOCK_SECOND);
 
   
 
@@ -167,7 +167,7 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
   /* end of testing */
 
   coap_set_uip_traffic_class(packet_priority);
-  REST.set_response_payload(response, buffer, sizeof(message));
+  coap_set_payload(response, buffer, sizeof(message));
 
   // REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "[Collect] ec: %lu, et: %lu, lc, %lu, pc: %lu", event_counter, event_threshold, event_threshold_last_change,packet_counter));
 
@@ -184,17 +184,17 @@ res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t prefer
   int threshold = -1;
   int priority = -1;
 
-  if(REST.get_query_variable(request, "thd", &threshold_c)) {
+  if(coap_get_query_variable(request, "thd", &threshold_c)) {
     threshold = (uint8_t)atoi(threshold_c);
   }
 
-  if(REST.get_query_variable(request, "pp", &priority_c)) {
+  if(coap_get_query_variable(request, "pp", &priority_c)) {
     priority = (uint8_t)atoi(priority_c);
   }
 
   if(threshold < 1 && (priority<0||priority>2)) {
     /* Threashold is too smaill ignore it! */
-    REST.set_response_status(response, REST.status.BAD_REQUEST);
+    coap_set_status_code(response, BAD_REQUEST_4_00);
   } else {
     if(threshold>=1){
       /* Update to new threshold */
@@ -224,6 +224,6 @@ res_periodic_handler()
     PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
         
     /* Notify the registered observers which will trigger the res_get_handler to create the response. */
-    REST.notify_subscribers(&res_bcollect);
+    coap_notify_observers(&res_bcollect);
   }
 }
