@@ -49,7 +49,7 @@
 
 /* IEEE802.15.4 frame version */
 #undef FRAME802154_CONF_VERSION
-#define FRAME802154_CONF_VERSION FRAME802154_IEEE802154E_2012
+#define FRAME802154_CONF_VERSION FRAME802154_IEEE802154E_2015
 
 
 /*******************************************************/
@@ -83,6 +83,11 @@
 /*******************************************************/
 /******************* Configure TSCH ********************/
 /*******************************************************/
+
+/* Set to enable TSCH security */
+#ifndef WITH_SECURITY
+#define WITH_SECURITY 0
+#endif /* WITH_SECURITY */
 
 /* TSCH logging. 0: disabled. 1: basic log. 2: with delayed
  * log messages from interrupt */
