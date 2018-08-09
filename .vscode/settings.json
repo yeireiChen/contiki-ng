@@ -3,6 +3,7 @@
         "slip.h": "c",
         "rpl-private.h": "c",
         "coap.h": "c",
-        "rpl.h": "c"
+        "rpl.h": "c",
+        "log.h": "c"
     }
 }
