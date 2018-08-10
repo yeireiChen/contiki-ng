@@ -11,7 +11,7 @@
 
 
 #include "net/routing/rpl-lite/rpl.h"
-//#include "net/routing/routing.h"
+#include "net/routing/routing.h"
 #include "net/link-stats.h"
 
 
@@ -116,7 +116,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
   rpl_parent_t *preferred_parent;
   linkaddr_t parent;
   linkaddr_copy(&parent, &linkaddr_null);
-  const struct link_stats *parent_link_stats;
+  struct link_stats *parent_link_stats;
 
 
   PRINTF("I am B_collect res_get hanlder!\n");
