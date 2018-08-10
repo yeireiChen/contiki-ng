@@ -28,8 +28,8 @@
 #endif
 
 
-static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
-static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
+static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
+static void res_post_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 static void res_periodic_handler(void);
 
 PERIODIC_RESOURCE(res_bcollect,
@@ -116,7 +116,7 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
   rpl_parent_t *preferred_parent;
   linkaddr_t parent;
   linkaddr_copy(&parent, &linkaddr_null);
-  const struct link_stats *parent_link_stats;
+  struct link_stats *parent_link_stats;
 
 
   PRINTF("I am B_collect res_get hanlder!\n");
