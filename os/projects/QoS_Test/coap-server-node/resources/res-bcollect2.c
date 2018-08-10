@@ -11,7 +11,7 @@
 
 //#include "net/routing/rpl-classic/rpl.h"
 #include "net/routing/rpl-lite/rpl.h"
-#include "net/routing/routing.h"
+//#include "net/routing/routing.h"
 #include "net/link-stats.h"
 
 #define DEBUG 0
