@@ -133,7 +133,7 @@ PROCESS_THREAD(node_process, ev, data)
   PROCESS_BEGIN();
 
 
-  NETSTACK_MAC.on();
+  //NETSTACK_MAC.on();
   timer_set(&etaa, CLOCK_SECOND * 5);
   while(1) {
     PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
