@@ -77,6 +77,9 @@ extern coap_resource_t
   
 PROCESS(er_example_server, "Erbium Example Server");
 PROCESS(node_process, "RPL Node");
+AUTOSTART_PROCESSES(&node_process);
+
+#if 0
 AUTOSTART_PROCESSES(&er_example_server,&node_process);
 
 PROCESS_THREAD(er_example_server, ev, data)
@@ -95,9 +98,6 @@ PROCESS_THREAD(er_example_server, ev, data)
   coap_activate_resource(&res_hello, "test/hello");
   coap_activate_resource(&res_separate, "test/separate");
   coap_activate_resource(&res_push, "test/push");
-  #if PLATFORM_HAS_BUTTON
-  coap_activate_resource(&res_event, "sensors/button");
-  #endif /* PLATFORM_HAS_BUTTON */
   coap_activate_resource(&res_toggle, "actuators/toggle");
   coap_activate_resource(&res_bcollect, "g/bcollect");
   coap_activate_resource(&res_bcollect_2, "g/bcollect_2");
@@ -125,14 +125,13 @@ PROCESS_THREAD(er_example_server, ev, data)
 
   PROCESS_END();
 }
-
+#endif
 
 PROCESS_THREAD(node_process, ev, data)
 {
   static struct etimer etaa;
   PROCESS_BEGIN();
-
-
+  NETSTACK_MAC.on();
   //NETSTACK_MAC.on();
   etimer_set(&etaa, CLOCK_SECOND * 5);
   while(1) {
