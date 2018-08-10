@@ -42,6 +42,7 @@
 
 #define DEBUG DEBUG_PRINT
 #include "net/ipv6/uip-debug.h"
+#include "project-conf.h"
 
 /* Declare and auto-start this file's process */
 PROCESS(contiki_ng_br, "Contiki-NG Border Router");

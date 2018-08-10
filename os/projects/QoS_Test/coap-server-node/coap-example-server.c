@@ -57,7 +57,7 @@
 #define DEBUG DEBUG_PRINT
 #include "net/ipv6/uip-debug.h"
 
-
+#include "project-conf.h"
 /* Log configuration */
 #include "sys/log.h"
 #define LOG_MODULE "App"
