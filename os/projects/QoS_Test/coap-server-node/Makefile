@@ -17,7 +17,7 @@ MAKE_WITH_ORCHESTRA ?= 0
 MAKE_WITH_SECURITY ?= 0
  # print #routes periodically, used for regression tests
 MAKE_WITH_PERIODIC_ROUTES_PRINT ?= 0
-
+MAKE_ROUTING = MAKE_ROUTING_RPL_CLASSIC
 MAKE_MAC = MAKE_MAC_TSCH
 MODULES += os/services/shell
 
