@@ -60,7 +60,7 @@ extern struct tsch_asn_t tsch_current_asn;
 
 
 static void
-res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
+res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
   /*
    * For minimal complexity, request query and options should be ignored for GET on observable resources.
@@ -174,7 +174,7 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
 
 /* Used for update the threshold */
 static void
-res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
+res_post_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
   const char *threshold_c = NULL;
   const char *priority_c = NULL;
