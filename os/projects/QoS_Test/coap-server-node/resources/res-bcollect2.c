@@ -113,7 +113,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
   rpl_parent_t *preferred_parent;
   linkaddr_t parent;
   linkaddr_copy(&parent, &linkaddr_null);
-  struct link_stats *parent_link_stats;
+  const struct link_stats *parent_link_stats;
 
 
   PRINTF("I am B_collect res_get hanlder!\n");
