@@ -116,9 +116,9 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
   struct link_stats *parent_link_stats;
 
 
-  PRINTF("I am B_collect_2 res_get hanlder!\n");
-  coap_set_header_content_format(response, APPLICATION_OCTET_STREAM);
-  coap_set_header_max_age(response,res_bcollect_2.periodic->period / CLOCK_SECOND);
+  PRINTF("I am B_collect res_get hanlder!\n");
+  coap_set_header_content_format(response,APPLICATION_OCTET_STREAM);
+  coap_set_header_max_age(response, res_bcollect.periodic->period / CLOCK_SECOND);
 
   
 
@@ -132,7 +132,7 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
     preferred_parent = dag->preferred_parent;
     if(preferred_parent != NULL) {
       uip_ds6_nbr_t *nbr;
-      nbr = uip_ds6_nbr_lookup(rpl_get_parent_ipaddr(preferred_parent));
+      nbr = uip_ds6_nbr_lookup(rpl_parent_get_ipaddr(preferred_parent));
       if(nbr != NULL) {
         /* Use parts of the IPv6 address as the parent address, in reversed byte order. */
         parent.u8[LINKADDR_SIZE - 1] = nbr->ipaddr.u8[sizeof(uip_ipaddr_t) - 2];
@@ -171,7 +171,6 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
 
   /* The REST.subscription_handler() will be called for observable resources by the REST framework. */
 }
-
 
 /* Used for update the threshold */
 static void

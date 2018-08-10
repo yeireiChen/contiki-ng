@@ -36,7 +36,10 @@
 #define __TSCH_PROJECT_CONF_H__
 
 
-
+#ifndef NETSTACK_CONF_WITH_IPV6
+/** Do we use IPv6 or not (default: no) */
+#define NETSTACK_CONF_WITH_IPV6                 1
+#endif
 /*******************************************************/
 /********* Enable RPL non-storing mode *****************/
 /*******************************************************/

@@ -53,7 +53,7 @@
 #include "coap-constants.h"
 #include "coap-conf.h"
 #include "coap-transport.h"
-
+#include "contiki-net.h"
 /**
  * \brief      The max size of the CoAP messages
  */
@@ -69,6 +69,15 @@
                                           (COAP_MAX_CHUNK_SIZE < 1024 ? 512 : \
                                           (COAP_MAX_CHUNK_SIZE < 2048 ? 1024 : 2048)))))))
 #endif /* COAP_MAX_BLOCK_SIZE */
+
+/* direct access into the buffer */
+#define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
+#if NETSTACK_CONF_WITH_IPV6
+#define UIP_UDP_BUF  ((struct uip_udp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
+#else
+#define UIP_UDP_BUF  ((struct uip_udp_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN])
+#endif
+
 
 /* bitmap for set options */
 #define COAP_OPTION_MAP_SIZE  (sizeof(uint8_t) * 8)
@@ -298,7 +307,7 @@ int coap_set_header_size1(coap_message_t *message, uint32_t size);
 
 int coap_get_payload(coap_message_t *message, const uint8_t **payload);
 int coap_set_payload(coap_message_t *message, const void *payload, size_t length);
-
+void coap_set_uip_traffic_class(uint8_t priority);
 #endif /* COAP_H_ */
 /** @} */
 /** @} */
