@@ -111,12 +111,12 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
   message.priority = packet_priority;
 
 
-  uint8_t packet_length = 0;
+  //uint8_t packet_length = 0;
   rpl_dag_t *dag;
   rpl_parent_t *preferred_parent;
   linkaddr_t parent;
   linkaddr_copy(&parent, &linkaddr_null);
-  struct link_stats *parent_link_stats;
+  const struct link_stats *parent_link_stats;
 
 
   PRINTF("I am B_collect res_get hanlder!\n");
