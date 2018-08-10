@@ -14,6 +14,8 @@ MODULES_REL += webserver
 include $(CONTIKI)/Makefile.identify-target
 MODULES_REL += $(TARGET)
 
+PROJECT_SOURCEFILES += slip-bridge.c
+
 # force Orchestra from command line
 MAKE_WITH_ORCHESTRA ?= 0
 # force Security from command line
