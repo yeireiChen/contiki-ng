@@ -72,7 +72,6 @@ extern coap_resource_t
   res_push,
   res_event,
   res_toggle,
-  res_collect,
   res_bcollect,
   res_bcollect_2;
   
@@ -100,7 +99,6 @@ PROCESS_THREAD(er_example_server, ev, data)
   coap_activate_resource(&res_event, "sensors/button");
   #endif /* PLATFORM_HAS_BUTTON */
   coap_activate_resource(&res_toggle, "actuators/toggle");
-  coap_activate_resource(&res_collect, "g/collect");
   coap_activate_resource(&res_bcollect, "g/bcollect");
   coap_activate_resource(&res_bcollect_2, "g/bcollect_2");
 
