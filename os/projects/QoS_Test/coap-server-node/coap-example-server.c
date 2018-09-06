@@ -76,7 +76,7 @@ extern coap_resource_t
   res_bcollect,
   res_bcollect_2;
   
-PROCESS(er_example_server, "Erbium Example Server");
+//PROCESS(er_example_server, "Erbium Example Server");
 PROCESS(node_process, "RPL Node");
 AUTOSTART_PROCESSES(&node_process);
 
