@@ -70,7 +70,10 @@
 
 /*******************************************************/
 /******************* Configure TSCH ********************/
-/*******************************************************/
+/******************************************************/
+
+/* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
+#define TSCH_CONF_AUTOSTART 0
 
 /* Set to enable TSCH security */
 #ifndef WITH_SECURITY

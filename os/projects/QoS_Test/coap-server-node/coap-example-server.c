@@ -78,9 +78,9 @@ extern coap_resource_t
   
 PROCESS(er_example_server, "Erbium Example Server");
 PROCESS(node_process, "RPL Node");
-AUTOSTART_PROCESSES(&node_process);
+//AUTOSTART_PROCESSES(&node_process);
 
-#if 0
+
 AUTOSTART_PROCESSES(&er_example_server,&node_process);
 
 PROCESS_THREAD(er_example_server, ev, data)
@@ -103,36 +103,20 @@ PROCESS_THREAD(er_example_server, ev, data)
   coap_activate_resource(&res_bcollect, "g/bcollect");
   coap_activate_resource(&res_bcollect_2, "g/bcollect_2");
 
-
   /* Define application-specific events here. */
   while(1) {
     PROCESS_WAIT_EVENT();
-#if PLATFORM_HAS_BUTTON
-#if PLATFORM_SUPPORTS_BUTTON_HAL
-    if(ev == button_hal_release_event) {
-#else
-    if(ev == sensors_event && data == &button_sensor) {
-#endif
-      LOG_DBG("*******BUTTON*******\n");
-
-      /* Call the event_handler for this application-specific event. */
-      res_event.trigger();
-
-      /* Also call the separate response example handler. */
-      res_separate.resume();
-    }
-#endif /* PLATFORM_HAS_BUTTON */
-  }                             /* while (1) */
+  } 
 
   PROCESS_END();
 }
-#endif
+
 
 PROCESS_THREAD(node_process, ev, data)
 {
   static struct etimer etaa;
   PROCESS_BEGIN();
-  NETSTACK_MAC.on();
+ 
   //NETSTACK_MAC.on();
   etimer_set(&etaa, CLOCK_SECOND * 5);
   while(1) {
@@ -157,7 +141,7 @@ PROCESS_THREAD(node_process, ev, data)
     }
   }
 #endif /* WITH_PERIODIC_ROUTES_PRINT */
-
+  NETSTACK_MAC.on();
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
