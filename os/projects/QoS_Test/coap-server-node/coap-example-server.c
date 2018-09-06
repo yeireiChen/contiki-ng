@@ -116,7 +116,7 @@ PROCESS_THREAD(node_process, ev, data)
 {
   static struct etimer etaa;
   PROCESS_BEGIN();
- 
+  NETSTACK_MAC.on();
   //NETSTACK_MAC.on();
   etimer_set(&etaa, CLOCK_SECOND * 5);
   while(1) {
@@ -141,7 +141,7 @@ PROCESS_THREAD(node_process, ev, data)
     }
   }
 #endif /* WITH_PERIODIC_ROUTES_PRINT */
-  NETSTACK_MAC.on();
+ 
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
