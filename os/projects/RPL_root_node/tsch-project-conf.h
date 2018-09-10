@@ -40,33 +40,6 @@
 /** Do we use IPv6 or not (default: no) */
 #define NETSTACK_CONF_WITH_IPV6                 1
 #endif
-/*******************************************************/
-/********* Enable RPL non-storing mode *****************/
-/*******************************************************/
-
-#undef UIP_CONF_MAX_ROUTES
-#define UIP_CONF_MAX_ROUTES 0 /* No need for routes */
-#undef RPL_CONF_MOP
-#define RPL_CONF_MOP RPL_MOP_NON_STORING /* Mode of operation*/
-
-/* TSCH and RPL callbacks */
-#define RPL_CALLBACK_PARENT_SWITCH tsch_rpl_callback_parent_switch
-#define RPL_CALLBACK_NEW_DIO_INTERVAL tsch_rpl_callback_new_dio_interval
-#define TSCH_CALLBACK_JOINING_NETWORK tsch_rpl_callback_joining_network
-#define TSCH_CALLBACK_LEAVING_NETWORK tsch_rpl_callback_leaving_network
-
-/* Needed for cc2420 platforms only */
-/* Disable DCO calibration (uses timerB) */
-#undef DCOSYNCH_CONF_ENABLED
-#define DCOSYNCH_CONF_ENABLED            0
-/* Enable SFD timestamps (uses timerB) */
-#undef CC2420_CONF_SFD_TIMESTAMPS
-#define CC2420_CONF_SFD_TIMESTAMPS       1
-/* Needed for IoT-LAB M3 nodes */
-#undef RF2XX_SOFT_PREPARE
-#define RF2XX_SOFT_PREPARE 0
-#undef RF2XX_WITH_TSCH
-#define RF2XX_WITH_TSCH 1
 
 /*******************************************************/
 /******************* Configure TSCH ********************/
