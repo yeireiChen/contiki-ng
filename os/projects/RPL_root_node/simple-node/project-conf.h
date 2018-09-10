@@ -35,13 +35,12 @@
 #ifndef PROJECT_CONF_H_
 #define PROJECT_CONF_H_
 
-/* Set to enable TSCH security */
-#ifndef WITH_SECURITY
-#define WITH_SECURITY 0
-#endif /* WITH_SECURITY */
+
 
 /* USB serial takes space, free more space elsewhere */
 #define SICSLOWPAN_CONF_FRAG 0
 #define UIP_CONF_BUFFER_SIZE 160
+
+#include "../tsch-project-conf.h"
 
 #endif /* PROJECT_CONF_H_ */

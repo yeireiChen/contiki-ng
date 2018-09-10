@@ -31,7 +31,7 @@
 #ifndef PROJECT_CONF_H_
 #define PROJECT_CONF_H_
 
-#include "../tsch-project-conf.h"
+
 
 #ifndef WEBSERVER_CONF_CFS_CONNS
 #define WEBSERVER_CONF_CFS_CONNS 2
@@ -45,6 +45,7 @@
 #define UIP_CONF_TCP 1
 #endif
 
+#include "../tsch-project-conf.h"
 
 
 #endif /* PROJECT_CONF_H_ */
