@@ -52,10 +52,10 @@
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_APP
 /*---------------------------------------------------------------------------*/
-//PROCESS(node_process, "RPL Node");
+PROCESS(node_process, "RPL Node");
 PROCESS(er_example_server, "Erbium Example Server");
-//AUTOSTART_PROCESSES(&er_example_server,&node_process);
-AUTOSTART_PROCESSES(&er_example_server);
+AUTOSTART_PROCESSES(&er_example_server,&node_process);
+
 /*---------------------------------------------------------------------------*/
 /*
  * Resources to be activated need to be imported through the extern keyword.
@@ -99,7 +99,7 @@ PROCESS_THREAD(er_example_server, ev, data)
  PROCESS_END();
 }
 
-#if 0
+
 PROCESS_THREAD(node_process, ev, data)
 {
   int is_coordinator;
@@ -138,5 +138,4 @@ PROCESS_THREAD(node_process, ev, data)
 
   PROCESS_END();
 }
-#endif
 /*---------------------------------------------------------------------------*/
