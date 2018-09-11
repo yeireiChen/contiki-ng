@@ -43,7 +43,7 @@
 
 
 #define LOG_LEVEL_APP LOG_LEVEL_DBG
-#if 0
+
 /* Increase rpl-border-router IP-buffer when using more than 64. */
 #undef REST_MAX_CHUNK_SIZE
 #define REST_MAX_CHUNK_SIZE            256
@@ -66,7 +66,7 @@
 
 /* Enable client-side support for COAP observe */
 #define COAP_OBSERVE_CLIENT 1
-#endif
+
 
 #include "../tsch-project-conf.h"
 
