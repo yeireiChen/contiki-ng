@@ -38,9 +38,35 @@
 
 #ifndef PROJECT_CONF_H_
 #define PROJECT_CONF_H_
+/* USB serial takes space, free more space elsewhere */
+#define SICSLOWPAN_CONF_FRAG 0
+#define UIP_CONF_BUFFER_SIZE 1280
+
 
 #define LOG_LEVEL_APP LOG_LEVEL_DBG
 
+/* Increase rpl-border-router IP-buffer when using more than 64. */
+#undef REST_MAX_CHUNK_SIZE
+#define REST_MAX_CHUNK_SIZE            256
+
+/* Multiplies with chunk size, be aware of memory constraints. */
+#undef COAP_MAX_OPEN_TRANSACTIONS
+#define COAP_MAX_OPEN_TRANSACTIONS     4
+
+/* Must be <= open transactions, default is COAP_MAX_OPEN_TRANSACTIONS-1. */
+
+   #undef COAP_MAX_OBSERVERS
+   #define COAP_MAX_OBSERVERS             2
+ 
+
+/* Filtering .well-known/core per query can be disabled to save space. */
+#undef COAP_LINK_FORMAT_FILTERING
+#define COAP_LINK_FORMAT_FILTERING     0
+#undef COAP_PROXY_OPTION_PROCESSING
+#define COAP_PROXY_OPTION_PROCESSING   0
+
+/* Enable client-side support for COAP observe */
+#define COAP_OBSERVE_CLIENT 1
 #include "../tsch-project-conf.h"
 
 #endif /* PROJECT_CONF_H_ */
