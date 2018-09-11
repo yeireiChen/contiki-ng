@@ -87,6 +87,9 @@
 #undef COAP_PROXY_OPTION_PROCESSING
 #define COAP_PROXY_OPTION_PROCESSING   0
 
+/* Enable client-side support for COAP observe */
+#define COAP_OBSERVE_CLIENT 1
+
 /* Turn of DAO ACK to make code smaller */
 #undef RPL_CONF_WITH_DAO_ACK
 #define RPL_CONF_WITH_DAO_ACK          0
@@ -94,8 +97,7 @@
 #undef RPL_CONF_OF
 #define RPL_CONF_OF                    rpl_of0
 
-/* Enable client-side support for COAP observe */
-#define COAP_OBSERVE_CLIENT 1
+
 
 #include "../00-common/tsch-project-conf.h"
 
