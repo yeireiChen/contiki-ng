@@ -42,59 +42,52 @@
 #include "contiki.h"
 #include "coap-engine.h"
 
-#if PLATFORM_SUPPORTS_BUTTON_HAL
-#include "dev/button-hal.h"
-#else
-#include "dev/button-sensor.h"
-#endif
-
 /* Log configuration */
 #include "sys/log.h"
 #define LOG_MODULE "App"
 #define LOG_LEVEL LOG_LEVEL_APP
-
-PROCESS(er_example_server, "Erbium Example Server");
-AUTOSTART_PROCESSES(&er_example_server);
-
-/*---------------------------------------------------------------------------*/
 /*
  * Resources to be activated need to be imported through the extern keyword.
  * The build system automatically compiles the resources in the corresponding sub-directory.
  */
- extern coap_resource_t
- res_hello,
- res_separate,
- res_push,
- res_event,
- res_toggle;
- /*res_bcollect,
- res_bcollect_2;*/
- 
+extern coap_resource_t
+  res_hello,
+  res_mirror,
+  res_chunks,
+  res_separate,
+  res_push,
+  res_event,
+  res_sub,
+  res_b1_sep_b2;
+
+
+PROCESS(er_example_server, "Erbium Example Server");
+AUTOSTART_PROCESSES(&er_example_server);
 
 PROCESS_THREAD(er_example_server, ev, data)
 {
- PROCESS_BEGIN();
+  PROCESS_BEGIN();
 
- PROCESS_PAUSE();
+  PROCESS_PAUSE();
 
- LOG_INFO("Starting Erbium Example Server\n");
+  LOG_INFO("Starting Erbium Example Server\n");
 
- /*
-  * Bind the resources to their Uri-Path.
-  * WARNING: Activating twice only means alternate path, not two instances!
-  * All static variables are the same for each URI path.
-  */
- coap_activate_resource(&res_hello, "test/hello");
- coap_activate_resource(&res_separate, "test/separate");
- coap_activate_resource(&res_push, "test/push");
- coap_activate_resource(&res_toggle, "actuators/toggle");
- //coap_activate_resource(&res_bcollect, "g/bcollect");
- //coap_activate_resource(&res_bcollect_2, "g/bcollect_2");
+  /*
+   * Bind the resources to their Uri-Path.
+   * WARNING: Activating twice only means alternate path, not two instances!
+   * All static variables are the same for each URI path.
+   */
+  coap_activate_resource(&res_hello, "test/hello");
+  coap_activate_resource(&res_mirror, "debug/mirror");
+  coap_activate_resource(&res_chunks, "test/chunks");
+  coap_activate_resource(&res_separate, "test/separate");
+  coap_activate_resource(&res_push, "test/push");
 
- /* Define application-specific events here. */
- while(1) {
-   PROCESS_WAIT_EVENT();
- } 
+  /* Define application-specific events here. */
+  while(1) {
+    PROCESS_WAIT_EVENT();
 
- PROCESS_END();
+  }                             /* while (1) */
+
+  PROCESS_END();
 }
