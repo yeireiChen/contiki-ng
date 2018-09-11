@@ -49,9 +49,53 @@
 
 /*---------------------------------------------------------------------------*/
 PROCESS(node_process, "RPL Node");
-AUTOSTART_PROCESSES(&node_process);
+PROCESS(er_example_server, "Erbium Example Server");
+AUTOSTART_PROCESSES(&er_example_server,&node_process);
 
 /*---------------------------------------------------------------------------*/
+/*
+ * Resources to be activated need to be imported through the extern keyword.
+ * The build system automatically compiles the resources in the corresponding sub-directory.
+ */
+ extern coap_resource_t
+ res_hello,
+ res_separate,
+ res_push,
+ res_event,
+ res_toggle;
+ /*res_bcollect,
+ res_bcollect_2;*/
+ 
+
+PROCESS_THREAD(er_example_server, ev, data)
+{
+ PROCESS_BEGIN();
+
+ PROCESS_PAUSE();
+
+ LOG_INFO("Starting Erbium Example Server\n");
+
+ /*
+  * Bind the resources to their Uri-Path.
+  * WARNING: Activating twice only means alternate path, not two instances!
+  * All static variables are the same for each URI path.
+  */
+ coap_activate_resource(&res_hello, "test/hello");
+ coap_activate_resource(&res_separate, "test/separate");
+ coap_activate_resource(&res_push, "test/push");
+ coap_activate_resource(&res_toggle, "actuators/toggle");
+ //coap_activate_resource(&res_bcollect, "g/bcollect");
+ //coap_activate_resource(&res_bcollect_2, "g/bcollect_2");
+
+ /* Define application-specific events here. */
+ while(1) {
+   PROCESS_WAIT_EVENT();
+ } 
+
+ PROCESS_END();
+}
+
+
 PROCESS_THREAD(node_process, ev, data)
 {
   int is_coordinator;
