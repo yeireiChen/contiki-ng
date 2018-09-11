@@ -65,7 +65,6 @@ AUTOSTART_PROCESSES(&er_example_server,&node_process);
  res_hello,
  res_separate,
  res_push,
- res_event,
  res_toggle;
  /*res_bcollect,
  res_bcollect_2;*/
