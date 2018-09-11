@@ -10,7 +10,6 @@
 #include "coap-engine.h"
 
 
-#include "net/routing/rpl-classic/rpl.h"
 #include "net/routing/routing.h"
 #include "net/link-stats.h"
 
