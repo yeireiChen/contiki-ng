@@ -426,6 +426,18 @@ tsch_schedule_create_minimal(void)
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
       LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
       0, 0);
+  tsch_schedule_add_link(sf_min,
+      (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
+      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+      2, 0);
+  tsch_schedule_add_link(sf_min,
+      (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
+      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+      4, 0);
+  tsch_schedule_add_link(sf_min,
+      (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
+      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
+      6, 0);
 }
 /*---------------------------------------------------------------------------*/
 struct tsch_slotframe *
