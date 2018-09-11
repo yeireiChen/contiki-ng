@@ -37,6 +37,7 @@
  */
 
 #include "contiki.h"
+#include "coap-engine.h"
 #include "sys/node-id.h"
 #include "sys/log.h"
 #include "net/ipv6/uip-ds6-route.h"
@@ -46,7 +47,10 @@
 
 #define DEBUG DEBUG_PRINT
 #include "net/ipv6/uip-debug.h"
-
+/* Log configuration */
+#include "sys/log.h"
+#define LOG_MODULE "App"
+#define LOG_LEVEL LOG_LEVEL_APP
 /*---------------------------------------------------------------------------*/
 PROCESS(node_process, "RPL Node");
 PROCESS(er_example_server, "Erbium Example Server");
