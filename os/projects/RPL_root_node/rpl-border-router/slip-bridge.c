@@ -48,7 +48,7 @@
 #define UIP_UDP_BUF       ((struct uip_udp_hdr *)&uip_buf[UIP_LLIPH_LEN])
 
 #define DEBUG DEBUG_FULL
-#include "net/ip/uip-debug.h"
+#include "net/ipv6/uip-debug.h"
 
 void set_prefix_64(uip_ipaddr_t *);
 
