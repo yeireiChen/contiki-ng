@@ -8,6 +8,9 @@ PLATFORMS_EXCLUDE = nrf52dk
 # Include RPL BR module
 MODULES += os/services/rpl-border-router
 MODULES += os/services/shell
+
+PROJECT_SOURCEFILES += slip-bridge.c
+
 # Include webserver module
 MODULES_REL += webserver
 # Include optional target-specific module
