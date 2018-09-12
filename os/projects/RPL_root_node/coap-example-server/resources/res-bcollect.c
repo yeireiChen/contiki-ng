@@ -13,6 +13,7 @@
 #include "net/routing/rpl-lite/rpl-icmp6.h"
 #include "net/routing/rpl-lite/rpl-types.h"
 #include "net/routing/rpl-lite/rpl-dag.h"
+#include "net/routing/rpl-lite/uip.h"
 #include "net/routing/routing.h"
 #include "net/link-stats.h"
 
