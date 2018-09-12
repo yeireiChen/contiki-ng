@@ -138,7 +138,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     preferred_parent = dag->preferred_parent;
     if(preferred_parent != NULL) {
       uip_ds6_nbr_t *nbr;
-      nbr = uip_ds6_nbr_lookup(rpl_neighbor_get_link_stats(preferred_parent));
+      nbr = uip_ds6_nbr_lookup(rpl_parent_get_ipaddr(preferred_parent));
       if(nbr != NULL) {
         /* Use parts of the IPv6 address as the parent address, in reversed byte order. */
         parent.u8[LINKADDR_SIZE - 1] = nbr->ipaddr.u8[sizeof(uip_ipaddr_t) - 2];
@@ -149,7 +149,6 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
       }
     }
     message.rank = dag->rank;
-  } else {
   }
 
   message.parent_address[0] = parent.u8[LINKADDR_SIZE - 1];
