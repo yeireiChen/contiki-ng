@@ -124,7 +124,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
 
   PRINTF("I am B_collect res_get hanlder!\n");
   coap_set_header_content_format(response,APPLICATION_OCTET_STREAM);
-  coap_set_header_max_age(response, res_bcollect.periodic->period / CLOCK_SECOND);
+  coap_set_header_max_age(response, res_bcollect_2.periodic->period / CLOCK_SECOND);
 
   
 
