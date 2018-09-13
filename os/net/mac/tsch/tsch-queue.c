@@ -70,6 +70,9 @@ MEMB(packet_memb, struct tsch_packet, QUEUEBUF_NUM);
 MEMB(neighbor_memb, struct tsch_neighbor, TSCH_QUEUE_MAX_NEIGHBOR_QUEUES);
 LIST(neighbor_list);
 
+/* Testing for QoS swap function.*/
+int8_t data_tcflow;
+
 /* Broadcast and EB virtual neighbors */
 struct tsch_neighbor *n_broadcast;
 struct tsch_neighbor *n_eb;
