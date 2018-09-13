@@ -60,6 +60,13 @@
 #define LOG_MODULE "TSCH Queue"
 #define LOG_LEVEL LOG_LEVEL_MAC
 
+#if TSCH_LOG_LEVEL >= 1
+#define DEBUG DEBUG_PRINT
+#else /* TSCH_LOG_LEVEL */
+#define DEBUG DEBUG_NONE
+#endif /* TSCH_LOG_LEVEL */
+#include "net/net-debug.h"
+
 /* Check if TSCH_QUEUE_NUM_PER_NEIGHBOR is power of two */
 #if (TSCH_QUEUE_NUM_PER_NEIGHBOR & (TSCH_QUEUE_NUM_PER_NEIGHBOR - 1)) != 0
 #error TSCH_QUEUE_NUM_PER_NEIGHBOR must be power of two
