@@ -45,6 +45,11 @@
 #define UIP_CONF_TCP 1
 #endif
 
+/* QoS function optional*/
+#ifndef ENABLE_QOS
+#define ENABLE_QOS           1
+#endif
+
 #include "../tsch-project-conf.h"
 
 

@@ -43,6 +43,11 @@
 
 #define LOG_LEVEL_APP LOG_LEVEL_DBG
 
+/* QoS function optional*/
+#ifndef ENABLE_QOS
+#define ENABLE_QOS           1
+#endif
+
 #include "../tsch-project-conf.h"
 
 #endif /* PROJECT_CONF_H_ */
