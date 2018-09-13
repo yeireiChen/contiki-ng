@@ -93,7 +93,7 @@ PROCESS_THREAD(er_example_server, ev, data)
   coap_activate_resource(&res_sub, "test/sub");
   coap_activate_resource(&res_b1_sep_b2, "test/b1sepb2");
   coap_activate_resource(&res_bcollect, "res/bcollect");
-  coap_activate_resource(&res_bcollect_2, "res/bcollect");
+  coap_activate_resource(&res_bcollect_2, "res/bcollect_2");
 
 
   /* Define application-specific events here. */
