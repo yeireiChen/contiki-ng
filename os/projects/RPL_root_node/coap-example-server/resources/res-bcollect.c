@@ -169,7 +169,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
   //PRINTF("%d \n",packet_priority);
   /* end of testing */
 
-  //coap_set_uip_traffic_class(packet_priority);
+  coap_set_uip_traffic_class(packet_priority);
   coap_set_payload(response, buffer, sizeof(message));
 
   // REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "[Collect] ec: %lu, et: %lu, lc, %lu, pc: %lu", event_counter, event_threshold, event_threshold_last_change,packet_counter));
