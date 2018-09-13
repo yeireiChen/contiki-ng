@@ -65,7 +65,8 @@ extern coap_resource_t
   res_event,
   res_sub,
   res_b1_sep_b2,
-  res_bcollect;
+  res_bcollect,
+  res_bcollect_2;
 
 
 PROCESS(er_example_server, "Erbium Example Server");
@@ -92,6 +93,7 @@ PROCESS_THREAD(er_example_server, ev, data)
   coap_activate_resource(&res_sub, "test/sub");
   coap_activate_resource(&res_b1_sep_b2, "test/b1sepb2");
   coap_activate_resource(&res_bcollect, "res/bcollect");
+  coap_activate_resource(&res_bcollect_2, "res/bcollect");
 
 
   /* Define application-specific events here. */
