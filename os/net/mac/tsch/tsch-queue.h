@@ -179,5 +179,11 @@ void tsch_queue_update_all_backoff_windows(const linkaddr_t *dest_addr);
  */
 void tsch_queue_init(void);
 
+/* Resorting ringbuf ,  swap the packets in ringbuf with priority */
+
+void tsch_queue_resorting_ringbuf_priority(struct tsch_neighbor *n,struct tsch_packet *p);
+void pkt_priority_sorting(struct tsch_neighbor *n,struct tsch_packet *p);
+
+
 #endif /* __TSCH_QUEUE_H__ */
 /** @} */
