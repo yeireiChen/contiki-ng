@@ -60,12 +60,7 @@
 #define LOG_MODULE "TSCH Queue"
 #define LOG_LEVEL LOG_LEVEL_MAC
 
-#if TSCH_LOG_LEVEL >= 1
-#define DEBUG DEBUG_PRINT
-#else /* TSCH_LOG_LEVEL */
-#define DEBUG DEBUG_NONE
-#endif /* TSCH_LOG_LEVEL */
-#include "net/net-debug.h"
+
 
 /* Check if TSCH_QUEUE_NUM_PER_NEIGHBOR is power of two */
 #if (TSCH_QUEUE_NUM_PER_NEIGHBOR & (TSCH_QUEUE_NUM_PER_NEIGHBOR - 1)) != 0
@@ -235,47 +230,39 @@ tsch_queue_remove_nbr(struct tsch_neighbor *n)
 /*---------------------------------------------------------------------------*/
 /* Add packet to neighbor queue. Use same lockfree implementation as ringbuf.c (put is atomic) */
 struct tsch_packet *
-tsch_queue_add_packet(const linkaddr_t *addr, mac_callback_t sent, void *ptr)
+tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
+                      mac_callback_t sent, void *ptr)
 {
   struct tsch_neighbor *n = NULL;
   int16_t put_index = -1;
   struct tsch_packet *p = NULL;
-
-  data_tcflow = -1; //by default.
-
-  if (!tsch_is_locked())
-  {
+  if(!tsch_is_locked()) {
     n = tsch_queue_add_nbr(addr);
-    if (n != NULL)
-    {
+    if(n != NULL) {
       put_index = ringbufindex_peek_put(&n->tx_ringbuf);
-      if (put_index != -1)
-      {
+      if(put_index != -1) {
         p = memb_alloc(&packet_memb);
-        if (p != NULL)
-        {
-        /* Enqueue packet */
+        if(p != NULL) {
+          /* Enqueue packet */
 #ifdef TSCH_CALLBACK_PACKET_READY
           TSCH_CALLBACK_PACKET_READY();
 #endif
-
           p->qb = queuebuf_new_from_packetbuf();
-          if (p->qb != NULL)
-          {
+          if(p->qb != NULL) {
             p->sent = sent;
             p->ptr = ptr;
             p->ret = MAC_TX_DEFERRED;
             p->transmissions = 0;
-
+            p->max_transmissions = max_transmissions;
             /* show queuebuf information. */
             uint8_t i;
             uint8_t dataLen = queuebuf_datalen(p->qb);
             for (i = 0; i < dataLen; i++)
             {
               uint8_t data = ((uint8_t *)queuebuf_dataptr(p->qb))[i];
-              PRINTF("%02x ", data);
+              LOG_DBG("%02x ", data);
             }
-            PRINTF("\n");
+            LOG_DBG("\n");
 
             //check coap have created packet, if will, print it.
             if ( dataLen >= 100 &&((uint8_t *)queuebuf_dataptr(p->qb))[0] == 0x21 &&
@@ -283,7 +270,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, mac_callback_t sent, void *ptr)
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 3] == 0xff )
             {
               data_tcflow = ((uint8_t *)queuebuf_dataptr(p->qb))[24]; //24 is tcflow location in queuebuf.
-              PRINTF("Traffic classes In TSCH queue : %02x\n", data_tcflow);
+              LOG_DBG("Traffic classes In TSCH queue : %02x\n", data_tcflow);
             }
 
 #if ENABLE_QOS
@@ -292,19 +279,17 @@ tsch_queue_add_packet(const linkaddr_t *addr, mac_callback_t sent, void *ptr)
             /* Add to ringbuf (actual add committed through atomic operation) */
             n->tx_array[put_index] = p;       //
             ringbufindex_put(&n->tx_ringbuf); //input ringbuf.
-            PRINTF("TSCH-queue: packet is added put_index=%u, packet=%p\n", put_index, p);
+            LOG_DBG("TSCH-queue: packet is added put_index=%u, packet=%p\n", put_index, p);
 #endif /* ENABLE_QOS */
             return p;
-          }
-          else
-          {
+          } else {
             memb_free(&packet_memb, p);
           }
         }
       }
     }
   }
-  PRINTF("TSCH-queue:! add packet failed: %u %p %d %p %p\n", tsch_is_locked(), n, put_index, p, p ? p->qb : NULL);
+  LOG_ERR("! add packet failed: %u %p %d %p %p\n", tsch_is_locked(), n, put_index, p, p ? p->qb : NULL);
   return 0;
 }
 /*---------------------------------------------------------------------------*/
@@ -314,16 +299,16 @@ void tsch_queue_resorting_ringbuf_priority(struct tsch_neighbor *n, struct tsch_
   int16_t put_index = ringbufindex_peek_put(&n->tx_ringbuf); //peek put ringbuf data.
   uint8_t ringbufindex_ELM = ringbufindex_elements(&n->tx_ringbuf);
 
-  PRINTF("Data Traffice class value : %02x , %d , Rinbuffer Index Elements : %d .\n", data_tcflow, data_tcflow, ringbufindex_ELM);
+  LOG_DBG("Data Traffice class value : %02x , %d , Rinbuffer Index Elements : %d .\n", data_tcflow, data_tcflow, ringbufindex_ELM);
   //if (data_tcflow != -1 && ringbufindex_ELM > 0)
   if (ringbufindex_ELM > 0)
   {
-    PRINTF(" HELLO I'M IN FUNCTION. \n");
+    LOG_DBG(" HELLO I'M IN FUNCTION. \n");
     pkt_priority_sorting(n, p);
   }
   else
   {
-    PRINTF(" ringbufindex_ELM empty & place \n");
+    LOG_DBG(" ringbufindex_ELM empty & place \n");
     n->tx_array[put_index] = p;
     ringbufindex_put(&n->tx_ringbuf); //input ringbuf.
   }
@@ -338,15 +323,15 @@ void pkt_priority_sorting(struct tsch_neighbor *n, struct tsch_packet *p)
   uint8_t current_packet_tcflow = ((uint8_t *)queuebuf_dataptr(p->qb))[24];
   
   int16_t i = put_index;
-  PRINTF("Start the put_index : %d \n", i);
+  LOG_DBG("Start the put_index : %d \n", i);
 
   while(1)
   {
     int8_t previous_index;
 
     if (i < 0) i = (ringbufSize-1); //fix the i < 0 , will crash;
-    PRINTF("put_index : %d\n", i);
-    PRINTF("left_Pkt_To_Scan: % d\n", ringbufindex_ELM);
+    LOG_DBG("put_index : %d\n", i);
+    LOG_DBG("left_Pkt_To_Scan: % d\n", ringbufindex_ELM);
     if(ringbufindex_ELM == 0) break;
   
     if(i==0){
@@ -368,7 +353,7 @@ void pkt_priority_sorting(struct tsch_neighbor *n, struct tsch_packet *p)
         previous_packet_tcflow = 0 ;
     }
 
-    PRINTF("tcflow_current : %d   tcflow_previous: %d \n", current_packet_tcflow,previous_packet_tcflow);
+    LOG_DBG("tcflow_current : %d   tcflow_previous: %d \n", current_packet_tcflow,previous_packet_tcflow);
 
     if (current_packet_tcflow <= previous_packet_tcflow) break;
     n->tx_array[i] = n->tx_array[previous_index];
@@ -379,10 +364,11 @@ void pkt_priority_sorting(struct tsch_neighbor *n, struct tsch_packet *p)
 
   n->tx_array[i] = p;
 
-  PRINTF("End the put_index : %d\n", i);
+  LOG_DBG("End the put_index : %d\n", i);
   ringbufindex_put(&n->tx_ringbuf); //input ringbuf.
 }
-/*---------------------------------------------------------------------------*/
+
+
 /* Returns the number of packets currently in any TSCH queue */
 int
 tsch_queue_global_packet_count(void)
