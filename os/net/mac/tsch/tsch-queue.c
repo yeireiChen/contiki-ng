@@ -54,6 +54,7 @@
 #include "net/queuebuf.h"
 #include "net/mac/tsch/tsch.h"
 #include <string.h>
+#include <stdio.h>
 
 /* Log configuration */
 #include "sys/log.h"
@@ -265,7 +266,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
             for (i = 0; i < dataLen; i++)
             {
               uint8_t data = ((uint8_t *)queuebuf_dataptr(p->qb))[i];
-              PRINTF("%02x ", data);
+              printf("%02x ", data);
             }
             LOG_DBG("\n");
 
