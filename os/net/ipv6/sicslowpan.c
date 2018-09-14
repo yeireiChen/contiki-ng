@@ -741,6 +741,10 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
 
   /* IPHC format of tc is ECN | DSCP , original is DSCP | ECN */
 
+  
+  packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow);
+  LOG_DBG("Set packetbuf attr tcflow, tcflow=%x02\n",UIP_IP_BUF->tcflow);
+  
   tmp = (UIP_IP_BUF->vtc << 4) | (UIP_IP_BUF->tcflow >> 4);
   tmp = ((tmp & 0x03) << 6) | (tmp >> 2);
 
@@ -756,8 +760,7 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
       /* compress only the flow label */
      *hc06_ptr = tmp;
       hc06_ptr += 1;
-      LOG_DBG("compress only the flow label");
-      packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow);
+      
     }
   } else {
     /* Flow label cannot be compressed */
@@ -775,8 +778,6 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
       /* but replace the top byte with the new ECN | DSCP format*/
       *hc06_ptr = tmp;
       hc06_ptr += 4;
-      LOG_DBG("compress nothing");
-      packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow);
    }
   }
 
