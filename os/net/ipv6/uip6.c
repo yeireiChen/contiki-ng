@@ -1563,7 +1563,7 @@ uip_process(uint8_t flag)
   UIP_IP_BUF->vtc = 0x60;
   
   LOG_DBG("UIP6 tcflow 3:%02x\n",UIP_IP_BUF->tcflow);
-  if (UIP_IP_BUF->tcflow != 0x00||UIP_IP_BUF->tcflow != 0x01||UIP_IP_BUF->tcflow != 0x02){
+  if (UIP_IP_BUF->tcflow != 0x00 && UIP_IP_BUF->tcflow != 0x01 && UIP_IP_BUF->tcflow != 0x02){
     UIP_IP_BUF->tcflow = 0x00;
   }
   LOG_DBG("UIP6 tcflow 4:%02x\n",UIP_IP_BUF->tcflow);
@@ -2275,7 +2275,7 @@ uip_process(uint8_t flag)
 
   LOG_DBG("UIP6 tcflow 1:%02x\n",UIP_IP_BUF->tcflow);
   
-  if (UIP_IP_BUF->tcflow != 0x00||UIP_IP_BUF->tcflow != 0x01||UIP_IP_BUF->tcflow != 0x02){
+  if (UIP_IP_BUF->tcflow != 0x00 && UIP_IP_BUF->tcflow != 0x01 && UIP_IP_BUF->tcflow != 0x02){
     UIP_IP_BUF->tcflow = 0x00;
   }
   LOG_DBG("UIP6 tcflow 2:%02x\n",UIP_IP_BUF->tcflow);
