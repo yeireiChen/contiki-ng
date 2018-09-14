@@ -266,7 +266,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
             for (i = 0; i < dataLen; i++)
             {
               uint8_t data = ((uint8_t *)queuebuf_dataptr(p->qb))[i];
-              printf("%02x ", data);
+              LOG_DBG("%02x ", data);
             }
             LOG_DBG("\n");
 
@@ -275,10 +275,9 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 4] == 0xf0 &&
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 3] == 0xff )
             {
-              data_tcflow = ((uint8_t *)queuebuf_dataptr(p->qb))[24]; //24 is tcflow location in queuebuf.
-              packetbuf_attr_t tcflowAttr;
-              tcflowAttr = queuebuf_attr(p->qb,PACKETBUF_ATTR_TCFLOW);
-              LOG_DBG("Traffic classes In TSCH queue : %02x , frome attr %02x\n", data_tcflow,tcflowAttr);
+              /*Get tcflow frome attribute*/
+              data_tcflow = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_TCFLOW); 
+              LOG_DBG("Traffic classes In TSCH queue frome attr : %02x\n" ,data_tcflow);
             }
 
 #if ENABLE_QOS
