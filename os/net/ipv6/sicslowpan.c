@@ -743,7 +743,7 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
 
   
   packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow);
-  LOG_DBG("Set packetbuf attr tcflow, tcflow=%x02\n",UIP_IP_BUF->tcflow);
+  LOG_DBG("Set packetbuf attr tcflow, tcflow=%02x\n",UIP_IP_BUF->tcflow);
   
   tmp = (UIP_IP_BUF->vtc << 4) | (UIP_IP_BUF->tcflow >> 4);
   tmp = ((tmp & 0x03) << 6) | (tmp >> 2);
