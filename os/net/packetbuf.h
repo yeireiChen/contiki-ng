@@ -237,7 +237,10 @@ enum {
   PACKETBUF_ATTR_KEY_ID_MODE,
   PACKETBUF_ATTR_KEY_INDEX,
 #endif /* LLSEC802154_USES_EXPLICIT_KEYS */
-
+  
+  /* Add traffic class attribute*/
+  PACKETBUF_ATTR_TCFLOW,
+  
   /* Scope 2 attributes: used between end-to-end nodes. */
   /* These must be last */
   PACKETBUF_ADDR_SENDER,
