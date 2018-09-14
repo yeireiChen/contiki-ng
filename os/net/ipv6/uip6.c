@@ -1562,10 +1562,12 @@ uip_process(uint8_t flag)
 
   UIP_IP_BUF->vtc = 0x60;
   
+  LOG_DBG("UIP6 tcflow 3:%02x\n",UIP_IP_BUF->tcflow);
   if (UIP_IP_BUF->tcflow != 0x00||UIP_IP_BUF->tcflow != 0x01||UIP_IP_BUF->tcflow != 0x02){
     UIP_IP_BUF->tcflow = 0x00;
   }
-  
+  LOG_DBG("UIP6 tcflow 4:%02x\n",UIP_IP_BUF->tcflow);
+
   UIP_IP_BUF->ttl = uip_udp_conn->ttl;
   UIP_IP_BUF->proto = UIP_PROTO_UDP;
 
@@ -2271,10 +2273,12 @@ uip_process(uint8_t flag)
 
   UIP_IP_BUF->vtc = 0x60;
 
-
+  LOG_DBG("UIP6 tcflow 1:%02x\n",UIP_IP_BUF->tcflow);
+  
   if (UIP_IP_BUF->tcflow != 0x00||UIP_IP_BUF->tcflow != 0x01||UIP_IP_BUF->tcflow != 0x02){
     UIP_IP_BUF->tcflow = 0x00;
   }
+  LOG_DBG("UIP6 tcflow 2:%02x\n",UIP_IP_BUF->tcflow);
 
   uip_ipaddr_copy(&UIP_IP_BUF->destipaddr, &uip_connr->ripaddr);
   uip_ds6_select_src(&UIP_IP_BUF->srcipaddr, &UIP_IP_BUF->destipaddr);
