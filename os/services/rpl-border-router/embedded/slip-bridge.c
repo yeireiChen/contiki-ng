@@ -53,7 +53,7 @@
 #include "sys/log.h"
 #define LOG_MODULE "SLIP"
 #define LOG_LEVEL LOG_LEVEL_NONE
----------------------------------------------------------*/
+/*---------------------------------------------------------*/
 void set_prefix_64(uip_ipaddr_t *);
 
 static uip_ipaddr_t last_sender;
