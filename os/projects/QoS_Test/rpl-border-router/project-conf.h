@@ -51,10 +51,10 @@
 #endif
 
 /*----------UART config--------------*/
-#define SERIAL_LINE_CONF_UART       1
-#define SLIP_ARCH_CONF_UART         1
-#define DBG_CONF_UART               1
-#define UART1_CONF_UART             1
+#define SERIAL_LINE_CONF_UART       0
+#define SLIP_ARCH_CONF_UART         0
+#define DBG_CONF_UART               0
+#define UART1_CONF_UART             0
 
 
 #include "../tsch-project-conf.h"
