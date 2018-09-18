@@ -75,7 +75,7 @@ slip_input_callback(void)
 {
   LOG_DBG("SIN: %u\n", uip_len);
   if(uip_buf[UIP_LLH_LEN] == '!') {
-    PRINTF("Got configuration message of type %c\n",
+    LOG_INFO("Got configuration message of type %c\n",
              uip_buf[UIP_LLH_LEN + 1]);
     if(uip_buf[UIP_LLH_LEN + 1] == 'P') {
       uip_ipaddr_t prefix;
@@ -85,9 +85,9 @@ slip_input_callback(void)
 
       uip_clear_buf();
 
-      PRINTF("Setting prefix ");
-      PRINT6ADDR(&prefix);
-      PRINTF("\n");
+      LOG_INFO("Setting prefix ");
+      LOG_INFO_6ADDR(&prefix);
+      LOG_INFO_("\n");
       set_prefix_64(&prefix);
     }
     uip_clear_buf();
