@@ -50,6 +50,13 @@
 #define ENABLE_QOS           1
 #endif
 
+/*----------UART config--------------*/
+#define SERIAL_LINE_CONF_UART       1
+#define SLIP_ARCH_CONF_UART         1
+#define DBG_CONF_UART               1
+#define UART1_CONF_UART             1
+
+
 #include "../tsch-project-conf.h"
 
 
