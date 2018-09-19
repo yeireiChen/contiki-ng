@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  *
  */
-#warning "BDR module macros read!!"
+
 #pragma message("BDR module macros read!!")
 #define BUILD_WITH_RPL_BORDER_ROUTER               1
 #define UIP_FALLBACK_INTERFACE         rpl_interface
