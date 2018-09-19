@@ -49,16 +49,6 @@
 #define ENABLE_QOS           1
 #endif
 
-#ifdef UIP_FALLBACK_INTERFACE
-#pragma message("UIP_FALLBACK_INTERFACE set to ##UIP_FALLBACK_INTERFACE##")
-#endif
-
-#ifndef UIP_FALLBACK_INTERFACE
-#pragma message("UIP_FALLBACK_INTERFACE set to rpl_interface")
-#define UIP_FALLBACK_INTERFACE rpl_interface
-#endif
-
-
 /*----------UART config--------------*/
 #define SERIAL_LINE_CONF_UART       0
 #define SLIP_ARCH_CONF_UART         0
