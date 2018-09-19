@@ -50,6 +50,11 @@
 #define ENABLE_QOS           1
 #endif
 
+#ifndef UIP_FALLBACK_INTERFACE
+#define UIP_FALLBACK_INTERFACE rpl_interface
+#endif
+
+
 /*----------UART config--------------*/
 #define SERIAL_LINE_CONF_UART       0
 #define SLIP_ARCH_CONF_UART         0
