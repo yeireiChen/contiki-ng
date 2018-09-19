@@ -31,7 +31,8 @@
 #ifndef PROJECT_CONF_H_
 #define PROJECT_CONF_H_
 
-
+#warning "In project config"
+#pragma message("In project config")
 
 #ifndef WEBSERVER_CONF_CFS_CONNS
 #define WEBSERVER_CONF_CFS_CONNS 2
@@ -51,7 +52,8 @@
 #endif
 
 #ifndef UIP_FALLBACK_INTERFACE
-#pragma message "UIP_FALLBACK_INTERFACE set to rpl_interface"
+#warning "UIP_FALLBACK_INTERFACE set to rpl_interface"
+#pragma message("UIP_FALLBACK_INTERFACE set to rpl_interface")
 #define UIP_FALLBACK_INTERFACE rpl_interface
 #endif
 
