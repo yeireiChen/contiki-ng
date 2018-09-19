@@ -31,7 +31,6 @@
 #ifndef PROJECT_CONF_H_
 #define PROJECT_CONF_H_
 
-#pragma message("In project config")
 
 #ifndef WEBSERVER_CONF_CFS_CONNS
 #define WEBSERVER_CONF_CFS_CONNS 2
@@ -48,6 +47,10 @@
 /* QoS function optional*/
 #ifndef ENABLE_QOS
 #define ENABLE_QOS           1
+#endif
+
+#ifdef UIP_FALLBACK_INTERFACE
+#pragma message("UIP_FALLBACK_INTERFACE set to ##UIP_FALLBACK_INTERFACE##")
 #endif
 
 #ifndef UIP_FALLBACK_INTERFACE
