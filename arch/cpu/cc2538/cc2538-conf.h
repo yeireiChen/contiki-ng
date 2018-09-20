@@ -150,7 +150,6 @@
  * keep using SLIP
  */
 #if defined(UIP_FALLBACK_INTERFACE) || defined(CMD_CONF_OUTPUT)
-#pragma message("SLIP_ARCH_CONF_ENABLED  1")
 #define SLIP_ARCH_CONF_ENABLED      1
 #endif
 #endif
