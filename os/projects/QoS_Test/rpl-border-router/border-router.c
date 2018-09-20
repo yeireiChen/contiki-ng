@@ -39,8 +39,7 @@
 
 /* Declare and auto-start this file's process */
 PROCESS(contiki_ng_br, "Contiki-NG Border Router");
-PROCESS(node_process, "RPL Node");
-AUTOSTART_PROCESSES(&contiki_ng_br, &node_process);
+AUTOSTART_PROCESSES(&contiki_ng_br);
 
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(contiki_ng_br, ev, data)
@@ -53,21 +52,6 @@ PROCESS_THREAD(contiki_ng_br, ev, data)
 #endif /* BORDER_ROUTER_CONF_WEBSERVER */
 
   LOG_INFO("Contiki-NG Border Router started\n");
-
-  PROCESS_END();
-}
-
-PROCESS_THREAD(node_process, ev, data)
-{
-  static struct etimer etaa;
-  PROCESS_BEGIN();
-
-  etimer_set(&etaa, CLOCK_SECOND * 60);
-  while(1) {
-    PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
-    etimer_reset(&etaa);
-    /* print_network_status();  */
-  }
 
   PROCESS_END();
 }
