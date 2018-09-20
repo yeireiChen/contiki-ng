@@ -75,10 +75,10 @@
 #define LEDS_CONF_GREEN            2
 #define LEDS_CONF_ORANGE           4
 
-#define LEDS_ARCH_L1_PORT GPIO_A_NUM
-#define LEDS_ARCH_L1_PIN           0
-#define LEDS_ARCH_L2_PORT GPIO_A_NUM
-#define LEDS_ARCH_L2_PIN           1
+#define LEDS_ARCH_L1_PORT GPIO_C_NUM
+#define LEDS_ARCH_L1_PIN           1
+#define LEDS_ARCH_L2_PORT GPIO_C_NUM
+#define LEDS_ARCH_L2_PIN           2
 #define LEDS_ARCH_L3_PORT GPIO_C_NUM
 #define LEDS_ARCH_L3_PIN           3
 
@@ -113,11 +113,11 @@
  * UART1_* below.
  * @{
  */
-#define UART0_RX_PORT           GPIO_C_NUM
-#define UART0_RX_PIN            1
+#define UART0_RX_PORT           GPIO_A_NUM
+#define UART0_RX_PIN            0
 
-#define UART0_TX_PORT           GPIO_C_NUM
-#define UART0_TX_PIN            2
+#define UART0_TX_PORT           GPIO_A_NUM
+#define UART0_TX_PIN            1
 
 #define UART1_CTS_PORT          GPIO_B_NUM
 #define UART1_CTS_PIN           0
