@@ -9,6 +9,8 @@ PLATFORMS_EXCLUDE = nrf52dk
 MODULES += os/services/rpl-border-router
 # Include webserver module
 MODULES_REL += webserver
+MAKE_MAC = MAKE_MAC_TSCH
+
 # Include optional target-specific module
 include $(CONTIKI)/Makefile.identify-target
 MODULES_REL += $(TARGET)
