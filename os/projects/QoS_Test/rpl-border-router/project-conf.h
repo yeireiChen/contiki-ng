@@ -46,7 +46,7 @@
 
 /* QoS function optional*/
 #ifndef ENABLE_QOS
-#define ENABLE_QOS           1
+#define ENABLE_QOS           0
 #endif
 
 /*----------UART config--------------*/
