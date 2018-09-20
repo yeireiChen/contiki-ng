@@ -4,6 +4,7 @@ CONTIKI = ../..
 
 # The BR is either native or embedded, and in the latter case must support SLIP
 PLATFORMS_EXCLUDE = nrf52dk
+MAKE_MAC = MAKE_MAC_TSCH
 
 # Include RPL BR module
 MODULES += os/services/rpl-border-router
