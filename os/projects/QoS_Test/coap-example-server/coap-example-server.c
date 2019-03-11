@@ -70,7 +70,8 @@ extern coap_resource_t
 
 
 PROCESS(er_example_server, "Erbium Example Server");
-AUTOSTART_PROCESSES(&er_example_server);
+PROCESS(node_process, "RPL Node");
+AUTOSTART_PROCESSES(&er_example_server,&node_process);
 
 PROCESS_THREAD(er_example_server, ev, data)
 {
@@ -101,6 +102,17 @@ PROCESS_THREAD(er_example_server, ev, data)
     PROCESS_WAIT_EVENT();
 
   }                             /* while (1) */
+
+  PROCESS_END();
+}
+
+
+PROCESS_THREAD(node_process, ev, data)
+{
+
+  PROCESS_BEGIN();
+
+  NETSTACK_MAC.on();
 
   PROCESS_END();
 }
