@@ -34,7 +34,6 @@
 #include "net/routing/routing.h"
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/ipv6/uip-sr.h"
-#include "net/ipv6/uip.h"
 #include "lib/list.h"
 #include "lib/memb.h"
 
@@ -97,7 +96,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
   memb_init(&node_memb);
   list_init(node_list);
   uip_ipaddr_t hostaddr;
-  uip_gethostaddr(&hostaddr);
+  hostaddr = &rpl_get_global_address();
   node_t *root_node = memb_alloc(&node_memb);
   root_node->node_addr = hostaddr;
   LIST_STRUCT_INIT(root_node,child_list);
