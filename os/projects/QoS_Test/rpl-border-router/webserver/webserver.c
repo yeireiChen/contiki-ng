@@ -60,12 +60,11 @@ static int blen;
  */
 #include "httpd-simple.h"
 
-struct node_s{
+typedef struct node_s{
   uip_ipaddr_t node_addr;
   uip_ipaddr_t parent_addr;
   LIST_STRUCT(child_list);
-};
-typedef struct node_t node_s;
+}node_t;
 LIST(node_list);
 LIST(dfs_stack);
 MEMB(node_memb,node_t,RPL_TOPOLOGY_PRINT_SIZE);
@@ -193,7 +192,7 @@ if(list_length(node_list)!=0){
         }
       }
       ADD("    <li>");
-      ipaddr_add(&(root_node->node_addr);
+      ipaddr_add(&(root_node->node_addr));
       ADD("</li>\n");
       list_init(dfs_stack);
       for(node_itor=list_head(root_node->child_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
