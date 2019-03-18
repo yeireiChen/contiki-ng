@@ -95,8 +95,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
 {
   memb_init(&node_memb);
   list_init(node_list);
-  uip_ipaddr_t hostaddr;
-  hostaddr = &rpl_get_global_address();
+  uip_ipaddr_t *hostaddr=rpl_get_global_address();
   node_t *root_node = memb_alloc(&node_memb);
   root_node->node_addr = hostaddr;
   LIST_STRUCT_INIT(root_node,child_list);
