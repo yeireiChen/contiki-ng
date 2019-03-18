@@ -65,7 +65,7 @@ struct node_s{
   uip_ipaddr_t parent_addr;
   LIST_STRUCT(child_list);
 };
-typedef node_t node_s;
+typedef struct node_t node_s;
 LIST(node_list);
 LIST(dfs_stack);
 MEMB(node_memb,node_t,RPL_TOPOLOGY_PRINT_SIZE);
