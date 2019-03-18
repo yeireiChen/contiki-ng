@@ -34,6 +34,9 @@
 #include "net/routing/routing.h"
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/ipv6/uip-sr.h"
+#include "net/ipv6/uip.h"
+#include "lib/list.h"
+#include "lib/memb.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -57,6 +60,15 @@ static int blen;
  */
 #include "httpd-simple.h"
 
+struct node_s{
+  uip_ipaddr_t node_addr;
+  uip_ipaddr_t parent_addr;
+  LIST_STRUCT(child_list);
+};
+typedef node_s node_t
+LIST(node_list);
+LIST(dfs_stack);
+MEMB(node_memb,node_t,RPL_TOPOLOGY_PRINT_SIZE);
 /*---------------------------------------------------------------------------*/
 static void
 ipaddr_add(const uip_ipaddr_t *addr)
@@ -83,6 +95,16 @@ ipaddr_add(const uip_ipaddr_t *addr)
 static
 PT_THREAD(generate_routes(struct httpd_state *s))
 {
+  memb_init(&node_memb);
+  list_init(node_list);
+  uip_ipaddr_t hostaddr;
+  uip_gethostaddr(&hostaddr);
+  node_t *root_node = memb_alloc(&node_memb);
+  root_node->node_addr = hostaddr;
+  root_node->node_addr = NULL;
+  LIST_STRUCT_INIT(root_node,child_list);
+  list_add(node_list,root_node);
+
   static uip_ds6_nbr_t *nbr;
 
   PSOCK_BEGIN(&s->sout);
@@ -132,6 +154,13 @@ PT_THREAD(generate_routes(struct httpd_state *s))
 
         NETSTACK_ROUTING.get_sr_node_ipaddr(&child_ipaddr, link);
         NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
+       
+        node_t *current_node = memb_alloc(&node_memb);
+        current_node->node_addr=child_ipaddr;
+        current_node->parent_addr=parent_ipaddr;
+        LIST_STRUCT_INIT(current_node,child_list);
+        list_add(node_list,current_node);
+
 
         ADD("    <li>");
         ipaddr_add(&child_ipaddr);
@@ -146,9 +175,43 @@ PT_THREAD(generate_routes(struct httpd_state *s))
     }
     ADD("  </ul>");
     SEND(&s->sout);
-  }
-#endif /* UIP_SR_LINK_NUM != 0 */
 
+  }
+
+#endif /* UIP_SR_LINK_NUM != 0 */
+if(list_length(node_list)!=0){
+      ADD("  Topology\n  <ul>\n");
+      SEND(&s->sout);
+      //construct topology tree
+      static node_t *node_itor;
+      for(node_itor=list_head(node_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
+        static node_t *inner_itor;
+        for(inner_itor=list_head(node_list);inner_itor!=NULL;inner_itor=list_item_next(inner_itor)){
+          if(uip_ipaddr_cmp(node_itor->parent_addr,inner_itor->node_addr)){
+            list_push(inner_itor->child_list,node_itor);
+          }
+        }
+      }
+      ADD("    <li>");
+      ipaddr_add(&(root_node->node_addr);
+      ADD("</li>\n");
+      list_init(dfs_stack);
+      for(node_itor=list_head(root_node->child_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
+        list_push(dfs_stack,node_itor);
+      }
+      for(node_itor=list_head(dfs_stack);node_itor!=NULL;node_itor=list_item_next(node_itor)){
+        node_t *current_node= list_pop(dfs_stack);
+        ADD("    <li>");
+        ipaddr_add(&(current_node->node_addr));
+        ADD("</li>\n");
+        static node_t *inner_itor;
+        for(inner_itor=list_head(current_node->child_list);inner_itor!=NULL;inner_itor=list_item_next(inner_itor)){
+          list_push(dfs_stack,inner_itor);
+        }
+      }
+      ADD("  </ul>");
+      SEND(&s->sout);
+}
   SEND_STRING(&s->sout, BOTTOM);
 
   PSOCK_END(&s->sout);

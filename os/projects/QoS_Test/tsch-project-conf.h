@@ -41,6 +41,10 @@
 #define NETSTACK_CONF_WITH_IPV6                 1
 #endif
 
+#ifndef RPL_TOPOLOGY_PRINT_SIZE
+#define RPL_TOPOLOGY_PRINT_SIZE                 30
+#endif
+
 /*******************************************************/
 /******************* Configure TSCH ********************/
 /******************************************************/
@@ -68,7 +72,7 @@
 
 /* IEEE802.15.4 PANID */
 #undef IEEE802154_CONF_PANID
-#define IEEE802154_CONF_PANID 0xcdef
+#define IEEE802154_CONF_PANID 0xcafe
 
 #undef TSCH_CONF_JOIN_MY_PANID_ONLY
 #define TSCH_CONF_JOIN_MY_PANID_ONLY 1
