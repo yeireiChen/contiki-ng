@@ -100,6 +100,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
   uip_gethostaddr(&hostaddr);
   node_t *root_node = memb_alloc(&node_memb);
   root_node->node_addr = hostaddr;
+  &(root_node->parent_addr) = NULL;
   LIST_STRUCT_INIT(root_node,child_list);
   list_add(node_list,root_node);
 
@@ -185,7 +186,7 @@ if(list_length(node_list)!=0){
       for(node_itor=list_head(node_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
         static node_t *inner_itor;
         for(inner_itor=list_head(node_list);inner_itor!=NULL;inner_itor=list_item_next(inner_itor)){
-          if(node_itor->parent_addr != NULL && uip_ipaddr_cmp(node_itor->parent_addr,inner_itor->node_addr)){
+          if(&(node_itor->parent_addr) != NULL && uip_ipaddr_cmp(node_itor->parent_addr,inner_itor->node_addr)){
             list_push(inner_itor->child_list,node_itor);
           }
         }
