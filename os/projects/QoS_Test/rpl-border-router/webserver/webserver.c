@@ -58,7 +58,7 @@ static int blen;
  * a single static buffer is used for all segments.
  */
 #include "httpd-simple.h"
-
+/*
 typedef struct node_s{
   uip_ipaddr_t node_addr;
   uip_ipaddr_t parent_addr;
@@ -68,17 +68,18 @@ LIST(node_list);
 LIST(dfs_stack);
 MEMB(node_memb,node_t,RPL_TOPOLOGY_PRINT_SIZE);
 
-node_t *node_container[RPL_TOPOLOGY_PRINT_SIZE];
+node_t node_container[RPL_TOPOLOGY_PRINT_SIZE];
 int container_ptr=0;
 void con_ini(){
   container_ptr=0;
 }
-node_t *con_alloc(){
+int con_alloc(){
   if(container_ptr<RPL_TOPOLOGY_PRINT_SIZE){
-    return node_container[container_ptr++];
+    container_ptr++;
+    return 1;
   }
-  return NULL;
-}
+  return 0;
+}*/
 /*---------------------------------------------------------------------------*/
 static void
 ipaddr_add(const uip_ipaddr_t *addr)
@@ -106,18 +107,25 @@ static
 PT_THREAD(generate_routes(struct httpd_state *s))
 {
  // memb_init(&node_memb);
- con_ini();
+ /*con_ini();
 
   list_init(node_list);
   
   uip_ipaddr_t hostaddr;
   NETSTACK_ROUTING.get_root_ipaddr(&hostaddr);
+  node_t *root_node;*/
   //node_t *root_node = memb_alloc(&node_memb);
-  node_t *root_node = con_alloc();
+  /*node_t *root_node = con_alloc();
   uip_ipaddr_copy(&root_node->node_addr , &hostaddr);
   LIST_STRUCT_INIT(root_node,child_list);
-  list_add(node_list,root_node);
-
+  list_add(node_list,root_node);*/
+/*
+  if(con_alloc()){
+  root_node=&node_container[container_ptr];
+  uip_ipaddr_copy(&(node_container[container_ptr].node_addr),&hostaddr);
+  LIST_STRUCT_INIT(&node_container[container_ptr],child_list);
+  list_add(node_list,&node_container[container_ptr]);
+  }*/
   static uip_ds6_nbr_t *nbr;
 
   PSOCK_BEGIN(&s->sout);
@@ -167,24 +175,32 @@ PT_THREAD(generate_routes(struct httpd_state *s))
 
         NETSTACK_ROUTING.get_sr_node_ipaddr(&child_ipaddr, link);
         NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
-       
-        node_t *current_node = con_alloc();
+       /*
+        if(con_alloc()){
+          ADD("    <li>");
+          ipaddr_add(&child_ipaddr);
+  
+          ADD(" (parent: ");
+          ipaddr_add(&parent_ipaddr);
+          ADD(") %us %d %d", (unsigned int)link->lifetime,list_length(node_list),memb_numfree(&node_memb));
+  
+          ADD("</li>\n");
+          SEND(&s->sout);
+          uip_ipaddr_copy(&node_container[container_ptr].node_addr,&child_ipaddr);
+          uip_ipaddr_copy(&node_container[container_ptr].parent_addr,&parent_ipaddr);
+          LIST_STRUCT_INIT(&node_container[container_ptr],child_list);
+          list_add(node_list,&node_container[container_ptr]);
+          }*/
+
+       /* node_t *current_node = con_alloc();
         if(current_node){
            uip_ipaddr_copy(&current_node->node_addr,&child_ipaddr);
            uip_ipaddr_copy(&current_node->parent_addr,&parent_ipaddr);
            LIST_STRUCT_INIT(current_node,child_list);
            list_add(node_list,current_node);
-        }
+        }*/
 
-        ADD("    <li>");
-        ipaddr_add(&child_ipaddr);
-
-        ADD(" (parent: ");
-        ipaddr_add(&parent_ipaddr);
-        ADD(") %us %d %d", (unsigned int)link->lifetime,list_length(node_list),memb_numfree(&node_memb));
-
-        ADD("</li>\n");
-        SEND(&s->sout);
+  
       }
     }
     ADD("  </ul>");
@@ -193,7 +209,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
   }
 
 #endif /* UIP_SR_LINK_NUM != 0 */
-if(list_length(node_list)!=0){
+/*if(list_length(node_list)!=0){
       ADD("  Topology\n %d %d <ul>\n",list_length(node_list),memb_numfree(&node_memb));
       SEND(&s->sout);
       //construct topology tree
@@ -223,7 +239,7 @@ if(list_length(node_list)!=0){
         for(inner_itor=list_head(current_node->child_list);inner_itor!=NULL;inner_itor=list_item_next(inner_itor)){
           list_push(dfs_stack,inner_itor);
         }
-      }
+      }*/
       ADD("  </ul>");
       SEND(&s->sout);
 }
