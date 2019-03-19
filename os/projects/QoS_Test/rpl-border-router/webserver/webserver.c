@@ -153,18 +153,19 @@ PT_THREAD(generate_routes(struct httpd_state *s))
         NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
        
         node_t *current_node = memb_alloc(&node_memb);
-        uip_ipaddr_copy(&current_node->node_addr,&child_ipaddr);
-        uip_ipaddr_copy(&current_node->parent_addr,&parent_ipaddr);
-        LIST_STRUCT_INIT(current_node,child_list);
-        list_add(node_list,current_node);
-
+        if(current_node){
+           uip_ipaddr_copy(&current_node->node_addr,&child_ipaddr);
+           uip_ipaddr_copy(&current_node->parent_addr,&parent_ipaddr);
+           LIST_STRUCT_INIT(current_node,child_list);
+           list_add(node_list,current_node);
+        }
 
         ADD("    <li>");
         ipaddr_add(&child_ipaddr);
 
         ADD(" (parent: ");
         ipaddr_add(&parent_ipaddr);
-        ADD(") %us", (unsigned int)link->lifetime);
+        ADD(") %us %d %d", (unsigned int)link->lifetime,list_length(node_list),memb_numfree(&node_memb));
 
         ADD("</li>\n");
         SEND(&s->sout);
@@ -177,7 +178,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
 
 #endif /* UIP_SR_LINK_NUM != 0 */
 if(list_length(node_list)!=0){
-      ADD("  Topology\n  <ul>\n");
+      ADD("  Topology\n %d %d <ul>\n",list_length(node_list),memb_numfree(&node_memb));
       SEND(&s->sout);
       //construct topology tree
       static node_t *node_itor;
