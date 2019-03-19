@@ -30,242 +30,159 @@
  *
  */
 
-#include "contiki.h"
-#include "net/routing/routing.h"
-#include "net/ipv6/uip-ds6-route.h"
-#include "net/ipv6/uip-sr.h"
-#include "lib/list.h"
-#include "lib/memb.h"
-
-#include <stdio.h>
-#include <string.h>
-
-/*---------------------------------------------------------------------------*/
-static const char *TOP = "<html>\n  <head>\n    <title>Contiki-NG</title>\n  </head>\n<body>\n";
-static const char *BOTTOM = "\n</body>\n</html>\n";
-static char buf[256];
-static int blen;
-#define ADD(...) do {                                                   \
-    blen += snprintf(&buf[blen], sizeof(buf) - blen, __VA_ARGS__);      \
-  } while(0)
-#define SEND(s) do { \
-  SEND_STRING(s, buf); \
-  blen = 0; \
-} while(0);
-
-/* Use simple webserver with only one page for minimum footprint.
- * Multiple connections can result in interleaved tcp segments since
- * a single static buffer is used for all segments.
- */
-#include "httpd-simple.h"
-/*
-typedef struct node_s{
-  uip_ipaddr_t node_addr;
-  uip_ipaddr_t parent_addr;
-  LIST_STRUCT(child_list);
-}node_t;
-LIST(node_list);
-LIST(dfs_stack);
-MEMB(node_memb,node_t,RPL_TOPOLOGY_PRINT_SIZE);
-
-node_t node_container[RPL_TOPOLOGY_PRINT_SIZE];
-int container_ptr=0;
-void con_ini(){
-  container_ptr=0;
-}
-int con_alloc(){
-  if(container_ptr<RPL_TOPOLOGY_PRINT_SIZE){
-    container_ptr++;
-    return 1;
-  }
-  return 0;
-}*/
-/*---------------------------------------------------------------------------*/
-static void
-ipaddr_add(const uip_ipaddr_t *addr)
-{
-  uint16_t a;
-  int i, f;
-  for(i = 0, f = 0; i < sizeof(uip_ipaddr_t); i += 2) {
-    a = (addr->u8[i] << 8) + addr->u8[i + 1];
-    if(a == 0 && f >= 0) {
-      if(f++ == 0) {
-        ADD("::");
-      }
-    } else {
-      if(f > 0) {
-        f = -1;
-      } else if(i > 0) {
-        ADD(":");
-      }
-      ADD("%x", a);
-    }
-  }
-}
-/*---------------------------------------------------------------------------*/
-static
-PT_THREAD(generate_routes(struct httpd_state *s))
-{
- // memb_init(&node_memb);
- /*con_ini();
-
-  list_init(node_list);
+ #include "contiki.h"
+ #include "net/routing/routing.h"
+ #include "net/ipv6/uip-ds6-route.h"
+ #include "net/ipv6/uip-sr.h"
+ 
+ #include <stdio.h>
+ #include <string.h>
+ 
+ /*---------------------------------------------------------------------------*/
+ static const char *TOP = "<html>\n  <head>\n    <title>Contiki-NG</title>\n  </head>\n<body>\n";
+ static const char *BOTTOM = "\n</body>\n</html>\n";
+ static char buf[256];
+ static int blen;
+ #define ADD(...) do {                                                   \
+     blen += snprintf(&buf[blen], sizeof(buf) - blen, __VA_ARGS__);      \
+   } while(0)
+ #define SEND(s) do { \
+   SEND_STRING(s, buf); \
+   blen = 0; \
+ } while(0);
+ 
+ /* Use simple webserver with only one page for minimum footprint.
+  * Multiple connections can result in interleaved tcp segments since
+  * a single static buffer is used for all segments.
+  */
+ #include "httpd-simple.h"
+ 
+ /*---------------------------------------------------------------------------*/
+ static void
+ ipaddr_add(const uip_ipaddr_t *addr)
+ {
+   uint16_t a;
+   int i, f;
+   for(i = 0, f = 0; i < sizeof(uip_ipaddr_t); i += 2) {
+     a = (addr->u8[i] << 8) + addr->u8[i + 1];
+     if(a == 0 && f >= 0) {
+       if(f++ == 0) {
+         ADD("::");
+       }
+     } else {
+       if(f > 0) {
+         f = -1;
+       } else if(i > 0) {
+         ADD(":");
+       }
+       ADD("%x", a);
+     }
+   }
+ }
+ /*---------------------------------------------------------------------------*/
+ static
+ PT_THREAD(generate_routes(struct httpd_state *s))
+ {
+   static uip_ds6_nbr_t *nbr;
   
-  uip_ipaddr_t hostaddr;
-  NETSTACK_ROUTING.get_root_ipaddr(&hostaddr);
-  node_t *root_node;*/
-  //node_t *root_node = memb_alloc(&node_memb);
-  /*node_t *root_node = con_alloc();
-  uip_ipaddr_copy(&root_node->node_addr , &hostaddr);
-  LIST_STRUCT_INIT(root_node,child_list);
-  list_add(node_list,root_node);*/
-/*
-  if(con_alloc()){
-  root_node=&node_container[container_ptr];
-  uip_ipaddr_copy(&(node_container[container_ptr].node_addr),&hostaddr);
-  LIST_STRUCT_INIT(&node_container[container_ptr],child_list);
-  list_add(node_list,&node_container[container_ptr]);
-  }*/
-  static uip_ds6_nbr_t *nbr;
+   PSOCK_BEGIN(&s->sout);
+   SEND_STRING(&s->sout, TOP);
 
-  PSOCK_BEGIN(&s->sout);
-  SEND_STRING(&s->sout, TOP);
-
-  ADD("  Neighbors\n  <ul>\n");
-  SEND(&s->sout);
-  for(nbr = nbr_table_head(ds6_neighbors);
-      nbr != NULL;
-      nbr = nbr_table_next(ds6_neighbors, nbr)) {
-    ADD("    <li>");
-    ipaddr_add(&nbr->ipaddr);
-    ADD("</li>\n");
-    SEND(&s->sout);
-  }
-  ADD("  </ul>\n");
-  SEND(&s->sout);
-
-#if (UIP_MAX_ROUTES != 0)
-  {
-    static uip_ds6_route_t *r;
-    ADD("  Routes\n  <ul>\n");
-    SEND(&s->sout);
-    for(r = uip_ds6_route_head(); r != NULL; r = uip_ds6_route_next(r)) {
-      ADD("    <li>");
-      ipaddr_add(&r->ipaddr);
-      ADD("/%u (via ", r->length);
-      ipaddr_add(uip_ds6_route_nexthop(r));
-      ADD(") %lus", (unsigned long)r->state.lifetime);
-      ADD("</li>\n");
-      SEND(&s->sout);
-    }
-    ADD("  </ul>\n");
-    SEND(&s->sout);
-  }
-#endif /* UIP_MAX_ROUTES != 0 */
-
-#if (UIP_SR_LINK_NUM != 0)
-  if(uip_sr_num_nodes() > 0) {
-    static uip_sr_node_t *link;
-    ADD("  Routing links\n  <ul>\n");
-    SEND(&s->sout);
-    for(link = uip_sr_node_head(); link != NULL; link = uip_sr_node_next(link)) {
-      if(link->parent != NULL) {
-        uip_ipaddr_t child_ipaddr;
-        uip_ipaddr_t parent_ipaddr;
-
-        NETSTACK_ROUTING.get_sr_node_ipaddr(&child_ipaddr, link);
-        NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
-       /*
-        if(con_alloc()){
-          ADD("    <li>");
-          ipaddr_add(&child_ipaddr);
-  
-          ADD(" (parent: ");
-          ipaddr_add(&parent_ipaddr);
-          ADD(") %us %d %d", (unsigned int)link->lifetime,list_length(node_list),memb_numfree(&node_memb));
-  
-          ADD("</li>\n");
-          SEND(&s->sout);
-          uip_ipaddr_copy(&node_container[container_ptr].node_addr,&child_ipaddr);
-          uip_ipaddr_copy(&node_container[container_ptr].parent_addr,&parent_ipaddr);
-          LIST_STRUCT_INIT(&node_container[container_ptr],child_list);
-          list_add(node_list,&node_container[container_ptr]);
-          }*/
-
-       /* node_t *current_node = con_alloc();
-        if(current_node){
-           uip_ipaddr_copy(&current_node->node_addr,&child_ipaddr);
-           uip_ipaddr_copy(&current_node->parent_addr,&parent_ipaddr);
-           LIST_STRUCT_INIT(current_node,child_list);
-           list_add(node_list,current_node);
-        }*/
-
-  
-      }
-    }
-    ADD("  </ul>");
-    SEND(&s->sout);
-
-  }
-
-#endif /* UIP_SR_LINK_NUM != 0 */
-/*if(list_length(node_list)!=0){
-      ADD("  Topology\n %d %d <ul>\n",list_length(node_list),memb_numfree(&node_memb));
-      SEND(&s->sout);
-      //construct topology tree
-      static node_t *node_itor;
-      for(node_itor=list_head(node_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
-        static node_t *inner_itor;
-        for(inner_itor=list_head(node_list);inner_itor!=NULL;inner_itor=list_item_next(inner_itor)){
-          if(uip_ipaddr_cmp(&node_itor->parent_addr,&inner_itor->node_addr)){
-            list_push(inner_itor->child_list,node_itor);
-          }
-        }
-      }
-    
-      ADD("    <li>");
-      ipaddr_add(&root_node->node_addr);
-      ADD("</li>\n");
-      list_init(dfs_stack);
-      for(node_itor=list_head(root_node->child_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
-        list_push(dfs_stack,node_itor);
-      }
-      for(node_itor=list_head(dfs_stack);node_itor!=NULL;node_itor=list_item_next(node_itor)){
-        node_t *current_node= list_pop(dfs_stack);
-        ADD("    <li>");
-        ipaddr_add(&(current_node->node_addr));
-        ADD("</li>\n");
-        static node_t *inner_itor;
-        for(inner_itor=list_head(current_node->child_list);inner_itor!=NULL;inner_itor=list_item_next(inner_itor)){
-          list_push(dfs_stack,inner_itor);
-        }
-      }*/
-      ADD("  </ul>");
-      SEND(&s->sout);
-}
-  SEND_STRING(&s->sout, BOTTOM);
-
-  PSOCK_END(&s->sout);
-}
-/*---------------------------------------------------------------------------*/
-PROCESS(webserver_nogui_process, "Web server");
-PROCESS_THREAD(webserver_nogui_process, ev, data)
-{
-  PROCESS_BEGIN();
-
-  httpd_init();
-
-  while(1) {
-    PROCESS_WAIT_EVENT_UNTIL(ev == tcpip_event);
-    httpd_appcall(data);
-  }
-
-  PROCESS_END();
-}
-/*---------------------------------------------------------------------------*/
-httpd_simple_script_t
-httpd_simple_get_script(const char *name)
-{
-  return generate_routes;
-}
-/*---------------------------------------------------------------------------*/
+   ADD("  Root\n  <ul>\n");
+   uip_ipaddr_t hostaddr;
+   NETSTACK_ROUTING.get_root_ipaddr(&hostaddr);
+   ADD("    <li>");
+   ipaddr_add(&hostaddr);
+   ADD("</li>\n");
+   SEND(&s->sout);
+   ADD("  </ul>\n");
+   SEND(&s->sout);
+   
+   ADD("  Neighbors\n  <ul>\n");
+   SEND(&s->sout);
+   for(nbr = nbr_table_head(ds6_neighbors);
+       nbr != NULL;
+       nbr = nbr_table_next(ds6_neighbors, nbr)) {
+     ADD("    <li>");
+     ipaddr_add(&nbr->ipaddr);
+     ADD("</li>\n");
+     SEND(&s->sout);
+   }
+   ADD("  </ul>\n");
+   SEND(&s->sout);
+ 
+ #if (UIP_MAX_ROUTES != 0)
+   {
+     static uip_ds6_route_t *r;
+     ADD("  Routes\n  <ul>\n");
+     SEND(&s->sout);
+     for(r = uip_ds6_route_head(); r != NULL; r = uip_ds6_route_next(r)) {
+       ADD("    <li>");
+       ipaddr_add(&r->ipaddr);
+       ADD("/%u (via ", r->length);
+       ipaddr_add(uip_ds6_route_nexthop(r));
+       ADD(") %lus", (unsigned long)r->state.lifetime);
+       ADD("</li>\n");
+       SEND(&s->sout);
+     }
+     ADD("  </ul>\n");
+     SEND(&s->sout);
+   }
+ #endif /* UIP_MAX_ROUTES != 0 */
+ 
+ #if (UIP_SR_LINK_NUM != 0)
+   if(uip_sr_num_nodes() > 0) {
+     static uip_sr_node_t *link;
+     ADD("  Routing links\n  <ul>\n");
+     SEND(&s->sout);
+     for(link = uip_sr_node_head(); link != NULL; link = uip_sr_node_next(link)) {
+       if(link->parent != NULL) {
+         uip_ipaddr_t child_ipaddr;
+         uip_ipaddr_t parent_ipaddr;
+ 
+         NETSTACK_ROUTING.get_sr_node_ipaddr(&child_ipaddr, link);
+         NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
+ 
+         ADD("    <li class='link'>");
+         ipaddr_add(&child_ipaddr);
+ 
+         ADD(" (parent: ");
+         ipaddr_add(&parent_ipaddr);
+         ADD(") %us", (unsigned int)link->lifetime);
+ 
+         ADD("</li>\n");
+         SEND(&s->sout);
+       }
+     }
+     ADD("  </ul>");
+     SEND(&s->sout);
+   }
+ #endif /* UIP_SR_LINK_NUM != 0 */
+ 
+   SEND_STRING(&s->sout, BOTTOM);
+ 
+   PSOCK_END(&s->sout);
+ }
+ /*---------------------------------------------------------------------------*/
+ PROCESS(webserver_nogui_process, "Web server");
+ PROCESS_THREAD(webserver_nogui_process, ev, data)
+ {
+   PROCESS_BEGIN();
+ 
+   httpd_init();
+ 
+   while(1) {
+     PROCESS_WAIT_EVENT_UNTIL(ev == tcpip_event);
+     httpd_appcall(data);
+   }
+ 
+   PROCESS_END();
+ }
+ /*---------------------------------------------------------------------------*/
+ httpd_simple_script_t
+ httpd_simple_get_script(const char *name)
+ {
+   return generate_routes;
+ }
+ /*---------------------------------------------------------------------------*/
+ 
