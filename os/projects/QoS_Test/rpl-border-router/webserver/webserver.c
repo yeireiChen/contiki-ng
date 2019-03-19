@@ -153,8 +153,8 @@ PT_THREAD(generate_routes(struct httpd_state *s))
         NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
        
         node_t *current_node = memb_alloc(&node_memb);
-        current_node->node_addr=child_ipaddr;
-        current_node->parent_addr=parent_ipaddr;
+        uip_ipaddr_copy(&current_node->node_addr,&child_ipaddr);
+        uip_ipaddr_copy(&current_node->parent_addr,&parent_ipaddr);
         LIST_STRUCT_INIT(current_node,child_list);
         list_add(node_list,current_node);
 
@@ -189,8 +189,9 @@ if(list_length(node_list)!=0){
           }
         }
       }
+    
       ADD("    <li>");
-      ipaddr_add(&(root_node->node_addr));
+      ipaddr_add(&root_node->node_addr);
       ADD("</li>\n");
       list_init(dfs_stack);
       for(node_itor=list_head(root_node->child_list);node_itor!=NULL;node_itor=list_item_next(node_itor)){
