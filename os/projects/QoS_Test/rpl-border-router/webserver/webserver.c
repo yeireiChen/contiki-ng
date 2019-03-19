@@ -67,6 +67,18 @@ typedef struct node_s{
 LIST(node_list);
 LIST(dfs_stack);
 MEMB(node_memb,node_t,RPL_TOPOLOGY_PRINT_SIZE);
+
+node_t *node_container[RPL_TOPOLOGY_PRINT_SIZE];
+int container_ptr=0;
+void con_ini(){
+  container_ptr=0;
+}
+node_t *con_alloc(){
+  if(container_ptr<RPL_TOPOLOGY_PRINT_SIZE){
+    return node_container[container_ptr++];
+  }
+  return NULL;
+}
 /*---------------------------------------------------------------------------*/
 static void
 ipaddr_add(const uip_ipaddr_t *addr)
@@ -93,12 +105,16 @@ ipaddr_add(const uip_ipaddr_t *addr)
 static
 PT_THREAD(generate_routes(struct httpd_state *s))
 {
-  memb_init(&node_memb);
+ // memb_init(&node_memb);
+ con_ini();
+
   list_init(node_list);
+  
   uip_ipaddr_t hostaddr;
   NETSTACK_ROUTING.get_root_ipaddr(&hostaddr);
-  node_t *root_node = memb_alloc(&node_memb);
-  root_node->node_addr = hostaddr;
+  //node_t *root_node = memb_alloc(&node_memb);
+  node_t *root_node = con_alloc();
+  uip_ipaddr_copy(&root_node->node_addr , &hostaddr);
   LIST_STRUCT_INIT(root_node,child_list);
   list_add(node_list,root_node);
 
@@ -152,7 +168,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
         NETSTACK_ROUTING.get_sr_node_ipaddr(&child_ipaddr, link);
         NETSTACK_ROUTING.get_sr_node_ipaddr(&parent_ipaddr, link->parent);
        
-        node_t *current_node = memb_alloc(&node_memb);
+        node_t *current_node = con_alloc();
         if(current_node){
            uip_ipaddr_copy(&current_node->node_addr,&child_ipaddr);
            uip_ipaddr_copy(&current_node->parent_addr,&parent_ipaddr);
