@@ -201,11 +201,13 @@ res_post_handler(coap_message_t *request, coap_message_t *response, uint8_t *buf
   } else {
     if(threshold>=1){
       /* Update to new threshold */
+      event_threshold = 0x00000000;
       event_threshold = threshold;
       event_threshold_last_change = event_counter;
     }
     if(priority>=0 && priority<= 2)
     {
+      packet_priority = 0x00000000;
       packet_priority = priority;
     }
   }
