@@ -41,9 +41,7 @@
 #define NETSTACK_CONF_WITH_IPV6                 1
 #endif
 
-#ifndef RPL_TOPOLOGY_PRINT_SIZE
-#define RPL_TOPOLOGY_PRINT_SIZE                 30
-#endif
+#define RPL_CONF_WITH_DAO_ACK 0
 
 /*******************************************************/
 /******************* Configure TSCH ********************/
@@ -60,7 +58,7 @@
 /* TSCH logging. 0: disabled. 1: basic log. 2: with delayed
  * log messages from interrupt */
 #undef TSCH_LOG_CONF_LEVEL
-#define TSCH_LOG_CONF_LEVEL 1
+#define TSCH_LOG_CONF_LEVEL 0
 
 // #define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 14, 18, 22, 26 }
 #define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 11,13,15,17 }
