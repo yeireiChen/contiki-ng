@@ -5,6 +5,7 @@
         "coap.h": "c",
         "rpl.h": "c",
         "log.h": "c",
-        "routing.h": "c"
+        "routing.h": "c",
+        "sixtop.h": "c"
     }
 }
