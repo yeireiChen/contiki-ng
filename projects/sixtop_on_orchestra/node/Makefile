@@ -15,5 +15,5 @@ MODULES += os/net/mac/tsch/sixtop
 MODULES_REL += ./resources
 
 
-CONTIKI=../../../..
+CONTIKI=../..
 include $(CONTIKI)/Makefile.include
