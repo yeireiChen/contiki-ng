@@ -6,6 +6,7 @@
         "rpl.h": "c",
         "log.h": "c",
         "routing.h": "c",
-        "sixtop.h": "c"
+        "sixtop.h": "c",
+        "sf-simple.h": "c"
     }
 }

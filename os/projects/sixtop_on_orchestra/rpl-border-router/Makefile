@@ -4,13 +4,13 @@ CONTIKI=../../../..
 
 # The BR is either native or embedded, and in the latter case must support SLIP
 PLATFORMS_EXCLUDE = nrf52dk
-
+MAKE_MAC = MAKE_MAC_TSCH
 # Include RPL BR module
 MODULES += os/services/rpl-border-router
 MODULES += os/services/orchestra
 MODULES += os/net/mac/tsch/sixtop
-MODULES += os/project/sixtop_on_orchestra/sixtop_schdule
-MAKE_MAC = MAKE_MAC_TSCH
+
+
 
 # Include webserver module
 MODULES_REL += webserver
