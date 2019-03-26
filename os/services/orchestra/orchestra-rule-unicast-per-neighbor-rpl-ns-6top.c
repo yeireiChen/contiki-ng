@@ -43,7 +43,8 @@
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/packetbuf.h"
 #include "net/mac/tsch/sixtop/sixtop.h"
-#include "projects/sixtop_on_orchestra/sixtop_schdule/sf-simple.h"
+#include "net/mac/tsch/sixtop/sixtop_simple_schdule/sf-simple.h"
+
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
