@@ -45,7 +45,7 @@
 
 int sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links);
 int sf_simple_remove_links(linkaddr_t *peer_addr);
-int sf_set_sf_slotframe_handle(uint16_t handle);
+int sf_set_slotframe_handle(uint16_t handle);
 
 #define SF_SIMPLE_MAX_LINKS  3
 #define SF_SIMPLE_SFID       0xf0

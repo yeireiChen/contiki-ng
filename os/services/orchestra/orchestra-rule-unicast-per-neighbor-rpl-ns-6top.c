@@ -43,7 +43,7 @@
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/packetbuf.h"
 #include "net/mac/tsch/sixtop/sixtop.h"
-
+#include "/project/sixtop_on_orchestra/sixtop_schdule/sf-simple.h"
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
@@ -100,7 +100,7 @@ init(uint16_t sf_handle)
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
-  sf_set_sf_slotframe_handle(sf_handle);
+  sf_set_slotframe_handle(sf_handle);
   sixtop_add_sf(&sf_simple_driver);
   /* Slotframe for unicast transmissions */
   sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
