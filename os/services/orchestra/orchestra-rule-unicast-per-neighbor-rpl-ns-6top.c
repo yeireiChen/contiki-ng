@@ -48,7 +48,7 @@
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
-static struct tsch_slotframe *sf_unicast;
+static struct tsch_slotframe *sf_unicast_sixtop;
 
 /*---------------------------------------------------------------------------*/
 static uint16_t
@@ -104,18 +104,18 @@ init(uint16_t sf_handle)
   sf_set_slotframe_handle(sf_handle);
   sixtop_add_sf(&sf_simple_driver);
   /* Slotframe for unicast transmissions */
-  sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
+  sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
   for(i = 0; i < ORCHESTRA_UNICAST_PERIOD; i++) {
-    tsch_schedule_add_link(sf_unicast,
+    tsch_schedule_add_link(sf_unicast_sixtop,
         LINK_OPTION_SHARED | LINK_OPTION_TX | ( i == rx_timeslot ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
   }
 }
 /*---------------------------------------------------------------------------*/
-struct orchestra_rule unicast_per_neighbor_rpl_ns = {
+struct orchestra_rule unicast_per_neighbor_rpl_ns_6top = {
   init,
   new_time_source,
   select_packet,
