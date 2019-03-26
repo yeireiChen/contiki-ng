@@ -47,6 +47,9 @@
 /******************* Configure TSCH ********************/
 /******************************************************/
 
+/*Enable six top*/
+#define TSCH_CONF_WITH_SIXTOP 1
+
 /* Do not start TSCH at init, wait for NETSTACK_MAC.on() */
 #define TSCH_CONF_AUTOSTART 0
 
