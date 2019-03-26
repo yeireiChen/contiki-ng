@@ -9,7 +9,7 @@ MAKE_MAC = MAKE_MAC_TSCH
 MODULES += os/services/rpl-border-router
 MODULES += os/services/orchestra
 MODULES += os/net/mac/tsch/sixtop
-
+MODULES += os/net/mac/tsch/sixtop/sixtop_simple_schdule
 
 
 # Include webserver module

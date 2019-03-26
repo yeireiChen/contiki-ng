@@ -89,7 +89,7 @@ static void response_input(sixp_pkt_rc_t rc,
                            const uint8_t *body, uint16_t body_len,
                            const linkaddr_t *peer_addr);
 
-/*An interface for outer to set slotframe handle*/
+
 int sf_set_slotframe_handle(uint16_t handle){
   slotframe_handle = handle;
   return (int)slotframe_handle;
