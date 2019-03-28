@@ -49,6 +49,11 @@ child_node *child_list_add_child(const linkaddr_t *address){
             LOG_INFO_LLADDR(&node->address);
             LOG_INFO_("\n");
             list_push(child_list,node);
+            LOG_INFO_("child add 2: ");
+            LOG_INFO_LLADDR(address);
+            LOG_INFO_(" ");
+            LOG_INFO_LLADDR(&node->address);
+            LOG_INFO_("\n");
             return node;
         }
     }
