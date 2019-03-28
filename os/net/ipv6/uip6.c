@@ -1218,9 +1218,9 @@ uip_process(uint8_t flag)
       }
       #if PROJECT_CHILD_LIST_HACK
       /*Peek input packet is a DAO packet or not, if so, if parent is me, record it.*/
-      if(*uip_next_hdr==UIP_PROTO_ICMP6){
-        LOG_INFO("icmpv6 peek length %d type: %d \n", uip_len, UIP_ICMP_BUF->type);
-        if(UIP_ICMP_BUF->type == RPL_CODE_DAO){
+      if(*uip_next_hdr == UIP_PROTO_ICMP6){
+        LOG_INFO("icmpv6 peek length %d type: %d code: %d\n", uip_len, UIP_ICMP_BUF->type,UIP_ICMP_BUF->icode);
+        if(UIP_ICMP_BUF->type == ICMP6_RPL && UIP_ICMP_BUF->icode == RPL_CODE_DAO){
           rpl_dao_t dao;
           rpl_icmp6_dao_parse(&dao);
           LOG_INFO_("peeked DAO parent:", dao.prefixlen);

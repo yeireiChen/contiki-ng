@@ -455,6 +455,7 @@ rpl_icmp6_dio_output(uip_ipaddr_t *uc_addr)
   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIO, pos);
 }
 /*---------------------------------------------------------------------------*/
+#if PROJECT_CHILD_LIST_HACK
 void rpl_icmp6_dao_parse(rpl_dao_t *dao)
 {
   uint8_t subopt_type;
@@ -525,7 +526,7 @@ void rpl_icmp6_dao_parse(rpl_dao_t *dao)
   LOG_INFO_6ADDR(&(dao->parent_addr));
   LOG_INFO_(" \n");
 }
-
+#endif
 static void
 dao_input(void)
 {
