@@ -4,7 +4,7 @@
 #include "lib/list.h"
 #include "lib/memb.h"
 #include "net/linkaddr.h"
-#include "net/ipv6/nbr-table.h"
+#include "net/nbr-table.h"
 
 MEMB(child,child_node,NBR_TABLE_MAX_NEIGHBORS);
 LIST(child_list);

@@ -9,6 +9,7 @@
         "sixtop.h": "c",
         "sf-simple.h": "c",
         "list.h": "c",
-        "childlist.h": "c"
+        "childlist.h": "c",
+        "nbr-table.h": "c"
     }
 }
