@@ -502,7 +502,7 @@ void rpl_icmp6_dao_parse(rpl_dao_t *dao)
         /* Handle the target option. */
         dao->prefixlen = buffer[i + 3];
         memset(&(dao->prefix), 0, sizeof(dao->prefix));
-        memcpy(&(dao->prefix), buffer + i + 4, (dao->prefix + 7) / CHAR_BIT);
+        memcpy(&(dao->prefix), buffer + i + 4, (dao->prefixlen + 7) / CHAR_BIT);
         break;
       case RPL_OPTION_TRANSIT:
         /* The path sequence and control are ignored. */
