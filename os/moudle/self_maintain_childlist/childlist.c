@@ -1,9 +1,10 @@
 /*Use to maintain child list for projects*/
 
-#include "/childlist.h"
+#include "childlist.h"
 #include "lib/list.h"
 #include "lib/memb.h"
 #include "net/linkaddr.h"
+#include "net/ipv6/nbr-table.h"
 
 MEMB(child,child_node,NBR_TABLE_MAX_NEIGHBORS);
 LIST(child_list);
