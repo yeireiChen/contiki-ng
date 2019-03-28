@@ -1318,14 +1318,14 @@ void uip_process(uint8_t flag)
           {
             LOG_INFO_("HEY ");
             LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
-            uip_ipaddr_t *ipaddr = NULL;
-            uip_ipaddr_copy(ipaddr,&UIP_IP_BUF->srcipaddr);
+            uip_ipaddr_t ipaddr;
+            uip_ipaddr_copy(&ipaddr,&UIP_IP_BUF->srcipaddr);
             LOG_INFO_(" ");
-            LOG_INFO_6ADDR(ipaddr);
-            uip_create_linklocal_prefix(ipaddr);
+            LOG_INFO_6ADDR(&ipaddr);
+            uip_create_linklocal_prefix(&ipaddr);
             if(ipaddr != NULL){
             LOG_INFO_(" OR ");
-            LOG_INFO_6ADDR(ipaddr);
+            LOG_INFO_6ADDR(&ipaddr);
             LOG_INFO_(" OR ");
             LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(ipaddr));
             child_node *node;
