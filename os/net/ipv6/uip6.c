@@ -1323,18 +1323,16 @@ void uip_process(uint8_t flag)
             LOG_INFO_(" ");
             LOG_INFO_6ADDR(&ipaddr);
             uip_create_linklocal_prefix(&ipaddr);
-            if(ipaddr != NULL){
             LOG_INFO_(" OR ");
             LOG_INFO_6ADDR(&ipaddr);
             LOG_INFO_(" OR ");
-            LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(ipaddr));
+            LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
             child_node *node;
-            node = child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(ipaddr));
+            node = child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
             if(node != NULL){
             LOG_INFO_(", NOW YOU ARE");
             LOG_INFO_LLADDR((const linkaddr_t *)node->address);
             LOG_INFO_("& I'M YOUR FATHER!!!\n");
-            }
             }
             else
             {
