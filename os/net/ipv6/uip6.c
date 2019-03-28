@@ -1318,10 +1318,15 @@ void uip_process(uint8_t flag)
           {
             child_node *node;
             node = child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&UIP_IP_BUF->srcipaddr));
+            if(node != NULL){
             LOG_INFO_("HEY ");
-            LOG_INFO_LLADDR(node->address);
+            LOG_INFO_LLADDR((const linkaddr_t *)node->address);
             LOG_INFO_(" I'M YOUR FATHER!!!\n");
-            
+            }
+            else
+            {
+              LOG_INFO_("SOMETHING WENT WRONG!!!\n");
+            }
           }
         }
       }
