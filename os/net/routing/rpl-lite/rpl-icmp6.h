@@ -138,4 +138,15 @@ void rpl_icmp6_init(void);
 
  /** @} */
 
+
+/**
+ * Initializes rpl-icmp6 module, registers ICMPv6 handlers for all
+ * RPL ICMPv6 messages: DIO, DIS, DAO and DAO-ACK
+*/
+
+#if PROJECT_CHILD_LIST_HACK
+/*parse the dao packet for peeking DAO info*/
+void rpl_icmp6_dao_parse(rpl_dao_t *dao);
+#endif
+
 #endif /* RPL_ICMP6_H_ */

@@ -80,6 +80,7 @@
 #include "net/ipv6/uip-ds6.h"
 #include "net/ipv6/multicast/uip-mcast6.h"
 #include "net/routing/routing.h"
+#include "net/routing/rpl-lite/rpl-icmp6.h"
 
 #if UIP_ND6_SEND_NS
 #include "net/ipv6/uip-ds6-nbr.h"
@@ -1215,7 +1216,19 @@ uip_process(uint8_t flag)
         UIP_STAT(++uip_stat.ip.drop);
         goto send;
       }
-
+      #if PROJECT_CHILD_LIST_HACK
+      /*Peek input packet is a DAO packet or not, if so, if parent is me, record it.*/
+      if(*uip_next_hdr==UIP_PROTO_ICMP6){
+        LOG_INFO("icmpv6 peek length %d type: %d \n", uip_len, UIP_ICMP_BUF->type);
+        if(UIP_ICMP_BUF->type == RPL_CODE_DAO){
+          rpl_dao_t dao;
+          rpl_icmp6_dao_parse(&dao);
+          LOG_INFO_("peeked DAO parent:", dao.prefixlen);
+          LOG_INFO_6ADDR(&dao.parent_addr);
+          LOG_INFO_(" \n");
+        }
+      }
+      #endif
       UIP_IP_BUF->ttl = UIP_IP_BUF->ttl - 1;
       LOG_INFO("Forwarding packet towards ");
       LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);

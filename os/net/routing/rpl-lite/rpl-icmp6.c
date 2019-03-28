@@ -455,6 +455,77 @@ rpl_icmp6_dio_output(uip_ipaddr_t *uc_addr)
   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIO, pos);
 }
 /*---------------------------------------------------------------------------*/
+void rpl_icmp6_dao_parse(rpl_dao_t *dao)
+{
+  uint8_t subopt_type;
+  unsigned char *buffer;
+  uint8_t buffer_length;
+  int pos;
+  int len;
+  int i;
+  uip_ipaddr_t from;
+
+  memset(dao, 0, sizeof(rpl_dao_t));
+
+  dao->instance_id = UIP_ICMP_PAYLOAD[0];
+
+  uip_ipaddr_copy(&from, &UIP_IP_BUF->srcipaddr);
+  memset(&(dao->parent_addr), 0, 16);
+
+  buffer = UIP_ICMP_PAYLOAD;
+  buffer_length = uip_len - uip_l3_icmp_hdr_len;
+
+  pos = 0;
+  pos++; /* instance ID */
+  dao->lifetime = curr_instance.default_lifetime;
+  dao->flags = buffer[pos++];
+  pos++; /* reserved */
+  dao->sequence = buffer[pos++];
+
+  /* Is the DAG ID present? */
+  if(dao->flags & RPL_DAO_D_FLAG) {
+    pos += 16;
+  }
+
+  /* Check if there are any RPL options present. */
+  for(i = pos; i < buffer_length; i += len) {
+    subopt_type = buffer[i];
+    if(subopt_type == RPL_OPTION_PAD1) {
+      len = 1;
+    } else {
+      /* The option consists of a two-byte header and a payload. */
+      len = 2 + buffer[i + 1];
+    }
+
+    switch(subopt_type) {
+      case RPL_OPTION_TARGET:
+        /* Handle the target option. */
+        dao.prefixlen = buffer[i + 3];
+        memset(&(dao->prefix), 0, sizeof(dao->prefix));
+        memcpy(&(dao->prefix), buffer + i + 4, (dao->prefix + 7) / CHAR_BIT);
+        break;
+      case RPL_OPTION_TRANSIT:
+        /* The path sequence and control are ignored. */
+        /*      pathcontrol = buffer[i + 3];
+                pathsequence = buffer[i + 4];*/
+        dao.lifetime = buffer[i + 5];
+        if(len >= 20) {
+          memcpy(&(dao->parent_addr), buffer + i + 6, 16);
+        }
+        break;
+    }
+  }
+
+  /* Destination Advertisement Object */
+  LOG_INFO("parse a %sDAO from ", dao->lifetime == 0 ? "No-path " : "");
+  LOG_INFO_6ADDR(&(UIP_IP_BUF->srcipaddr));
+  LOG_INFO_(", seqno %u, lifetime %u, prefix ", dao.->sequence, dao->lifetime);
+  LOG_INFO_6ADDR(&(dao->prefix));
+  LOG_INFO_(", prefix length %u, parent ", dao->prefixlen);
+  LOG_INFO_6ADDR(&(dao->parent_addr));
+  LOG_INFO_(" \n");
+}
+
 static void
 dao_input(void)
 {
