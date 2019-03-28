@@ -500,7 +500,7 @@ void rpl_icmp6_dao_parse(rpl_dao_t *dao)
     switch(subopt_type) {
       case RPL_OPTION_TARGET:
         /* Handle the target option. */
-        dao.prefixlen = buffer[i + 3];
+        dao->prefixlen = buffer[i + 3];
         memset(&(dao->prefix), 0, sizeof(dao->prefix));
         memcpy(&(dao->prefix), buffer + i + 4, (dao->prefix + 7) / CHAR_BIT);
         break;
@@ -508,7 +508,7 @@ void rpl_icmp6_dao_parse(rpl_dao_t *dao)
         /* The path sequence and control are ignored. */
         /*      pathcontrol = buffer[i + 3];
                 pathsequence = buffer[i + 4];*/
-        dao.lifetime = buffer[i + 5];
+        dao->lifetime = buffer[i + 5];
         if(len >= 20) {
           memcpy(&(dao->parent_addr), buffer + i + 6, 16);
         }
