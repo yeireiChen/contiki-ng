@@ -5,7 +5,7 @@
 #include "lib/memb.h"
 #include "net/linkaddr.h"
 #include "net/nbr-table.h"
-
+#include <string.h>
 
 
 MEMB(child,child_node,NBR_TABLE_MAX_NEIGHBORS);
