@@ -1223,9 +1223,13 @@ uip_process(uint8_t flag)
         if(UIP_ICMP_BUF->type == ICMP6_RPL && UIP_ICMP_BUF->icode == RPL_CODE_DAO){
           rpl_dao_t dao;
           rpl_icmp6_dao_parse(&dao);
-          LOG_INFO_("peeked DAO parent:", dao.prefixlen);
+          LOG_INFO_("peeked DAO parent:");
           LOG_INFO_6ADDR(&dao.parent_addr);
           LOG_INFO_(" \n");
+           if(uip_ds6_is_my_addr(&dao.parent_addr) ||
+              uip_ds6_is_my_maddr(&dao.parent_addr)){
+                LOG_INFO_("I'M YOUR FATHER!!!\n");
+            }
         }
       }
       #endif
