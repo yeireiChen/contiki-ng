@@ -1318,10 +1318,15 @@ void uip_process(uint8_t flag)
           {
             LOG_INFO_("HEY ");
             LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
+            uip_ipaddr_t *ipaddr = NULL;
+            uip_ipaddr_copy(ipaddr,&UIP_IP_BUF->srcipaddr);
+            uip_create_linklocal_prefix(ipaddr);
             LOG_INFO_(" OR ");
-            LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&UIP_IP_BUF->srcipaddr));
+            LOG_INFO_6ADDR(ipaddr);
+            LOG_INFO_(" OR ");
+            LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(ipaddr));
             child_node *node;
-            node = child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&UIP_IP_BUF->srcipaddr));
+            node = child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(ipaddr));
             if(node != NULL){
             LOG_INFO_(", NOW YOU ARE");
             LOG_INFO_LLADDR((const linkaddr_t *)node->address);
@@ -1329,7 +1334,7 @@ void uip_process(uint8_t flag)
             }
             else
             {
-              LOG_INFO_(", SOMETHING WENT WRONG!!!\n");
+              LOG_INFO_(",OH! SOMETHING WENT WRONG!!!\n");
             }
           }
         }
