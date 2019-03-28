@@ -519,7 +519,7 @@ void rpl_icmp6_dao_parse(rpl_dao_t *dao)
   /* Destination Advertisement Object */
   LOG_INFO("parse a %sDAO from ", dao->lifetime == 0 ? "No-path " : "");
   LOG_INFO_6ADDR(&(UIP_IP_BUF->srcipaddr));
-  LOG_INFO_(", seqno %u, lifetime %u, prefix ", dao.->sequence, dao->lifetime);
+  LOG_INFO_(", seqno %u, lifetime %u, prefix ", dao->sequence, dao->lifetime);
   LOG_INFO_6ADDR(&(dao->prefix));
   LOG_INFO_(", prefix length %u, parent ", dao->prefixlen);
   LOG_INFO_6ADDR(&(dao->parent_addr));
