@@ -16,7 +16,7 @@ void child_list_ini(){
     list_init(child_list);
 }
 
-child_node *find_child(linkaddr_t *address){
+child_node *find_child(const linkaddr_t *address){
     child_node *node;
     for(node=list_head(child_list);node!=NULL;node=list_item_next(node)){
         if(linkaddr_cmp(address,&node->address)){
