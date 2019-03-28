@@ -10,7 +10,7 @@ MODULES += os/net/app-layer/coap
 MODULES += os/services/orchestra
 MODULES += os/net/mac/tsch/sixtop
 MODULES += os/net/mac/tsch/sixtop/sixtop_simple_schdule
-
+MODULES += moudle/self_maintain_childlist
 
 # Include CoAP resources
 MODULES_REL += ./resources

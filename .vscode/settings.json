@@ -8,6 +8,7 @@
         "routing.h": "c",
         "sixtop.h": "c",
         "sf-simple.h": "c",
-        "list.h": "c"
+        "list.h": "c",
+        "childlist.h": "c"
     }
 }
