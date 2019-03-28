@@ -32,7 +32,7 @@ child_node *child_list_add_child(linkaddr_t *address){
     if(node==NULL){
         node = memb_alloc(&child);
         if(node!=NULL){
-            linkaddr_copy(&node -> address,address);
+            memcpy(&node->address,address,sizeof(linkaddr_t));
             list_push(child_list,node);
             return node;
         }

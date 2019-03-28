@@ -1330,9 +1330,9 @@ void uip_process(uint8_t flag)
             child_node *node;
             node = child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
             if(node != NULL){
-            LOG_INFO_(", NOW YOU ARE");
+            LOG_INFO_(", NOW YOU ARE ");
             LOG_INFO_LLADDR((const linkaddr_t *)&node->address);
-            LOG_INFO_("& I'M YOUR FATHER!!!\n");
+            LOG_INFO_(" & I'M YOUR FATHER!!!\n");
             }
             else
             {
