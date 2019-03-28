@@ -1332,7 +1332,14 @@ void uip_process(uint8_t flag)
             if(node != NULL){
             LOG_INFO_(", NOW YOU ARE ");
             LOG_INFO_LLADDR((const linkaddr_t *)&node->address);
-            LOG_INFO_(" & I'M YOUR FATHER!!!\n");
+            LOG_INFO_(" & I'M YOUR FATHER!!!");
+            if(linkaddr_cmp((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr),(const linkaddr_t *)&node->address)){
+              LOG_INFO_(" YOU LOOK SIMILAR\n");
+            }
+            else
+            {
+              LOG_INFO_("\n");
+            }
             }
             else
             {
