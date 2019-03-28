@@ -32,18 +32,21 @@ child_node *child_list_add_child(linkaddr_t *address){
         if(node!=NULL){
             node -> address = address;
             list_push(child_list,node);
+            return node;
         }
     }
+    return NULL;
 }
 
 int child_list_remove_child(child_node *node){
     list_remove(child_list,node);
      return memb_free(&child,node);
-};
+}
 
 int slot_is_used(uint16_t slot_offset){
+    child_node *node;
     for(node=list_head(child_list);node!=NULL;node=list_item_next(node)){
-        if(node->slot_offset == slot_offset)){
+        if(node->slot_offset == slot_offset){
             return 1;
         }
     }
@@ -54,5 +57,7 @@ int child_list_set_child_slot_offset(child_node *node,uint16_t slot_offset)
 {
     if(node != NULL){
         node -> slot_offset = slot_offset;
+        return 1;
     }
+    return 0;
 }
