@@ -80,7 +80,7 @@
 #include "net/ipv6/uip-ds6.h"
 #include "net/ipv6/multicast/uip-mcast6.h"
 #include "net/routing/routing.h"
-#include "net/routing/rpl-lite/rpl-icmp6.h"
+#include "net/routing/rpl-lite/rpl.h"
 
 #if UIP_ND6_SEND_NS
 #include "net/ipv6/uip-ds6-nbr.h"
