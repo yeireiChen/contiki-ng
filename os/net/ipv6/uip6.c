@@ -1320,7 +1320,10 @@ void uip_process(uint8_t flag)
             LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
             uip_ipaddr_t *ipaddr = NULL;
             uip_ipaddr_copy(ipaddr,&UIP_IP_BUF->srcipaddr);
+            LOG_INFO_(" ");
+            LOG_INFO_6ADDR(ipaddr);
             uip_create_linklocal_prefix(ipaddr);
+            if(ipaddr != NULL){
             LOG_INFO_(" OR ");
             LOG_INFO_6ADDR(ipaddr);
             LOG_INFO_(" OR ");
@@ -1331,6 +1334,7 @@ void uip_process(uint8_t flag)
             LOG_INFO_(", NOW YOU ARE");
             LOG_INFO_LLADDR((const linkaddr_t *)node->address);
             LOG_INFO_("& I'M YOUR FATHER!!!\n");
+            }
             }
             else
             {
