@@ -5,6 +5,9 @@
 #include "lib/memb.h"
 #include "net/linkaddr.h"
 
+MEMB(child,child_node,NBR_TABLE_MAX_NEIGHBORS);
+LIST(child_list);
+
 void child_list_ini(){
     memb_init(&child);
     list_init(child_list);

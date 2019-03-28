@@ -1,6 +1,4 @@
 /*Use to maintain child list for projects*/
-#include "lib/list.h"
-#include "lib/memb.h"
 #include "net/linkaddr.h"
 
 struct child_node_s{
@@ -10,8 +8,7 @@ struct child_node_s{
 
 typedef struct child_node_s child_node;
 
-MEMB(child,child_node,NBR_TABLE_MAX_NEIGHBORS);
-LIST(child_list);
+
 
 
 void child_list_ini();
