@@ -7,6 +7,7 @@
         "log.h": "c",
         "routing.h": "c",
         "sixtop.h": "c",
-        "sf-simple.h": "c"
+        "sf-simple.h": "c",
+        "list.h": "c"
     }
 }

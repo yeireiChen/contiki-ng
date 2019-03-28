@@ -45,6 +45,9 @@
 #include "net/mac/tsch/sixtop/sixtop.h"
 #include "net/mac/tsch/sixtop/sixtop_simple_schdule/sf-simple.h"
 
+#if PROJECT_CHILD_LIST_HACK
+#include "moudle/self_maintain_childlist/childlist.h"
+#endif
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
@@ -103,6 +106,7 @@ init(uint16_t sf_handle)
   channel_offset = sf_handle;
   sf_set_slotframe_handle(sf_handle);
   sixtop_add_sf(&sf_simple_driver);
+  child_list_ini();
   /* Slotframe for unicast transmissions */
   sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
