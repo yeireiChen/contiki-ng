@@ -5,7 +5,7 @@
 #include "lib/memb.h"
 #include "net/linkaddr.h"
 #include "net/nbr-table.h"
-#include <string.h>
+
 
 
 MEMB(child,child_node,NBR_TABLE_MAX_NEIGHBORS);
@@ -26,13 +26,13 @@ child_node *find_child(linkaddr_t *address){
     return NULL;
 }
 
-child_node *child_list_add_child(linkaddr_t *address){
+child_node *child_list_add_child(const linkaddr_t *address){
     child_node *node;
     node = find_child(address);
     if(node==NULL){
         node = memb_alloc(&child);
         if(node!=NULL){
-            memcpy(&node->address,address,sizeof(linkaddr_t));
+            linkaddr_copy(&node->address,address);
             list_push(child_list,node);
             return node;
         }
