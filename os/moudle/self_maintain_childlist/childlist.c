@@ -37,7 +37,7 @@ child_node *child_list_add_child(const linkaddr_t *address){
         node = memb_alloc(&child);
         if(node!=NULL){
             memset(node, 0, sizeof(child_node));
-             LOG_INFO_("child add 0: ");
+             LOG_INFO_("\nchild add 0: ");
             LOG_INFO_LLADDR(address);
             LOG_INFO_(" ");
             LOG_INFO_LLADDR(&node->address);
