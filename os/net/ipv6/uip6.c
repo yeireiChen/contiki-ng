@@ -1317,7 +1317,7 @@ void uip_process(uint8_t flag)
               uip_ds6_is_my_maddr(&dao.parent_addr))
           {
             LOG_INFO_("I'M YOUR FATHER!!!\n");
-            child_list_add_child((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&UIP_IP_BUF->srcipaddr));
+            child_list_add_child((linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&UIP_IP_BUF->srcipaddr));
           }
         }
       }
