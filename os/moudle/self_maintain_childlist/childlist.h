@@ -2,7 +2,7 @@
 #include "net/linkaddr.h"
 
 struct child_node_s{
-    linkaddr_t *address;
+    linkaddr_t address;
     uint16_t slot_offset;
 };
 

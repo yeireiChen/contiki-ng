@@ -19,7 +19,7 @@ void child_list_ini(){
 child_node *find_child(linkaddr_t *address){
     child_node *node;
     for(node=list_head(child_list);node!=NULL;node=list_item_next(node)){
-        if(linkaddr_cmp(address,node->address)){
+        if(linkaddr_cmp(address,&node->address)){
             return node;
         }
     }
@@ -32,7 +32,7 @@ child_node *child_list_add_child(linkaddr_t *address){
     if(node==NULL){
         node = memb_alloc(&child);
         if(node!=NULL){
-            node -> address = address;
+            linkaddr_copy(&node -> address,address);
             list_push(child_list,node);
             return node;
         }
