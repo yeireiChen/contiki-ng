@@ -85,7 +85,19 @@ add_uc_link(const linkaddr_t *linkaddr)
   }
 }
 /*---------------------------------------------------------------------------*/
-
+static int
+neighbor_has_uc_link(const linkaddr_t *linkaddr)
+{
+  if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
+    if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
+      return 1;
+    }
+    if(nbr_table_get_from_lladdr(nbr_routes, (linkaddr_t *)linkaddr) != NULL) {
+      return 1;
+    }
+  }
+  return 0;
+}
 /*---------------------------------------------------------------------------*/
 static void
 child_added(const linkaddr_t *linkaddr)
@@ -104,7 +116,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)) {
+     && !linkaddr_cmp(dest, &linkaddr_null) && linkaddr_cmp(&orchestra_parent_linkaddr, dest)) {
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
@@ -145,7 +157,7 @@ init(uint16_t sf_handle)
   tx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   
     tsch_schedule_add_link(sf_unicast_sixtop,
-        LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
+        LINK_OPTION_SHARED | LINK_OPTION_TX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         tx_timeslot, channel_offset);
   
