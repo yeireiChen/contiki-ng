@@ -109,7 +109,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
-      *timeslot = get_node_timeslot(&linkaddr_node_addr);
+      *timeslot = get_node_timeslot(dest);
     }
     return 1;
   }

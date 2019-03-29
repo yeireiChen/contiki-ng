@@ -84,7 +84,7 @@
 #if PROJECT_CHILD_LIST_HACK
 #include "net/routing/rpl-lite/rpl.h"
 #include "moudle/self_maintain_childlist/childlist.h"
-#include "service/orchestra/orchestra.h"
+#include "services/orchestra/orchestra.h"
 #endif
 
 #if UIP_ND6_SEND_NS
