@@ -439,7 +439,8 @@ update_hbh_header(void)
       uip_ext_len = last_uip_ext_len;
       return 0; /* Drop */
     }
-
+    LOG_INFO("set inside proto %d ",UIP_HBHO_BUF->next);
+    packetbuf_set_attr(PACKETBUF_ATTR_INSIDE_PROTO,UIP_HBHO_BUF->next);
     /* Update sender rank and instance, will update flags next */
     UIP_EXT_HDR_OPT_RPL_BUF->senderrank = UIP_HTONS(curr_instance.dag.rank);
     UIP_EXT_HDR_OPT_RPL_BUF->instance = curr_instance.instance_id;
@@ -475,7 +476,7 @@ insert_hbh_header(void)
   /* Move existing ext headers and payload UIP_EXT_BUF further */
   memmove(UIP_HBHO_NEXT_BUF, UIP_EXT_BUF, uip_len - UIP_IPH_LEN);
   memset(UIP_HBHO_BUF, 0, RPL_HOP_BY_HOP_LEN);
-  packetbuf_set_attr(PACKETBUF_ATTR_INSIDE_PROTO,UIP_IP_BUF->proto);
+ 
   /* Update IP and HBH protocol and fields */
   UIP_HBHO_BUF->next = UIP_IP_BUF->proto;
   UIP_IP_BUF->proto = UIP_PROTO_HBHO;
