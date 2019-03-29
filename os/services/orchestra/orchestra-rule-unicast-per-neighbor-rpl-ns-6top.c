@@ -69,7 +69,7 @@ add_uc_link(const linkaddr_t *linkaddr)
 {
   if(linkaddr != NULL) {
     uint16_t timeslot = get_node_timeslot(linkaddr);
-    uint8_t link_options = UNICAST_SLOT_SHARED_FLAG: LINK_OPTION_RX;
+    uint8_t link_options = LINK_OPTION_SHARED : LINK_OPTION_RX;
     if(timeslot == get_node_timeslot(&linkaddr_node_addr)) {
       /* This is also our timeslot, add necessary flags */
       link_options |= LINK_OPTION_TX;
@@ -127,15 +127,12 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
     } else {
       linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
     }
-    remove_uc_link(old_addr);
-    add_uc_link(new_addr);
   }
 }
 /*---------------------------------------------------------------------------*/
 static void
 init(uint16_t sf_handle)
 {
-  int i;
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
