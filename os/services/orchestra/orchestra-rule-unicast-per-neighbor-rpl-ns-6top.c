@@ -46,6 +46,8 @@
 #include "net/mac/tsch/sixtop/sixtop.h"
 #include "net/mac/tsch/sixtop/sixtop_simple_schdule/sf-simple.h"
 
+#include <stdio.h>
+
 #if PROJECT_CHILD_LIST_HACK
 #include "moudle/self_maintain_childlist/childlist.h"
 #endif
@@ -104,6 +106,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+  printf("6top_sb: %d\n",packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID));
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null) && linkaddr_cmp(&orchestra_parent_linkaddr, dest) 
      && packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID) != UIP_PROTO_ICMP6) {
