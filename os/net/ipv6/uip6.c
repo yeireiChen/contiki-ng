@@ -1276,31 +1276,50 @@ void uip_process(uint8_t flag)
   }
 #endif /* UIP_IPV6_MULTICAST */
 #if PROJECT_CHILD_LIST_HACK
+/*Peek input packet is a DAO packet or not, if so, if parent is me, record it.*/
 if (*uip_next_hdr == UIP_PROTO_ICMP6)
 {
-  if (uip_ds6_is_my_addr(&UIP_IP_BUF->destipaddr) ||
-  uip_ds6_is_my_maddr(&UIP_IP_BUF->destipaddr))
+  LOG_INFO("icmpv6 peek length %d type: %d code: %d\n", uip_len, UIP_ICMP_BUF->type, UIP_ICMP_BUF->icode);
+  if (UIP_ICMP_BUF->type == ICMP6_RPL && UIP_ICMP_BUF->icode == RPL_CODE_DAO)
   {
-  LOG_INFO("got icmpv6 to me length %d type: %d code: %d\n", uip_len, UIP_ICMP_BUF->type, UIP_ICMP_BUF->icode);
-    if (UIP_ICMP_BUF->type == ICMP6_RPL && UIP_ICMP_BUF->icode == RPL_CODE_DAO)
+    rpl_dao_t dao;
+    rpl_icmp6_dao_parse(&dao);
+    LOG_INFO_("peeked DAO parent:");
+    LOG_INFO_6ADDR(&dao.parent_addr);
+    LOG_INFO_(" \n");
+    if (uip_ds6_is_my_addr(&dao.parent_addr) ||
+        uip_ds6_is_my_maddr(&dao.parent_addr))
     {
-      rpl_dao_t dao;
-      rpl_icmp6_dao_parse(&dao);
-      if (uip_ds6_is_my_addr(&dao.parent_addr) ||
-      uip_ds6_is_my_maddr(&dao.parent_addr))
+      LOG_INFO_("HEY ");
+      LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
+      uip_ipaddr_t ipaddr;
+      uip_ipaddr_copy(&ipaddr,&UIP_IP_BUF->srcipaddr);
+      LOG_INFO_(" ");
+      LOG_INFO_6ADDR(&ipaddr);
+      uip_create_linklocal_prefix(&ipaddr);
+      LOG_INFO_(" OR ");
+      LOG_INFO_6ADDR(&ipaddr);
+      LOG_INFO_(" OR ");
+      LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
+      child_node *node;
+      node = child_list_add_child((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
+      if(node != NULL){
+      LOG_INFO_(", NOW YOU ARE ");
+      LOG_INFO_LLADDR(&node->address);
+      LOG_INFO_(" & I'M YOUR FATHER!!!");
+      if(linkaddr_cmp((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr),&node->address)){
+        LOG_INFO_(" YOU LOOK SIMILAR\n");
+        orchestra_callback_child_added(&node->address);
+      }
+      else
       {
-        uip_ipaddr_t ipaddr;
-        uip_ipaddr_copy(&ipaddr,&UIP_IP_BUF->srcipaddr);
-        uip_create_linklocal_prefix(&ipaddr);
-        LOG_INFO_("HEY ");
-        LOG_INFO_6ADDR(&ipaddr);
-        child_node *node;
-        node = child_list_add_child((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
-        if(node != NULL){
-          LOG_INFO_(" , NOW YOU ARE ");
-          LOG_INFO_LLADDR(&node->address);
-          LOG_INFO_(" & I'M YOUR FATHER!!! ");
-        }
+        LOG_INFO_("\n");
+      }
+      }
+      else
+      {
+        LOG_INFO_(",OH! SOMETHING WENT WRONG!!!\n");
+      }
     }
   }
 }
@@ -1331,55 +1350,7 @@ if (*uip_next_hdr == UIP_PROTO_ICMP6)
         UIP_STAT(++uip_stat.ip.drop);
         goto send;
       }
-#if PROJECT_CHILD_LIST_HACK
-      /*Peek input packet is a DAO packet or not, if so, if parent is me, record it.*/
-      if (*uip_next_hdr == UIP_PROTO_ICMP6)
-      {
-        LOG_INFO("icmpv6 peek length %d type: %d code: %d\n", uip_len, UIP_ICMP_BUF->type, UIP_ICMP_BUF->icode);
-        if (UIP_ICMP_BUF->type == ICMP6_RPL && UIP_ICMP_BUF->icode == RPL_CODE_DAO)
-        {
-          rpl_dao_t dao;
-          rpl_icmp6_dao_parse(&dao);
-          LOG_INFO_("peeked DAO parent:");
-          LOG_INFO_6ADDR(&dao.parent_addr);
-          LOG_INFO_(" \n");
-          if (uip_ds6_is_my_addr(&dao.parent_addr) ||
-              uip_ds6_is_my_maddr(&dao.parent_addr))
-          {
-            LOG_INFO_("HEY ");
-            LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
-            uip_ipaddr_t ipaddr;
-            uip_ipaddr_copy(&ipaddr,&UIP_IP_BUF->srcipaddr);
-            LOG_INFO_(" ");
-            LOG_INFO_6ADDR(&ipaddr);
-            uip_create_linklocal_prefix(&ipaddr);
-            LOG_INFO_(" OR ");
-            LOG_INFO_6ADDR(&ipaddr);
-            LOG_INFO_(" OR ");
-            LOG_INFO_LLADDR((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
-            child_node *node;
-            node = child_list_add_child((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
-            if(node != NULL){
-            LOG_INFO_(", NOW YOU ARE ");
-            LOG_INFO_LLADDR(&node->address);
-            LOG_INFO_(" & I'M YOUR FATHER!!!");
-            if(linkaddr_cmp((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr),&node->address)){
-              LOG_INFO_(" YOU LOOK SIMILAR\n");
-              orchestra_callback_child_added(&node->address);
-            }
-            else
-            {
-              LOG_INFO_("\n");
-            }
-            }
-            else
-            {
-              LOG_INFO_(",OH! SOMETHING WENT WRONG!!!\n");
-            }
-          }
-        }
-      }
-#endif
+
       UIP_IP_BUF->ttl = UIP_IP_BUF->ttl - 1;
       LOG_INFO("Forwarding packet towards ");
       LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
