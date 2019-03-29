@@ -22,11 +22,11 @@ void child_list_ini(){
 /*------------------------------------------------------------------------*/
 /*---------------Link list------------------------------------------------*/
 /*------------------------------------------------------------------------*/
-child_list *child_list_head(){
+child_node *child_list_head(){
     return head.next;
 }
-child_list *child_list_next(child_node *node){
-    return node.next;
+child_node *child_list_next(child_node *node){
+    return node->next;
 }
 void child_list_push(child_node *node){
     child_node* current_head = head.next;
