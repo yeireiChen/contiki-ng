@@ -47,11 +47,11 @@ void child_list_push(child_node *node){
 
 void print_child_list(){
     child_node *current_node;
-    LOG_INFO_("child list: ");
+    LOG_INFO_("\nchild list: ");
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
         LOG_INFO_LLADDR(&current_node->address);
+        LOG_INFO_(" ");
     }
-    LOG_INFO_("\n");
 }
 /*------------------------------------------------------------------------*/
 child_node *find_child(const linkaddr_t *address){
@@ -98,8 +98,11 @@ child_node *child_list_add_child(const linkaddr_t *address){
 }
 
 int child_list_remove_child(child_node *node){
+    int ret;
     child_list_remove(node);
-     return memb_free(&child,node);
+    ret = memb_free(&child,node);
+    node = NULL;
+    return ret;
 }
 
 int slot_is_used(uint16_t slot_offset){
