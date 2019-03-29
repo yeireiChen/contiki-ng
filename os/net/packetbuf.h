@@ -240,6 +240,7 @@ enum {
   
   /* Add traffic class attribute*/
   PACKETBUF_ATTR_TCFLOW,
+  PACKETBUF_ATTR_INSIDE_PROTO,
   
   /* Scope 2 attributes: used between end-to-end nodes. */
   /* These must be last */

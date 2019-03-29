@@ -475,7 +475,7 @@ insert_hbh_header(void)
   /* Move existing ext headers and payload UIP_EXT_BUF further */
   memmove(UIP_HBHO_NEXT_BUF, UIP_EXT_BUF, uip_len - UIP_IPH_LEN);
   memset(UIP_HBHO_BUF, 0, RPL_HOP_BY_HOP_LEN);
-
+  packetbuf_set_attr(PACKETBUF_ATTR_INSIDE_PROTO,UIP_IP_BUF->proto);
   /* Update IP and HBH protocol and fields */
   UIP_HBHO_BUF->next = UIP_IP_BUF->proto;
   UIP_IP_BUF->proto = UIP_PROTO_HBHO;
