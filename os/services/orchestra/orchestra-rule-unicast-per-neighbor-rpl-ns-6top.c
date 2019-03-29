@@ -42,6 +42,7 @@
 #include "orchestra.h"
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/ipv6/uip.h"
+#include "net/ipv6/uip-icmp6.h"
 #include "net/packetbuf.h"
 #include "net/mac/tsch/sixtop/sixtop.h"
 #include "net/mac/tsch/sixtop/sixtop_simple_schdule/sf-simple.h"
