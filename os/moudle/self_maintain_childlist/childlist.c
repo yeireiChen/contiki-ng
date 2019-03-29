@@ -68,11 +68,9 @@ child_node *find_child(const linkaddr_t *address){
 child_node *child_list_add_child(const linkaddr_t *address){
     child_node *node;
     node = find_child(address);
-    print_child_list();
     if( node && child_list_remove_child(node)){
         node = NULL;
     }
-    print_child_list();
     if(node==NULL){
         node = memb_alloc(&child);
         LOG_INFO_("\nallocate! ");

@@ -1372,6 +1372,7 @@ if (*uip_next_hdr == UIP_PROTO_ICMP6)
             LOG_INFO_(" & I'M YOUR FATHER!!!");
             if(linkaddr_cmp((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr),&node->address)){
               LOG_INFO_(" YOU LOOK SIMILAR\n");
+              NETSTACK_CONF_ROUTING_NEIGHBOR_ADDED_CALLBACK(&node->address);
             }
             else
             {
