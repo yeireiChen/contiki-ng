@@ -35,7 +35,7 @@ void child_list_push(child_node *node){
 }
  void child_list_remove(child_node *node){
     child_node *current_node;
-    child_node *privious_node = *head;
+    child_node *privious_node = &head;
 
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
         if(current_node == node){
