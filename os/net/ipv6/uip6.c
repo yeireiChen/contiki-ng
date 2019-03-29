@@ -1301,6 +1301,7 @@ if (*uip_next_hdr == UIP_PROTO_ICMP6)
           LOG_INFO_(" & I'M YOUR FATHER!!! ");
         }
         uip_ipaddr_copy(&UIP_IP_BUF->destipaddr,&curr_instance.dag.dag_id);
+        uip_ds6_select_src(&UIP_IP_BUF->srcipaddr, &UIP_IP_BUF->destipaddr);
         LOG_INFO_(" , NOW SENT TO ROOT ");
         LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
         LOG_INFO_(" !\n");
