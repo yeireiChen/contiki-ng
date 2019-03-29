@@ -5,7 +5,7 @@ struct child_node_s{
     linkaddr_t address;
     uint16_t slot_offset;
     uint16_t channel_offset;
-    child_node_s *next;
+    struct child_node_s *next;
 };
 
 typedef struct child_node_s child_node;
