@@ -109,7 +109,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   printf("6top_sb: %d %d\n",packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID),linkaddr_cmp(&orchestra_parent_linkaddr, dest));
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null) && linkaddr_cmp(&orchestra_parent_linkaddr, dest) 
-     && packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID) == UIP_PROTO_UDP) {
+     && packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID) == UIP_PROTO_HBHO) {
       printf("send by 6top_sb!\n",packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID));
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
