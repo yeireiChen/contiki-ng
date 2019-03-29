@@ -73,7 +73,7 @@ child_node *child_list_add_child(const linkaddr_t *address){
             LOG_INFO_(" ");
             LOG_INFO_LLADDR(&node->address);
             LOG_INFO_("\n");           
-            child_list_push(child_list,node);
+            child_list_push(node);
             LOG_INFO_("child add 2: ");
             LOG_INFO_LLADDR(address);
             LOG_INFO_(" ");
@@ -92,7 +92,7 @@ int child_list_remove_child(child_node *node){
 
 int slot_is_used(uint16_t slot_offset){
     child_node *node;
-    for(node=child_list_head(child_list);node!=NULL;node=child_list_next(node)){
+    for(node=child_list_head();node!=NULL;node=child_list_next(node)){
         if(node->slot_offset == slot_offset){
             return 1;
         }
