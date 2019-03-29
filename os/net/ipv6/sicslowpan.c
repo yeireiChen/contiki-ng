@@ -901,7 +901,7 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   }
 
   uncomp_hdr_len = UIP_IPH_LEN;
-
+  uint16_t last_proto = UIP_IP_BUF->proto;
   /* Start of ext hdr compression or UDP compression */
   /* pick out the next-header position */
   next_hdr = &UIP_IP_BUF->proto;
@@ -1018,12 +1018,20 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
     default:
       LOG_ERR("compression: could not handle compression of header");
     }
+    if(next_hdr != NULL) {
+      last_proto = *next_hdr;   
+    }
   }
   if(next_hdr != NULL) {
     /* Last header could not be compressed - we assume that this is then OK!*/
     /* as the last EXT_HDR should be "uncompressed" and have the next there */
     LOG_DBG("compression: last header could is not compressed: %d\n", *next_hdr);
   }
+
+  LOG_INFO("set inside proto %d ",last_proto);
+  packetbuf_set_attr(PACKETBUF_ATTR_INSIDE_PROTO,last_proto);
+  LOG_INFO(" %d \n",packetbuf_attr(PACKETBUF_ATTR_INSIDE_PROTO));
+
   /* before the packetbuf_hdr_len operation */
   PACKETBUF_IPHC_BUF[0] = iphc0;
   PACKETBUF_IPHC_BUF[1] = iphc1;
