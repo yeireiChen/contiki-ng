@@ -69,7 +69,9 @@ child_node *child_list_add_child(const linkaddr_t *address){
     child_node *node;
     node = find_child(address);
     print_child_list();
-    child_list_remove_child(node);
+    if( node && child_list_remove_child(node)){
+        node = NULL;
+    }
     print_child_list();
     if(node==NULL){
         node = memb_alloc(&child);
@@ -100,11 +102,8 @@ child_node *child_list_add_child(const linkaddr_t *address){
 }
 
 int child_list_remove_child(child_node *node){
-    int ret;
     child_list_remove(node);
-    ret = memb_free(&child,node);
-    node = NULL;
-    return ret;
+    return memb_free(&child,node)==0?1:0;
 }
 
 int slot_is_used(uint16_t slot_offset){
