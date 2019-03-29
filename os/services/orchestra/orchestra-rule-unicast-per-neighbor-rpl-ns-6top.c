@@ -57,8 +57,8 @@ static struct tsch_slotframe *sf_unicast_sixtop;
 static uint16_t
 get_node_timeslot(const linkaddr_t *addr)
 {
-  if(addr != NULL && ORCHESTRA_UNICAST_PERIOD > 0) {
-    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_UNICAST_PERIOD;
+  if(addr != NULL && ORCHESTRA_SIXTOP_PERIOD > 0) {
+    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_SIXTOP_PERIOD;
   } else {
     return 0xffff;
   }
@@ -69,7 +69,7 @@ add_uc_link(const linkaddr_t *linkaddr)
 {
   if(linkaddr != NULL) {
     uint16_t timeslot = get_node_timeslot(linkaddr);
-    uint8_t link_options = LINK_OPTION_SHARED : LINK_OPTION_RX;
+    uint8_t link_options = LINK_OPTION_SHARED | LINK_OPTION_RX;
     if(timeslot == get_node_timeslot(&linkaddr_node_addr)) {
       /* This is also our timeslot, add necessary flags */
       link_options |= LINK_OPTION_TX;
@@ -120,7 +120,7 @@ static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
   if(new != old) {
-    const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
+    //const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
     const linkaddr_t *new_addr = new != NULL ? &new->addr : NULL;
     if(new_addr != NULL) {
       linkaddr_copy(&orchestra_parent_linkaddr, new_addr);
@@ -140,7 +140,7 @@ init(uint16_t sf_handle)
   sixtop_add_sf(&sf_simple_driver);
   child_list_ini();
   /* Slotframe for unicast transmissions */
-  sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
+  sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_SIXTOP_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   
     tsch_schedule_add_link(sf_unicast_sixtop,
