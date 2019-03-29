@@ -58,6 +58,7 @@ child_node *find_child(const linkaddr_t *address){
 child_node *child_list_add_child(const linkaddr_t *address){
     child_node *node;
     node = find_child(address);
+    child_list_remove_child(node);
     if(node==NULL){
         node = memb_alloc(&child);
         if(node!=NULL){

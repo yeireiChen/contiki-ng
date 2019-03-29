@@ -455,7 +455,7 @@ rpl_icmp6_dio_output(uip_ipaddr_t *uc_addr)
   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIO, pos);
 }
 /*---------------------------------------------------------------------------*/
-#if PROJECT_CHILD_LIST_HACK
+#if PROJECT_CHILD_LIST_HACK 
 void rpl_icmp6_dao_parse(rpl_dao_t *dao)
 {
   uint8_t subopt_type;
@@ -689,9 +689,12 @@ rpl_icmp6_dao_output(uint8_t lifetime)
   LOG_INFO_(", parent ");
   LOG_INFO_6ADDR(parent_ipaddr);
   LOG_INFO_("\n");
-
+#if PROJECT_CHILD_LIST_HACK == 1
+  uip_icmp6_send(parent_ipaddr, ICMP6_RPL, RPL_CODE_DAO, pos);
+#else
   /* Send DAO to root (IPv6 address is DAG ID) */
   uip_icmp6_send(&curr_instance.dag.dag_id, ICMP6_RPL, RPL_CODE_DAO, pos);
+#endif
 }
 #if RPL_WITH_DAO_ACK
 /*---------------------------------------------------------------------------*/

@@ -1274,7 +1274,43 @@ void uip_process(uint8_t flag)
     }
   }
 #endif /* UIP_IPV6_MULTICAST */
-
+#if PROJECT_CHILD_LIST_HACK == 1
+if (*uip_next_hdr == UIP_PROTO_ICMP6)
+{
+  if (uip_ds6_is_my_addr(&UIP_IP_BUF->destipaddr) ||
+  uip_ds6_is_my_maddr(&UIP_IP_BUF->destipaddr))
+  {
+  LOG_INFO("got icmpv6 to me length %d type: %d code: %d\n", uip_len, UIP_ICMP_BUF->type, UIP_ICMP_BUF->icode);
+    if (UIP_ICMP_BUF->type == ICMP6_RPL && UIP_ICMP_BUF->icode == RPL_CODE_DAO)
+    {
+      rpl_dao_t dao;
+      rpl_icmp6_dao_parse(&dao);
+      if (uip_ds6_is_my_addr(&dao.parent_addr) ||
+      uip_ds6_is_my_maddr(&dao.parent_addr))
+      {
+        uip_ipaddr_t ipaddr;
+        uip_ipaddr_copy(&ipaddr,&UIP_IP_BUF->srcipaddr);
+        uip_create_linklocal_prefix(&ipaddr);
+        LOG_INFO_("HEY ");
+        LOG_INFO_6ADDR(&ipaddr);
+        child_node *node;
+        node = child_list_add_child((const linkaddr_t *)uip_ds6_nbr_lladdr_from_ipaddr(&ipaddr));
+        if(node != NULL){
+          LOG_INFO_(" , NOW YOU ARE ");
+          LOG_INFO_LLADDR(&node->address);
+          LOG_INFO_(" & I'M YOUR FATHER!!! ");
+        }
+        uip_ipaddr_copy(&UIP_IP_BUF->destipaddr,&curr_instance.dag.dag_id);
+        LOG_INFO_(" , NOW SENT TO ROOT ");
+        LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
+        LOG_INFO_(" !\n");
+        UIP_ICMP_BUF->icmpchksum = 0;
+        UIP_ICMP_BUF->icmpchksum = ~uip_icmp6chksum();
+     }
+    }
+  }
+}
+#endif
   /* TBD Some Parameter problem messages */
   if (!uip_ds6_is_my_addr(&UIP_IP_BUF->destipaddr) &&
       !uip_ds6_is_my_maddr(&UIP_IP_BUF->destipaddr))
@@ -1301,7 +1337,7 @@ void uip_process(uint8_t flag)
         UIP_STAT(++uip_stat.ip.drop);
         goto send;
       }
-#if PROJECT_CHILD_LIST_HACK
+#if PROJECT_CHILD_LIST_HACK == 2
       /*Peek input packet is a DAO packet or not, if so, if parent is me, record it.*/
       if (*uip_next_hdr == UIP_PROTO_ICMP6)
       {
