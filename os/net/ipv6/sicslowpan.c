@@ -463,7 +463,7 @@ set_packet_attrs(void)
   int c = 0;
   /* set protocol in NETWORK_ID */
   packetbuf_set_attr(PACKETBUF_ATTR_NETWORK_ID, UIP_IP_BUF->proto);
-
+  LOG_INFO(" %d \n",packetbuf_attr(PACKETBUF_ATTR_INSIDE_PROTO));
   /* assign values to the channel attribute (port or type + code) */
   if(UIP_IP_BUF->proto == UIP_PROTO_UDP) {
     c = UIP_UDP_BUF(0)->srcport;
