@@ -35,7 +35,7 @@ void child_list_push(child_node *node){
 }
  void child_list_remove(child_node *node){
     child_node *current_node;
-    child_node *privious_node = head.next;
+    child_node *privious_node = *head;
 
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
         if(current_node == node){
@@ -73,6 +73,7 @@ child_node *child_list_add_child(const linkaddr_t *address){
     print_child_list();
     if(node==NULL){
         node = memb_alloc(&child);
+        LOG_INFO_("\nallocate! ");
         if(node!=NULL){
            
             LOG_INFO_("\nchild add 0: ");
