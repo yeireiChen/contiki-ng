@@ -439,9 +439,7 @@ update_hbh_header(void)
       uip_ext_len = last_uip_ext_len;
       return 0; /* Drop */
     }
-    LOG_INFO("set inside proto %d ",UIP_HBHO_BUF->next);
-    packetbuf_set_attr(PACKETBUF_ATTR_INSIDE_PROTO,UIP_HBHO_BUF->next);
-    LOG_INFO(" %d \n",packetbuf_attr(PACKETBUF_ATTR_INSIDE_PROTO));
+ 
     /* Update sender rank and instance, will update flags next */
     UIP_EXT_HDR_OPT_RPL_BUF->senderrank = UIP_HTONS(curr_instance.dag.rank);
     UIP_EXT_HDR_OPT_RPL_BUF->instance = curr_instance.instance_id;

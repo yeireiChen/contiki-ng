@@ -1275,7 +1275,7 @@ void uip_process(uint8_t flag)
     }
   }
 #endif /* UIP_IPV6_MULTICAST */
-#if PROJECT_CHILD_LIST_HACK == 1
+#if PROJECT_CHILD_LIST_HACK
 if (*uip_next_hdr == UIP_PROTO_ICMP6)
 {
   if (uip_ds6_is_my_addr(&UIP_IP_BUF->destipaddr) ||
@@ -1301,14 +1301,6 @@ if (*uip_next_hdr == UIP_PROTO_ICMP6)
           LOG_INFO_LLADDR(&node->address);
           LOG_INFO_(" & I'M YOUR FATHER!!! ");
         }
-        uip_ipaddr_copy(&UIP_IP_BUF->destipaddr,&curr_instance.dag.dag_id);
-        uip_ds6_select_src(&UIP_IP_BUF->srcipaddr, &UIP_IP_BUF->destipaddr);
-        LOG_INFO_(" , NOW SENT TO ROOT ");
-        LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
-        LOG_INFO_(" !\n");
-        UIP_ICMP_BUF->icmpchksum = 0;
-        UIP_ICMP_BUF->icmpchksum = ~uip_icmp6chksum();
-     }
     }
   }
 }
@@ -1339,7 +1331,7 @@ if (*uip_next_hdr == UIP_PROTO_ICMP6)
         UIP_STAT(++uip_stat.ip.drop);
         goto send;
       }
-#if PROJECT_CHILD_LIST_HACK == 2
+#if PROJECT_CHILD_LIST_HACK
       /*Peek input packet is a DAO packet or not, if so, if parent is me, record it.*/
       if (*uip_next_hdr == UIP_PROTO_ICMP6)
       {
