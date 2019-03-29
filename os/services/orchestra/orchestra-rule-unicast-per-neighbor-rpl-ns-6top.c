@@ -41,6 +41,7 @@
 #include "contiki.h"
 #include "orchestra.h"
 #include "net/ipv6/uip-ds6-route.h"
+#include "net/ipv6/uip.h"
 #include "net/packetbuf.h"
 #include "net/mac/tsch/sixtop/sixtop.h"
 #include "net/mac/tsch/sixtop/sixtop_simple_schdule/sf-simple.h"
@@ -85,19 +86,7 @@ add_uc_link(const linkaddr_t *linkaddr)
   }
 }
 /*---------------------------------------------------------------------------*/
-static int
-neighbor_has_uc_link(const linkaddr_t *linkaddr)
-{
-  if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
-    if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
-      return 1;
-    }
-    if(nbr_table_get_from_lladdr(nbr_routes, (linkaddr_t *)linkaddr) != NULL) {
-      return 1;
-    }
-  }
-  return 0;
-}
+
 /*---------------------------------------------------------------------------*/
 static void
 child_added(const linkaddr_t *linkaddr)
@@ -116,7 +105,8 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null) && linkaddr_cmp(&orchestra_parent_linkaddr, dest)) {
+     && !linkaddr_cmp(dest, &linkaddr_null) && linkaddr_cmp(&orchestra_parent_linkaddr, dest) 
+     && packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID) != UIP_PROTO_ICMP6) {
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
