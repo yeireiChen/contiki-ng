@@ -127,13 +127,14 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
     } else {
       linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
     }
+    add_uc_link(new_addr);
   }
 }
 /*---------------------------------------------------------------------------*/
 static void
 init(uint16_t sf_handle)
 {
-  uint16_t rx_timeslot;
+  uint16_t tx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
   sf_set_slotframe_handle(sf_handle);
@@ -141,12 +142,12 @@ init(uint16_t sf_handle)
   child_list_ini();
   /* Slotframe for unicast transmissions */
   sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_SIXTOP_PERIOD);
-  rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
+  tx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   
     tsch_schedule_add_link(sf_unicast_sixtop,
-        LINK_OPTION_SHARED | LINK_OPTION_TX,
+        LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
-        rx_timeslot, channel_offset);
+        tx_timeslot, channel_offset);
   
 }
 /*---------------------------------------------------------------------------*/
