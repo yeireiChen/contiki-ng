@@ -44,6 +44,15 @@ void child_list_push(child_node *node){
         privious_node = current_node;
     }
 }
+
+void print_child_list(){
+    child_node *current_node;
+    LOG_INFO_("child list: ");
+    for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
+        LOG_INFO_LLADDR(&current_node->address);
+    }
+    LOG_INFO_("\n");
+}
 /*------------------------------------------------------------------------*/
 child_node *find_child(const linkaddr_t *address){
     child_node *node;
@@ -58,12 +67,14 @@ child_node *find_child(const linkaddr_t *address){
 child_node *child_list_add_child(const linkaddr_t *address){
     child_node *node;
     node = find_child(address);
+    print_child_list();
     child_list_remove_child(node);
+    print_child_list();
     if(node==NULL){
         node = memb_alloc(&child);
         if(node!=NULL){
            
-             LOG_INFO_("\nchild add 0: ");
+            LOG_INFO_("\nchild add 0: ");
             LOG_INFO_LLADDR(address);
             LOG_INFO_(" ");
             LOG_INFO_LLADDR(&node->address);
