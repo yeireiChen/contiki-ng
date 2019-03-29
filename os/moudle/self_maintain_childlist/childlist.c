@@ -40,6 +40,7 @@ void child_list_push(child_node *node){
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
         if(current_node == node){
              privious_node->next = node->next;
+             break;
         }
         privious_node = current_node;
     }
