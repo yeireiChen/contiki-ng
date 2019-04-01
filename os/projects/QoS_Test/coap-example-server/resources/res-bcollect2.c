@@ -188,11 +188,11 @@ res_post_handler(coap_message_t *request, coap_message_t *response, uint8_t *buf
   int priority = -1;
 
   if(coap_get_query_variable(request, "thd", &threshold_c)) {
-    threshold = atoi(threshold_c);
+    threshold = (uint8_t)atoi(threshold_c);
   }
 
   if(coap_get_query_variable(request, "pp", &priority_c)) {
-    priority = atoi(priority_c);
+    priority = (uint8_t)atoi(priority_c);
   }
 
   if(threshold < 1 && (priority<0||priority>2)) {
@@ -201,12 +201,14 @@ res_post_handler(coap_message_t *request, coap_message_t *response, uint8_t *buf
   } else {
     if(threshold>=1){
       /* Update to new threshold */
-      event_threshold = (uint8_t)(threshold & 0x11111111);
+      event_threshold = 0x00000000;
+      event_threshold = threshold;
       event_threshold_last_change = event_counter;
     }
     if(priority>=0 && priority<= 2)
     {
-      packet_priority = (uint8_t)(priority & 0x11111111);
+      packet_priority = 0x00000000;
+      packet_priority = priority;
     }
   }
 }
