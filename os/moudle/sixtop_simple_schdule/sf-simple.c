@@ -50,8 +50,14 @@
 #include "moudle/self_maintain_childlist/childlist.h"
 #include "sf-simple.h"
 
+/* Log configuration */
+#include "sys/log.h"
+#define LOG_MODULE "6top"
+#define LOG_LEVEL LOG_LEVEL_6TOP
+
 #define DEBUG DEBUG_PRINT
 #include "net/net-debug.h"
+#include "stdio.h"
 
 typedef struct {
   uint16_t timeslot_offset;
@@ -122,7 +128,7 @@ print_cell_list(const uint8_t *cell_list, uint16_t cell_list_len)
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
     read_cell(&cell_list[i], &cell);
-    PRINTF("%u ", cell.timeslot_offset);
+    printf("%u ", cell.timeslot_offset);
   }
 }
 
@@ -150,7 +156,7 @@ add_links_to_schedule(const linkaddr_t *peer_addr, uint8_t link_option,
       continue;
     }
 
-    PRINTF("sf-simple: Schedule link %d as %s with node %u\n",
+    LOG_INFO("sf-simple: Schedule link %d as %s with node %u\n",
            cell.timeslot_offset,
            link_option == LINK_OPTION_RX ? "RX" : "TX",
            peer_addr->u8[7]);
@@ -292,14 +298,14 @@ add_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *peer_add
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_ADD,
                             &cell_list, &cell_list_len,
                             body, body_len) != 0) {
-    PRINTF("sf-simple: Parse error on add request\n");
+    LOG_INFO("sf-simple: Parse error on add request\n");
     return;
   }
 
-  PRINTF("sf-simple: Received a 6P Add Request for %d links from node %d with LinkList : ",
+  LOG_INFO("sf-simple: Received a 6P Add Request for %d links from node %d with LinkList : ",
          num_cells, peer_addr->u8[7]);
   print_cell_list(cell_list, cell_list_len);
-  PRINTF("\n");
+  LOG_INFO("\n");
 
   slotframe = tsch_schedule_get_slotframe_by_handle(slotframe_handle);
   if(slotframe == NULL) {
@@ -329,7 +335,7 @@ add_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *peer_add
 
     if(feasible_link == num_cells) {
       /* Links are feasible. Create Link Response packet */
-      PRINTF("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
+      LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
       sixp_output(SIXP_PKT_TYPE_RESPONSE,
                   (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                   SF_SIMPLE_SFID,
@@ -362,14 +368,14 @@ delete_req_input(const uint8_t *body, uint16_t body_len,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_DELETE,
                             &cell_list, &cell_list_len,
                             body, body_len) != 0) {
-    PRINTF("sf-simple: Parse error on delete request\n");
+    LOG_INFO("sf-simple: Parse error on delete request\n");
     return;
   }
 
-  PRINTF("sf-simple: Received a 6P Delete Request for %d links from node %d with LinkList : ",
+  LOG_INFO("sf-simple: Received a 6P Delete Request for %d links from node %d with LinkList : ",
          num_cells, peer_addr->u8[7]);
   print_cell_list(cell_list, cell_list_len);
-  PRINTF("\n");
+  LOG_INFO("\n");
 
   slotframe = tsch_schedule_get_slotframe_by_handle(slotframe_handle);
   if(slotframe == NULL) {
@@ -396,7 +402,7 @@ delete_req_input(const uint8_t *body, uint16_t body_len,
   }
 
   /* Links are feasible. Create Link Response packet */
-  PRINTF("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
+  LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
   sixp_output(SIXP_PKT_TYPE_RESPONSE,
               (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
               SF_SIMPLE_SFID,
@@ -434,16 +440,16 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
                             &cell_list, &cell_list_len,
                             body, body_len) != 0) {
-    PRINTF("sf-simple: Parse error on add request\n");
+    LOG_INFO("sf-simple: Parse error on add request\n");
     return;
   }
 
-  PRINTF("sf-simple: Received a 6P realocate Request for %d links from node %d ,to realocate ",
+  LOG_INFO("sf-simple: Received a 6P realocate Request for %d links from node %d ,to realocate ",
          num_cells, peer_addr->u8[7]);
   print_cell_list(rel_cell, rel_cell_len);
-  PRINTF("with LinkList :");
+  LOG_INFO("with LinkList :");
   print_cell_list(cell_list, cell_list_len);
-  PRINTF("\n");
+  LOG_INFO("\n");
 
   slotframe = tsch_schedule_get_slotframe_by_handle(slotframe_handle);
   if(slotframe == NULL) {
@@ -480,7 +486,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
 
     if(feasible_link == num_cells) {
       /* Links are feasible. Create Link Response packet */
-      PRINTF("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
+      LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
       sixp_output(SIXP_PKT_TYPE_RESPONSE,
                   (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                   SF_SIMPLE_SFID,
@@ -558,12 +564,12 @@ response_input(sixp_pkt_rc_t rc,
                                   (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                   &cell_list, &cell_list_len,
                                   body, body_len) != 0) {
-          PRINTF("sf-simple: Parse error on add response\n");
+          LOG_INFO("sf-simple: Parse error on add response\n");
           return;
         }
-        PRINTF("sf-simple: Received a 6P Add Response with LinkList : ");
+        LOG_INFO("sf-simple: Received a 6P Add Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
-        PRINTF("\n");
+        LOG_INFO("\n");
         add_links_to_schedule(peer_addr, LINK_OPTION_TX,
                               cell_list, cell_list_len);
         break;
@@ -572,12 +578,12 @@ response_input(sixp_pkt_rc_t rc,
                                   (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                   &cell_list, &cell_list_len,
                                   body, body_len) != 0) {
-          PRINTF("sf-simple: Parse error on add response\n");
+          LOG_INFO("sf-simple: Parse error on add response\n");
           return;
         }
-        PRINTF("sf-simple: Received a 6P Delete Response with LinkList : ");
+        LOG_INFO("sf-simple: Received a 6P Delete Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
-        PRINTF("\n");
+        LOG_INFO("\n");
         remove_links_to_schedule(cell_list, cell_list_len);
         break;
       case SIXP_PKT_CMD_RELOCATE:
@@ -589,12 +595,12 @@ response_input(sixp_pkt_rc_t rc,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                             &cell_list, &cell_list_len,
                             body, body_len) != 0) {
-          PRINTF("sf-simple: Parse error on realocate response\n");
+          LOG_INFO("sf-simple: Parse error on realocate response\n");
           return;
         }
-        PRINTF("sf-simple: Received a 6P realocate Response with LinkList : ");
+        LOG_INFO("sf-simple: Received a 6P realocate Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
-        PRINTF("\n");
+        LOG_INFO("\n");
         add_links_to_schedule(peer_addr, LINK_OPTION_RX,
                           cell_list, cell_list_len);
         remove_links_to_schedule(rel_cell, rel_cell_len);
@@ -603,7 +609,7 @@ response_input(sixp_pkt_rc_t rc,
       case SIXP_PKT_CMD_LIST:
       case SIXP_PKT_CMD_CLEAR:
       default:
-        PRINTF("sf-simple: unsupported response\n");
+        LOG_INFO("sf-simple: unsupported response\n");
     }
   }
 }
@@ -655,7 +661,7 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
         index++;
         slot_check++;
       } else if(slot_check > TSCH_SCHEDULE_DEFAULT_LENGTH) {
-        PRINTF("sf-simple:! Number of trials for free slot exceeded...\n");
+        LOG_INFO("sf-simple:! Number of trials for free slot exceeded...\n");
         return -1;
         break; /* exit while loop */
       }
@@ -683,7 +689,7 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
                             (const uint8_t *)cell_list,
                             index * sizeof(sf_simple_cell_t), 0,
                             req_storage, sizeof(req_storage)) != 0) {
-    PRINTF("sf-simple: Build error on add request\n");
+    LOG_INFO("sf-simple: Build error on add request\n");
     return -1;
   }
 
@@ -694,10 +700,10 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
               req_storage, req_len, peer_addr,
               NULL, NULL, 0);
 
-  PRINTF("sf-simple: Send a 6P Add Request for %d links to node %d with LinkList : ",
+  LOG_INFO("sf-simple: Send a 6P Add Request for %d links to node %d with LinkList : ",
          num_links, peer_addr->u8[7]);
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
-  PRINTF("\n");
+  LOG_INFO("\n");
 
   return 0;
 }
@@ -747,7 +753,7 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
                             (const uint8_t *)&cell, sizeof(cell),
                             0,
                             req_storage, sizeof(req_storage)) != 0) {
-    PRINTF("sf-simple: Build error on add request\n");
+    LOG_INFO("sf-simple: Build error on add request\n");
     return -1;
   }
   /* The length of fixed part is 4 bytes: Metadata, CellOptions, and NumCells */
@@ -758,10 +764,10 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
               req_storage, req_len, peer_addr,
               NULL, NULL, 0);
 
-  PRINTF("sf-simple: Send a 6P Delete Request for %d links to node %d with LinkList : ",
+  LOG_INFO("sf-simple: Send a 6P Delete Request for %d links to node %d with LinkList : ",
          1, peer_addr->u8[7]);
   print_cell_list((const uint8_t *)&cell, sizeof(cell));
-  PRINTF("\n");
+  LOG_INFO("\n");
 
   return 0;
 }
@@ -813,7 +819,7 @@ uint8_t i = 0, index = 0;
         index++;
         slot_check++;
       } else if(slot_check > TSCH_SCHEDULE_DEFAULT_LENGTH) {
-        PRINTF("sf-simple:! Number of trials for free slot exceeded...\n");
+        LOG_INFO("sf-simple:! Number of trials for free slot exceeded...\n");
         return -1;
         break; /* exit while loop */
       }
@@ -848,7 +854,7 @@ uint8_t i = 0, index = 0;
                             index * sizeof(sf_simple_cell_t), 0,
                             req_storage,
                             sizeof(req_storage)) != 0) {
-    PRINTF("sf-simple: Build error on add request\n");
+    LOG_INFO("sf-simple: Build error on add request\n");
     return -1;
   }
 
@@ -861,12 +867,12 @@ uint8_t i = 0, index = 0;
               req_storage, req_len, peer_addr,
               NULL, NULL, 0);
 
-  PRINTF("sf-simple: Send a 6P realocate Request for %d links to node %d ,to realocate ",
+  LOG_INFO("sf-simple: Send a 6P realocate Request for %d links to node %d ,to realocate ",
          1, peer_addr->u8[7]);
   print_cell_list((const uint8_t *)&rel_cell,sizeof(sf_simple_cell_t));
-  PRINTF("with LinkList :");
+  LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
-  PRINTF("\n");
+  LOG_INFO("\n");
 
   return 0;
 
