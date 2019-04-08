@@ -40,6 +40,7 @@
 #include <string.h>
 #include "coap-engine.h"
 #include "net/mac/tsch/tsch.h"
+#include "net/mac/tsch/sixtop/sixtop.h"
 #include "moudle/sixtop_simple_schdule/sf-simple.h"
 
 static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
