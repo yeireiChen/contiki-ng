@@ -52,6 +52,12 @@ int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t c
 /*An interface for outer to set slotframe handle*/
 int sf_set_slotframe_handle(uint16_t handle);
 
+#ifdef SF_CONF_SIX_TOP_SLOTFRAME_LENGTH
+#define SF_SIX_TOP_SLOTFRAME_LENGTH SF_CONF_SIX_TOP_SLOTFRAME_LENGTH
+#else
+#define SF_SIX_TOP_SLOTFRAME_LENGTH 17
+#endif
+
 #define SF_SIMPLE_MAX_LINKS  3
 #define SF_SIMPLE_SFID       0xf0
 extern const sixtop_sf_t sf_simple_driver;

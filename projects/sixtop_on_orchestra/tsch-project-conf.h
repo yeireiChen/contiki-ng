@@ -135,6 +135,8 @@
 #define ORCHESTRA_CONF_COMMON_SHARED_PERIOD            19 /* Common shared slot, 7 is a very short slotframe (high energy, high capacity). Must be prime and at least equal to number of nodes (incl. BR) */
 #define ORCHESTRA_CONF_UNICAST_PERIOD                  23
 #define ORCHESTRA_CONF_SIXTOP_PERIOD                   17 
+
+#define SF_CONF_SIX_TOP_SLOTFRAME_LENGTH ORCHESTRA_CONF_SIXTOP_PERIOD
 #endif /* WITH_ORCHESTRA */
 
 

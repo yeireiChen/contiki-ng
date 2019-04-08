@@ -633,8 +633,8 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
   assert(peer_addr != NULL && sf != NULL);
 
   do {
-    /* Randomly select a slot offset within TSCH_SCHEDULE_DEFAULT_LENGTH */
-    random_slot = ((random_rand() & 0xFF)) % TSCH_SCHEDULE_DEFAULT_LENGTH;
+    /* Randomly select a slot offset within SF_SIX_TOP_SLOTFRAME_LENGTH */
+    random_slot = ((random_rand() & 0xFF)) % SF_SIX_TOP_SLOTFRAME_LENGTH;
 
     if(tsch_schedule_get_link_by_timeslot(sf, random_slot) == NULL) {
 
@@ -791,8 +791,8 @@ uint8_t i = 0, index = 0;
   assert(peer_addr != NULL && sf != NULL);
 
   do {
-    /* Randomly select a slot offset within TSCH_SCHEDULE_DEFAULT_LENGTH */
-    random_slot = ((random_rand() & 0xFF)) % TSCH_SCHEDULE_DEFAULT_LENGTH;
+    /* Randomly select a slot offset within SF_SIX_TOP_SLOTFRAME_LENGTH */
+    random_slot = ((random_rand() & 0xFF)) % SF_SIX_TOP_SLOTFRAME_LENGTH;
 
     if(tsch_schedule_get_link_by_timeslot(sf, random_slot) == NULL && !slot_is_used(random_slot)) {
 
