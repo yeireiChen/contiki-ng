@@ -46,6 +46,9 @@
 int sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links);
 int sf_simple_remove_links(linkaddr_t *peer_addr);
 
+/*Only support one cell now*/
+int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel);
+
 /*An interface for outer to set slotframe handle*/
 int sf_set_slotframe_handle(uint16_t handle);
 

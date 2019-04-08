@@ -47,6 +47,7 @@
 #include "net/mac/tsch/sixtop/sixp-pkt.h"
 #include "net/mac/tsch/sixtop/sixp-trans.h"
 
+#include "moudle/self_maintain_childlist/childlist.h"
 #include "sf-simple.h"
 
 #define DEBUG DEBUG_PRINT
@@ -613,6 +614,13 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
 
   return 0;
 }
+/*------------------------------------------------------------*/
+int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel)
+{
+
+
+}
+
 
 const sixtop_sf_t sf_simple_driver = {
   SF_SIMPLE_SFID,
