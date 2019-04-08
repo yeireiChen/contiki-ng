@@ -86,7 +86,7 @@ PROCESS_THREAD(er_example_server, ev, data)
    * WARNING: Activating twice only means alternate path, not two instances!
    * All static variables are the same for each URI path.
    */
-  //coap_activate_resource(&res_hello, "test/hello");
+  coap_activate_resource(&res_hello, "test/hello");
   //coap_activate_resource(&res_mirror, "debug/mirror");
   //coap_activate_resource(&res_chunks, "test/chunks");
   //coap_activate_resource(&res_separate, "test/separate");

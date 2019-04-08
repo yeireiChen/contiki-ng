@@ -39,6 +39,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "coap-engine.h"
+#include "net/mac/tsch/tsch.h"
+#include "moudle/sixtop_simple_schdule/sf-simple.h"
 
 static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
@@ -76,7 +78,13 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
   } else {
     memcpy(buffer, message, length);
   }
-
+const char *ad_c = NULL;
+  int ad = 0;
+if(coap_get_query_variable(request, "ad", &ad_c)) {
+  struct tsch_neighbor *n;
+  n = tsch_queue_get_time_source();
+  sf_simple_add_links(&n->addr, ad);
+}
   coap_set_header_content_format(response, TEXT_PLAIN); /* text/plain is the default, hence this option could be omitted. */
   coap_set_header_etag(response, (uint8_t *)&length, 1);
   coap_set_payload(response, buffer, length);

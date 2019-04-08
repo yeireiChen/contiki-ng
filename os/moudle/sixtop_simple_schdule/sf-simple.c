@@ -180,7 +180,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
     read_cell(&cell_list[i], &cell);
-    if(cell.timeslot_offset == 0xffff) {
+    if(cell.timeslot_offset == 0xffff || slot_is_used(cell.timeslot_offset)) {
       continue;
     }
 

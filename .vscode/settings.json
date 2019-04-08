@@ -10,6 +10,7 @@
         "sf-simple.h": "c",
         "list.h": "c",
         "childlist.h": "c",
-        "nbr-table.h": "c"
+        "nbr-table.h": "c",
+        "uip-ds6-route.h": "c"
     }
 }
