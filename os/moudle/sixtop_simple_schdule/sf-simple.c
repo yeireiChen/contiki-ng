@@ -454,7 +454,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
     memset(res_storage, 0, sizeof(res_storage));
     res_len = 0;
 
-    read_cell(&rel_cell, &cell);
+    read_cell(rel_cell, &cell);
     sixp_pkt_set_cand_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
@@ -574,12 +574,12 @@ response_input(sixp_pkt_rc_t rc,
         remove_links_to_schedule(cell_list, cell_list_len);
         break;
       case SIXP_PKT_CMD_RELOCATE:
-        const uint8_t *rel_cell;
+        uint8_t *rel_cell;
         uint16_t rel_cell_len;
 
          if(sixp_pkt_get_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                            &rel_cell, &rel_cell_len,
+                            (const uint8_t*)&rel_cell, &rel_cell_len,
                             body, body_len) != 0 ||
             sixp_pkt_get_cand_cell_list(SIXP_PKT_TYPE_RESPONSE,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
@@ -591,7 +591,7 @@ response_input(sixp_pkt_rc_t rc,
         PRINTF("sf-simple: Received a 6P realocate Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         PRINTF("\n");
-        add_links_to_schedule(dest_addr, LINK_OPTION_RX,
+        add_links_to_schedule(peer_addr, LINK_OPTION_RX,
                           cell_list, cell_list_len);
         remove_links_to_schedule(rel_cell, rel_cell_len);
         break;
@@ -834,7 +834,7 @@ uint8_t i = 0, index = 0;
                             sizeof(req_storage)) != 0 ||
      sixp_pkt_set_rel_cell_list(SIXP_PKT_TYPE_REQUEST,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
-                            (const uint8_t *)rel_cell,
+                            (const uint8_t *)&rel_cell,
                             sizeof(sf_simple_cell_t), 0,
                             req_storage,
                             sizeof(req_storage)) != 0||
