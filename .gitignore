@@ -68,3 +68,9 @@ cpu/x86/uefi/Makefile.uefi
 cpu/x86/uefi/edk2
 .vscode/settings.json
 .vscode/settings.json
+.vscode/ipch/4301ea0491bcefc/ORCHESTRA.ipch
+.gitignore
+.vscode/ipch/58514c18ce5dc6be/UIP6.ipch
+.vscode/ipch/75b3c8ba968e2bdd/ORCHESTRA-RULE-UNICAST-PER-NEIGHBOR-RPL-NS-6TOP.ipch
+.vscode/ipch/7df3a23836a53f8b/CHILDLIST.ipch
+.vscode/ipch/b7c2b763d2225ec8/TEST-SIXP-PKT.ipch

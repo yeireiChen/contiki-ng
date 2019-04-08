@@ -11,7 +11,7 @@ MODULES += os/services/orchestra
 MODULES += os/net/mac/tsch/sixtop
 MODULES += os/net/mac/tsch/sixtop/sixtop_simple_schdule
 MODULES += os/moudle/self_maintain_childlist
-
+MODULES += os/moudle/sixtop_simple_schdule
 
 # Include webserver module
 MODULES_REL += webserver

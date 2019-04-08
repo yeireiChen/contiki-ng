@@ -45,7 +45,7 @@
 #include "net/ipv6/uip-icmp6.h"
 #include "net/packetbuf.h"
 #include "net/mac/tsch/sixtop/sixtop.h"
-#include "net/mac/tsch/sixtop/sixtop_simple_schdule/sf-simple.h"
+#include "moudle/sixtop_simple_schdule/sf-simple.h"
 
 #include <stdio.h>
 
@@ -150,6 +150,12 @@ init(uint16_t sf_handle)
   /* Slotframe for unicast transmissions */
   sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_SIXTOP_PERIOD);
   tx_timeslot = get_node_timeslot(&linkaddr_node_addr);
+  
+  child_node *node;
+    node = child_list_add_child(&linkaddr_node_addr);
+    if(node){
+      child_list_set_child_offsets(node,tx_timeslot,channel_offset);
+    }
   
     tsch_schedule_add_link(sf_unicast_sixtop,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
