@@ -537,7 +537,7 @@ response_input(sixp_pkt_rc_t rc,
 
   const uint8_t *rel_cell;
   uint16_t rel_cell_len;
-  
+
   sixp_nbr_t *nbr;
   sixp_trans_t *trans;
 
@@ -859,8 +859,8 @@ uint8_t i = 0, index = 0;
               NULL, NULL, 0);
 
   PRINTF("sf-simple: Send a 6P realocate Request for %d links to node %d ,to realocate ",
-         num_links, peer_addr->u8[7]);
-  print_cell_list((const uint8_t *)rel_cell,sizeof(sf_simple_cell_t));
+         1, peer_addr->u8[7]);
+  print_cell_list((const uint8_t *)&rel_cell,sizeof(sf_simple_cell_t));
   PRINTF("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   PRINTF("\n");
