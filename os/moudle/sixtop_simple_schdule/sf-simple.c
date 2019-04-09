@@ -747,7 +747,7 @@ else
          LOG_INFO_LLADDR(&l->addr);
         LOG_INFO("\n");
       /* Non-zero value indicates a scheduled link */
-      if((linkaddr_cmp(&l->addr, peer_addr)) && (l->link_options == LINK_OPTION_TX)) {
+      if((l->link_options == LINK_OPTION_TX) && slot_is_used(i)) {
         /* This link is scheduled as a TX link to the specified neighbor */
         cell.timeslot_offset = i;
         cell.channel_offset = l->channel_offset;
