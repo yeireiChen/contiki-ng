@@ -135,7 +135,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
       linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
     }
     child_node *node;
-    if(&linkaddr_node_addr != NULL){
+    
     node = find_child(&linkaddr_node_addr);
     if(node != NULL && old_addr != NULL){
       sf_simple_remove_direct_link((linkaddr_t *)old_addr,node->slot_offset);
@@ -145,7 +145,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         get_node_timeslot(&linkaddr_node_addr), channel_offset);
     }
-    }
+    
   }
 }
 /*---------------------------------------------------------------------------*/
