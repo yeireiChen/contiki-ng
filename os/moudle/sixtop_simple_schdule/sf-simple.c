@@ -550,8 +550,6 @@ response_input(sixp_pkt_rc_t rc,
   sixp_nbr_t *nbr;
   sixp_trans_t *trans;
 
-  sf_simple_cell_t cell;
-
   assert(body != NULL && peer_addr != NULL);
 
   if((nbr = sixp_nbr_find(peer_addr)) == NULL ||
