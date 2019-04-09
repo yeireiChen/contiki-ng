@@ -897,7 +897,64 @@ uint8_t i = 0, index = 0;
   return 0;
 
 }
+/*---------------------------------------------------------------------------*/
+/* Initiates a Sixtop Link deletion
+ */
+int
+sf_simple_remove_direct_link(linkaddr_t *peer_addr,uint16_t timeslot)
+{if(peer_addr == NULL){
+ LOG_INFO("sf-simple: peer_addrs is NULL\n");
+}
+else
+{
+  LOG_INFO("sf-simple: Prepare to remove frome");
+  LOG_INFO_LLADDR(peer_addr);
+  LOG_INFO("\n");
+}
+  uint8_t i = 0, index = 0;
+  struct tsch_slotframe *sf =
+    tsch_schedule_get_slotframe_by_handle(slotframe_handle);
+  struct tsch_link *l;
 
+ l=tsch_schedule_get_link_by_timeslot(sf,timeslot);
+
+if(l==NULL){
+  LOG_INFO("sf-simple: link not found");
+  return -1;
+}
+  sf_simple_cell_t cell;
+  cell.timeslot_offset=timeslot;
+  cell.channel_offset=l->channel_offset;
+
+  memset(req_storage, 0, sizeof(req_storage));
+  if(sixp_pkt_set_num_cells(SIXP_PKT_TYPE_REQUEST,
+                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_DELETE,
+                            1,
+                            req_storage,
+                            sizeof(req_storage)) != 0 ||
+     sixp_pkt_set_cell_list(SIXP_PKT_TYPE_REQUEST,
+                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_DELETE,
+                            (const uint8_t *)&cell, sizeof(cell),
+                            0,
+                            req_storage, sizeof(req_storage)) != 0) {
+    LOG_INFO("sf-simple: Build error on add request\n");
+    return -1;
+  }
+  /* The length of fixed part is 4 bytes: Metadata, CellOptions, and NumCells */
+  req_len = 4 + sizeof(sf_simple_cell_t);
+
+  sixp_output(SIXP_PKT_TYPE_REQUEST, (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_DELETE,
+              SF_SIMPLE_SFID,
+              req_storage, req_len, peer_addr,
+              NULL, NULL, 0);
+
+  LOG_INFO("sf-simple: Send a 6P Delete Request for %d links to node %d with LinkList : ",
+         1, peer_addr->u8[7]);
+  print_cell_list((const uint8_t *)&cell, sizeof(cell));
+  LOG_INFO("\n");
+
+  return 0;
+}
 
 const sixtop_sf_t sf_simple_driver = {
   SF_SIMPLE_SFID,
