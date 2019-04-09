@@ -743,11 +743,11 @@ else
     l = tsch_schedule_get_link_by_timeslot(sf, i);
 
     if(l) {
-       LOG_INFO("sf-simple:Get link\n");
+       LOG_INFO("sf-simple:Get link %d :",i);
          LOG_INFO_LLADDR(&l->addr);
         LOG_INFO("\n");
       /* Non-zero value indicates a scheduled link */
-      if((l->link_options == LINK_OPTION_TX) && slot_is_used(i)) {
+      if((l->link_options == LINK_OPTION_TX)) {
         /* This link is scheduled as a TX link to the specified neighbor */
         cell.timeslot_offset = i;
         cell.channel_offset = l->channel_offset;
