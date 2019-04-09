@@ -86,6 +86,12 @@ if(coap_get_query_variable(request, "ad", &ad_c)) {
   n = tsch_queue_get_time_source();
   sf_simple_add_links(&n->addr, ad);
 }
+const char *rd_c = NULL;
+if(coap_get_query_variable(request, "rd", &rd_c)) {
+  struct tsch_neighbor *n;
+  n = tsch_queue_get_time_source();
+  sf_simple_remove_links(&n->addr);
+}
   coap_set_header_content_format(response, TEXT_PLAIN); /* text/plain is the default, hence this option could be omitted. */
   coap_set_header_etag(response, (uint8_t *)&length, 1);
   coap_set_payload(response, buffer, length);
