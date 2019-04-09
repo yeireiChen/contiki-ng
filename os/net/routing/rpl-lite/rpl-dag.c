@@ -328,6 +328,12 @@ rpl_dag_update_state(void)
         LOG_WARN_(", staying in DAG\n");
         rpl_timers_unschedule_leaving();
       }
+      else
+      {
+        linkaddr_t *old_parent_linkaddr;
+        old_parent_linkaddr = rpl_neighbor_get_lladdr(old_parent);
+        SF_SIX_TOP_REMOVE_LINKS(old_parent_linkaddr);
+      }
 
       /* Schedule a DAO */
       if(curr_instance.dag.preferred_parent != NULL) {

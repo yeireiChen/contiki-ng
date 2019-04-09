@@ -137,6 +137,9 @@
 #define ORCHESTRA_CONF_SIXTOP_PERIOD                   17 
 
 #define SF_CONF_SIX_TOP_SLOTFRAME_LENGTH ORCHESTRA_CONF_SIXTOP_PERIOD
+#define SF_SIX_TOP_ADD_LINKS sf_simple_add_links
+#define SF_SIX_TOP_REMOVE_LINKS sf_simple_remove_links
+#define SF_SIX_TOP_REALOCATE_LINKS sf_simple_realocate_links
 #endif /* WITH_ORCHESTRA */
 
 

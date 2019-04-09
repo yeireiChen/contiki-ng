@@ -134,7 +134,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
     } else {
       linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
     }
-    add_uc_link(new_addr);
+    
   }
 }
 /*---------------------------------------------------------------------------*/

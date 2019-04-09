@@ -186,7 +186,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
     read_cell(&cell_list[i], &cell);
-    if(cell.timeslot_offset == 0xffff || slot_is_used(cell.timeslot_offset)) {
+    if(cell.timeslot_offset == 0xffff) {
       continue;
     }
 
@@ -550,6 +550,8 @@ response_input(sixp_pkt_rc_t rc,
   sixp_nbr_t *nbr;
   sixp_trans_t *trans;
 
+  sf_simple_cell_t cell;
+
   assert(body != NULL && peer_addr != NULL);
 
   if((nbr = sixp_nbr_find(peer_addr)) == NULL ||
@@ -603,7 +605,10 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("\n");
         add_links_to_schedule(peer_addr, LINK_OPTION_RX,
                           cell_list, cell_list_len);
-        remove_links_to_schedule(rel_cell, rel_cell_len);
+        read_cell(rel_cell, &cell);
+        if(!slot_is_used(rel_cell->timeslot_offset)){
+          remove_links_to_schedule(rel_cell, rel_cell_len);
+        }
         break;
       case SIXP_PKT_CMD_COUNT:
       case SIXP_PKT_CMD_LIST:
@@ -660,7 +665,7 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
 
         index++;
         slot_check++;
-      } else if(slot_check > TSCH_SCHEDULE_DEFAULT_LENGTH) {
+      } else if(slot_check > SF_SIX_TOP_SLOTFRAME_LENGTH) {
         LOG_INFO("sf-simple:! Number of trials for free slot exceeded...\n");
         return -1;
         break; /* exit while loop */
@@ -723,7 +728,7 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
 
   assert(peer_addr != NULL && sf != NULL);
 
-  for(i = 0; i < TSCH_SCHEDULE_DEFAULT_LENGTH; i++) {
+  for(i = 0; i < SF_SIX_TOP_SLOTFRAME_LENGTH; i++) {
     l = tsch_schedule_get_link_by_timeslot(sf, i);
 
     if(l) {
@@ -818,7 +823,7 @@ uint8_t i = 0, index = 0;
 
         index++;
         slot_check++;
-      } else if(slot_check > TSCH_SCHEDULE_DEFAULT_LENGTH) {
+      } else if(slot_check > SF_SIX_TOP_SLOTFRAME_LENGTH) {
         LOG_INFO("sf-simple:! Number of trials for free slot exceeded...\n");
         return -1;
         break; /* exit while loop */
