@@ -717,8 +717,15 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
  */
 int
 sf_simple_remove_links(linkaddr_t *peer_addr)
+{if(peer_addr == NULL){
+ LOG_INFO("sf-simple: peer_addrs is NULL\n");
+}
+else
 {
-  LOG_INFO("sf-simple: Prepare to remove\n");
+  LOG_INFO("sf-simple: Prepare to remove frome");
+  LOG_INFO_LLADDR(peer_addr);
+  LOG_INFO("\n");
+}
   uint8_t i = 0, index = 0;
   struct tsch_slotframe *sf =
     tsch_schedule_get_slotframe_by_handle(slotframe_handle);
@@ -726,9 +733,7 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
 
   uint16_t req_len;
   sf_simple_cell_t cell;
-if(peer_addr == NULL){
- LOG_INFO("sf-simple: peer_addrs is NULL\n");
-}
+
  if(sf == NULL){
   LOG_INFO("sf-simple: sf is NULL\n");
   }
@@ -738,6 +743,9 @@ if(peer_addr == NULL){
     l = tsch_schedule_get_link_by_timeslot(sf, i);
 
     if(l) {
+       LOG_INFO("sf-simple:Get link\n");
+         LOG_INFO_LLADDR(&l->addr);
+        LOG_INFO("\n");
       /* Non-zero value indicates a scheduled link */
       if((linkaddr_cmp(&l->addr, peer_addr)) && (l->link_options == LINK_OPTION_TX)) {
         /* This link is scheduled as a TX link to the specified neighbor */
