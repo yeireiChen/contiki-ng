@@ -46,10 +46,10 @@
 #include "net/ipv6/uip-sr.h"
 #include "net/nbr-table.h"
 #include "net/link-stats.h"
-
+/*
 #include "net/mac/tsch/sixtop/sixtop.h"
 #include "moudle/sixtop_simple_schdule/sf-simple.h"
-
+*/
 /* Log configuration */
 #include "sys/log.h"
 #define LOG_MODULE "RPL"
@@ -340,7 +340,7 @@ rpl_dag_update_state(void)
         LOG_INFO("\n");
         linkaddr_t *old_parent_linkaddr;
         old_parent_linkaddr = (linkaddr_t *)rpl_neighbor_get_lladdr(old_parent);
-        sf_simple_remove_links(old_parent_linkaddr);
+        //sf_simple_remove_links(old_parent_linkaddr);
       }
 
       /* Schedule a DAO */
