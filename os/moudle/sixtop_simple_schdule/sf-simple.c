@@ -606,7 +606,7 @@ response_input(sixp_pkt_rc_t rc,
         add_links_to_schedule(peer_addr, LINK_OPTION_RX,
                           cell_list, cell_list_len);
         read_cell(rel_cell, &cell);
-        if(!slot_is_used(rel_cell->timeslot_offset)){
+        if(!slot_is_used(cell->timeslot_offset)){
           remove_links_to_schedule(rel_cell, rel_cell_len);
         }
         break;
