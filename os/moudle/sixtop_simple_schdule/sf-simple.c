@@ -911,7 +911,8 @@ else
   LOG_INFO_LLADDR(peer_addr);
   LOG_INFO("\n");
 }
-  uint8_t i = 0, index = 0;
+  
+  uint16_t req_len;
   struct tsch_slotframe *sf =
     tsch_schedule_get_slotframe_by_handle(slotframe_handle);
   struct tsch_link *l;
