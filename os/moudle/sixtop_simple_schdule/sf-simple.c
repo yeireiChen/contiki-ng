@@ -548,7 +548,7 @@ response_input(sixp_pkt_rc_t rc,
   uint16_t rel_cell_len;
 
   sf_simple_cell_t cell;
-  
+
   sixp_nbr_t *nbr;
   sixp_trans_t *trans;
 
@@ -718,6 +718,7 @@ sf_simple_add_links(linkaddr_t *peer_addr, uint8_t num_links)
 int
 sf_simple_remove_links(linkaddr_t *peer_addr)
 {
+  LOG_INFO("sf-simple: Prepare to remove\n");
   uint8_t i = 0, index = 0;
   struct tsch_slotframe *sf =
     tsch_schedule_get_slotframe_by_handle(slotframe_handle);
@@ -725,7 +726,12 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
 
   uint16_t req_len;
   sf_simple_cell_t cell;
-
+if(peer_addr == NULL){
+ LOG_INFO("sf-simple: peer_addrs is NULL\n");
+}
+ if(sf == NULL){
+  LOG_INFO("sf-simple: sf is NULL\n");
+  }
   assert(peer_addr != NULL && sf != NULL);
 
   for(i = 0; i < SF_SIX_TOP_SLOTFRAME_LENGTH; i++) {
@@ -744,6 +750,7 @@ sf_simple_remove_links(linkaddr_t *peer_addr)
   }
 
   if(index == 0) {
+     LOG_INFO("sf-simple: nothing to remove\n");
     return -1;
   }
 
