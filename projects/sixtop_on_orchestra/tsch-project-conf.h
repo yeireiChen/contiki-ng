@@ -135,16 +135,9 @@
 #define ORCHESTRA_CONF_COMMON_SHARED_PERIOD            19 /* Common shared slot, 7 is a very short slotframe (high energy, high capacity). Must be prime and at least equal to number of nodes (incl. BR) */
 #define ORCHESTRA_CONF_UNICAST_PERIOD                  23
 #define ORCHESTRA_CONF_SIXTOP_PERIOD                   17 
-<<<<<<< HEAD
-
-#define SF_CONF_SIX_TOP_SLOTFRAME_LENGTH ORCHESTRA_CONF_SIXTOP_PERIOD
-/*#define SF_SIX_TOP_ADD_LINKS sf_simple_add_links
-#define SF_SIX_TOP_REMOVE_LINKS sf_simple_remove_links
-#define SF_SIX_TOP_REALOCATE_LINKS sf_simple_realocate_links*/
-=======
->>>>>>> parent of 93ca724a2... set consts
 #endif /* WITH_ORCHESTRA */
 
+#define SF_CONF_SIX_TOP_SLOTFRAME_LENGTH ORCHESTRA_CONF_SIXTOP_PERIOD
 
 #if CONTIKI_TARGET_Z1
 /* Save some space to fit the limited RAM of the z1 */
