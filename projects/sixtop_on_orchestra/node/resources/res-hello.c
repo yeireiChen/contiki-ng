@@ -83,6 +83,7 @@ const char *ad_c = NULL;
   int ad = 0;
 if(coap_get_query_variable(request, "ad", &ad_c)) {
   struct tsch_neighbor *n;
+  ad = atoi(ad_c);
   n = tsch_queue_get_time_source();
   sf_simple_add_links(&n->addr, ad);
 }
