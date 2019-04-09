@@ -127,7 +127,7 @@ static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
   if(new != old) {
-    //const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
+    const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
     const linkaddr_t *new_addr = new != NULL ? &new->addr : NULL;
     if(new_addr != NULL) {
       linkaddr_copy(&orchestra_parent_linkaddr, new_addr);
@@ -137,7 +137,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
     child_node *node;
     node = find_child(&linkaddr_node_addr);
     if(node){
-      sf_simple_remove_direct_link(&linkaddr_node_addr,node->slot_offset);
+      sf_simple_remove_direct_link(old_addr,node->slot_offset);
      child_list_set_child_offsets(node,get_node_timeslot(&linkaddr_node_addr),channel_offset);
       tsch_schedule_add_link(sf_unicast_sixtop,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
