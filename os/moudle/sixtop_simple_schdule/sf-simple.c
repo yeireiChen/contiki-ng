@@ -400,7 +400,8 @@ delete_req_input(const uint8_t *body, uint16_t body_len,
       }
     }
   }
-
+  LOG_INFO("sf-simple:%d requested slots found\n",res_len);
+  
   /* Links are feasible. Create Link Response packet */
   LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
   sixp_output(SIXP_PKT_TYPE_RESPONSE,
@@ -586,7 +587,10 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("sf-simple: Received a 6P Delete Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
-        remove_links_to_schedule(cell_list, cell_list_len);
+        read_cell(&cell_list[i], &cell);
+         if(!slot_is_used(cell.timeslot_offset)){
+          remove_links_to_schedule(cell_list, cell_list_len);
+         }
         break;
       case SIXP_PKT_CMD_RELOCATE:
          if(sixp_pkt_get_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
