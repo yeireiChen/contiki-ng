@@ -481,13 +481,8 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
   if(num_cells > 0 && cell_list_len > 0) {
     memset(res_storage, 0, sizeof(res_storage));
     res_len = 0;
-     sixp_pkt_set_num_cells(SIXP_PKT_TYPE_RESPONSE,
-                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                            1,
-                            req_storage,
-                            sizeof(req_storage));
     read_cell(rel_cell, &cell);
-    sixp_pkt_set_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
+    sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
                                0,
@@ -500,7 +495,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
       read_cell(&cell_list[i], &cell);
       if(tsch_schedule_get_link_by_timeslot(slotframe,
                                             cell.timeslot_offset) == NULL && !slot_is_used(cell.timeslot_offset)) {
-        sixp_pkt_set_cand_cell_list(SIXP_PKT_TYPE_RESPONSE,
+        sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
                                feasible_link,
@@ -619,14 +614,10 @@ response_input(sixp_pkt_rc_t rc,
         process_post(&sf_wait_parent_switch_done_process,sf_parent_switch_done, NULL);
         break;
       case SIXP_PKT_CMD_RELOCATE:
-         if(sixp_pkt_get_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                            &rel_cell, &rel_cell_len,
-                            body, body_len) != 0 ||
-            sixp_pkt_get_cand_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                            &cell_list, &cell_list_len,
-                            body, body_len) != 0) {
+         if(sixp_pkt_get_cell_list(SIXP_PKT_TYPE_RESPONSE,
+                                  (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
+                                  &cell_list, &cell_list_len,
+                                  body, body_len) != 0) {
           LOG_INFO("sf-simple: Parse error on realocate response\n");
           return;
         }
@@ -634,14 +625,15 @@ response_input(sixp_pkt_rc_t rc,
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
         add_links_to_schedule(peer_addr, LINK_OPTION_RX,
-                          cell_list, cell_list_len);
-        read_cell(rel_cell, &cell);
+                         &cell_list[1], cell_list_len-1);
+        read_cell(&cell_list[1], &cell);
         node = find_child(peer_addr);
         if(node){
           child_list_set_child_offsets(node,cell.timeslot_offset,cell.channel_offset);
         }
+        read_cell(&cell_list[0], &cell);
         if(!slot_is_used(cell.timeslot_offset)){
-          remove_links_to_schedule(rel_cell, rel_cell_len);
+          remove_links_to_schedule(&cell_list[0], rel_cell_len-1);
         }
         
         break;
