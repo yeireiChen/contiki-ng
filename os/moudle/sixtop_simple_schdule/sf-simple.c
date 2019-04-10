@@ -824,10 +824,10 @@ else
 }
 /*------------------------------------------------------------*/
 
-typedef struct realocate_process_data_t{
+struct realocate_process_data_s{
   uint16_t timeslot;
   uint16_t channel;
-} realocate_process_data;
+} realocate_process_data = {-1,-1};
 
 int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel)
 {
