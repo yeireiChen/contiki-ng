@@ -986,7 +986,7 @@ sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr,u
   if(node && sf_simple_remove_direct_link(old_addr,node->slot_offset) == 0){
     LOG_INFO("Add to new parent success\n");
     parent_switch_process_data data = {default_tx_timeslot};
-    process_start(&sf_wait_parent_switch_done_process, data);
+    process_start(&sf_wait_parent_switch_done_process, &data);
     
   }
 
