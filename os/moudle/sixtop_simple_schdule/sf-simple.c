@@ -1058,7 +1058,7 @@ PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
   struct tsch_slotframe *slotframe;
   PROCESS_BEGIN();
   etimer_set(&et, CLOCK_SECOND * 1);
-  default_tx_timeslot = (parent_switch_process_data *)data -> default_tx_timeslot;
+  default_tx_timeslot = ((parent_switch_process_data *)data) -> default_tx_timeslot;
   PROCESS_WAIT_EVENT_UNTIL(ev == sf_parent_switch_done);
   PROCESS_YIELD_UNTIL(etimer_expired(&et));
   LOG_INFO("sf_trans_done\n");
