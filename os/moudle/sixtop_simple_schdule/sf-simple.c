@@ -1066,7 +1066,7 @@ PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
   if(slotframe != NULL) {
   child_node *node;
     node = find_child(&linkaddr_node_addr);
-    if(node != NULL && &default_tx_timeslot != NULL){
+    if(node != NULL && default_tx_timeslot >= 0){
       child_list_set_child_offsets(node,default_tx_timeslot,slotframe_handle);
       tsch_schedule_add_link(slotframe,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
