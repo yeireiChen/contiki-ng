@@ -972,6 +972,10 @@ if(l==NULL){
   return 0;
 }
 
+typedef struct {
+  uint16_t default_tx_timeslot
+} parent_switch_process_data;
+
 void
 sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr,uint16_t default_tx_timeslot)
 {
@@ -981,7 +985,8 @@ sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr,u
 
   if(node && sf_simple_remove_direct_link(old_addr,node->slot_offset) == 0){
     LOG_INFO("Add to new parent success\n");
-    process_start(&sf_wait_parent_switch_done_process, default_tx_timeslot);
+    parent_switch_process_data data = {default_tx_timeslot};
+    process_start(&sf_wait_parent_switch_done_process, data);
     
   }
 
@@ -1053,7 +1058,7 @@ PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
   struct tsch_slotframe *slotframe;
   PROCESS_BEGIN();
   etimer_set(&et, CLOCK_SECOND * 1);
-  default_tx_timeslot = data;
+  default_tx_timeslot = (parent_switch_process_data *)data -> default_tx_timeslot;
   PROCESS_WAIT_EVENT_UNTIL(ev == sf_parent_switch_done);
   PROCESS_YIELD_UNTIL(etimer_expired(&et));
   LOG_INFO("sf_trans_done\n");
