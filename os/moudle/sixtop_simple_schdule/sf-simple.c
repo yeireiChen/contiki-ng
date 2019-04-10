@@ -973,7 +973,7 @@ if(l==NULL){
 }
 
 typedef struct {
-  uint16_t default_tx_timeslot
+  uint16_t default_tx_timeslot;
 } parent_switch_process_data;
 
 void
