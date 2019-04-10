@@ -931,8 +931,8 @@ uint8_t i = 0, index = 0;
   LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   LOG_INFO("\n");
-  realocate_process_data.timeslot = timeslot;
-  realocate_process_data.channel = channel;
+  //realocate_process_data.timeslot = timeslot;
+  //realocate_process_data.channel = channel;
   return 0;
 }
 /*---------------------------------------------------------------------------*/
