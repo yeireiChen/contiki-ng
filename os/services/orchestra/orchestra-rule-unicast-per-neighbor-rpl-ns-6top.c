@@ -90,7 +90,7 @@ add_uc_link(const linkaddr_t *linkaddr)
     }
     else
     {
-      sf_simple_realocate_links(linkaddr,timeslot,channel_offset);
+      sf_simple_realocate_links((linkaddr_t *)linkaddr,timeslot,channel_offset);
     }
     }
   }
