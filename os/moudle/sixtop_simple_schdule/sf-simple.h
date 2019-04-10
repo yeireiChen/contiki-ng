@@ -62,7 +62,7 @@ int sf_set_slotframe_handle(uint16_t handle);
 #define SF_SIX_TOP_SLOTFRAME_LENGTH 17
 #endif
 
-#define SF_SIMPLE_MAX_LINKS  5
+#define SF_SIMPLE_MAX_LINKS  3
 #define SF_SIMPLE_SFID       0xf0
 #define TIMEOUT_WAIT_FOR_RETRY_RANDOM 5
 extern const sixtop_sf_t sf_simple_driver;
