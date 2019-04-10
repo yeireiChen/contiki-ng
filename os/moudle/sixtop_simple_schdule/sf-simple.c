@@ -63,6 +63,7 @@ PROCESS(sf_wait_parent_switch_done_process, "sf wait parent switch done process"
 process_event_t sf_parent_switch_done;
 PROCESS(sf_wait_for_retry_process, "Wait for retry process");
 
+
 typedef struct {
   uint16_t timeslot_offset;
   uint16_t channel_offset;
@@ -572,7 +573,7 @@ response_input(sixp_pkt_rc_t rc,
 
   sixp_nbr_t *nbr;
   sixp_trans_t *trans;
-
+  child_node *node;
   assert(body != NULL && peer_addr != NULL);
 
   if((nbr = sixp_nbr_find(peer_addr)) == NULL ||
@@ -631,9 +632,14 @@ response_input(sixp_pkt_rc_t rc,
         add_links_to_schedule(peer_addr, LINK_OPTION_RX,
                           cell_list, cell_list_len);
         read_cell(rel_cell, &cell);
+        node = find_child(peer_addr);
+        if(node){
+          child_list_set_child_offsets(node,cell.timeslot_offset,cell.channel_offset);
+        }
         if(!slot_is_used(cell.timeslot_offset)){
           remove_links_to_schedule(rel_cell, rel_cell_len);
         }
+        
         break;
       case SIXP_PKT_CMD_COUNT:
       case SIXP_PKT_CMD_LIST:
@@ -817,6 +823,12 @@ else
   return 0;
 }
 /*------------------------------------------------------------*/
+
+typedef struct realocate_process_data_t{
+  uint16_t timeslot;
+  uint16_t channel;
+} realocate_process_data;
+
 int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel)
 {
 uint8_t i = 0, index = 0;
@@ -833,6 +845,7 @@ uint8_t i = 0, index = 0;
   uint8_t slot_check = 1;
   uint16_t random_slot = 0;
 
+  
   assert(peer_addr != NULL && sf != NULL);
 
   do {
@@ -918,9 +931,8 @@ uint8_t i = 0, index = 0;
   LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   LOG_INFO("\n");
-
+  realocate_process_data = {timeslot,channel};
   return 0;
-
 }
 /*---------------------------------------------------------------------------*/
 /* Initiates a Sixtop Link deletion
@@ -1050,6 +1062,10 @@ PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
         node = find_child(&linkaddr_node_addr);
         sf_simple_remove_direct_link(&peer_addr,node->slot_offset);
         break;
+      case SIXP_PKT_CMD_RELOCATE:
+       LOG_INFO("Retry relocate\n");
+        sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
+       break;
       default:
         /* unsupported request */
         break;
@@ -1088,10 +1104,12 @@ PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
   PROCESS_END();
 }
 
+
 static void
 init(void)
 {
   sf_parent_switch_done = process_alloc_event();
+  
 }
 const sixtop_sf_t sf_simple_driver = {
   SF_SIMPLE_SFID,

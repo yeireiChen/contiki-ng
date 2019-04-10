@@ -80,12 +80,19 @@ add_uc_link(const linkaddr_t *linkaddr)
     }
     child_node *node;
     node = find_child(linkaddr);
+    
     if(node){
+      if(!slot_is_used(timeslot)){
       child_list_set_child_offsets(node,timeslot,channel_offset);
-    }
-    /* Add/update link */
-    tsch_schedule_add_link(sf_unicast_sixtop, link_options, LINK_TYPE_NORMAL, &tsch_broadcast_address,
+     /* Add/update link */
+      tsch_schedule_add_link(sf_unicast_sixtop, link_options, LINK_TYPE_NORMAL, &tsch_broadcast_address,
           timeslot, channel_offset);
+    }
+    else
+    {
+      sf_simple_realocate_links(linkaddr,timeslot,channel_offset);
+    }
+    }
   }
 }
 /*---------------------------------------------------------------------------*/
