@@ -46,7 +46,6 @@
 #include "net/mac/tsch/sixtop/sixp-nbr.h"
 #include "net/mac/tsch/sixtop/sixp-pkt.h"
 #include "net/mac/tsch/sixtop/sixp-trans.h"
-#include "services/orchestra/orchestra.h"
 
 #include "moudle/self_maintain_childlist/childlist.h"
 #include "sf-simple.h"
@@ -974,7 +973,7 @@ if(l==NULL){
 }
 
 void
-sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr)
+sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr,uint16_t default_tx_timeslot)
 {
   LOG_INFO("in sf_simple_switching_parent_callback\n");
   child_node *node;
@@ -982,7 +981,7 @@ sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr)
 
   if(node && sf_simple_remove_direct_link(old_addr,node->slot_offset) == 0){
     LOG_INFO("Add to new parent success\n");
-    process_start(&sf_wait_parent_switch_done_process, old_addr);
+    process_start(&sf_wait_parent_switch_done_process, default_tx_timeslot);
     
   }
 
@@ -1049,24 +1048,27 @@ PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
 
 PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
 {
-  static linkaddr_t *old_addr = NULL;
+  static uint16_t default_tx_timeslot;
   static struct etimer et;
-
+  struct tsch_slotframe *slotframe;
   PROCESS_BEGIN();
   etimer_set(&et, CLOCK_SECOND * 1);
-  old_addr = data;
+  default_tx_timeslot = data;
   PROCESS_WAIT_EVENT_UNTIL(ev == sf_parent_switch_done);
   PROCESS_YIELD_UNTIL(etimer_expired(&et));
   LOG_INFO("sf_trans_done\n");
+  slotframe = tsch_schedule_get_slotframe_by_handle(slotframe_handle);
+  if(slotframe != NULL) {
   child_node *node;
     node = find_child(&linkaddr_node_addr);
-    if(node != NULL && old_addr != NULL){
-      child_list_set_child_offsets(node,get_node_timeslot(&linkaddr_node_addr),channel_offset);
-      tsch_schedule_add_link(sf_unicast_sixtop,
+    if(node != NULL && default_tx_timeslot != NULL){
+      child_list_set_child_offsets(node,default_tx_timeslot,slotframe_handle);
+      tsch_schedule_add_link(slotframe,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
-        get_node_timeslot(&linkaddr_node_addr), channel_offset);
+        default_tx_timeslot, slotframe_handle);
     }
+  }
   PROCESS_END();
 }
 

@@ -49,7 +49,7 @@ int sf_simple_remove_links(linkaddr_t *peer_addr);
 /*Only support one cell now*/
 int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel);
 int sf_simple_remove_direct_link(linkaddr_t *peer_addr,uint16_t timeslot);
-void sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr);
+void sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr,uint16_t default_tx_timeslot);
 
 /*An interface for outer to set slotframe handle*/
 int sf_set_slotframe_handle(uint16_t handle);

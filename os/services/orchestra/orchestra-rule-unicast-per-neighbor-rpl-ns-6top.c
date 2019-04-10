@@ -135,7 +135,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
       linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
     }
     if(old_addr != NULL && new_addr != NULL){
-    sf_simple_switching_parent_callback((linkaddr_t *)old_addr,(linkaddr_t *)new_addr);
+    sf_simple_switching_parent_callback((linkaddr_t *)old_addr,(linkaddr_t *)new_addr,get_node_timeslot(&linkaddr_node_addr));
     }
   }
 }
