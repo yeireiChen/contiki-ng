@@ -621,8 +621,7 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("sf-simple: Received a 6P realocate Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
-        add_links_to_schedule(peer_addr, LINK_OPTION_RX,
-                         &cell_list[1], cell_list_len-1);
+        //add_links_to_schedule(peer_addr, LINK_OPTION_RX,&cell_list[1], cell_list_len-1);
         read_cell(&cell_list[1], &cell);
         node = find_child(peer_addr);
         if(node){
@@ -630,7 +629,7 @@ response_input(sixp_pkt_rc_t rc,
         }
         read_cell(&cell_list[0], &cell);
         if(!slot_is_used(cell.timeslot_offset)){
-          remove_links_to_schedule(&cell_list[0], cell_list_len-1);
+          //remove_links_to_schedule(&cell_list[0], cell_list_len-1);
         }
         
         break;
