@@ -134,18 +134,9 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
     } else {
       linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
     }
-    child_node *node;
-    
-    node = find_child(&linkaddr_node_addr);
-    if(node != NULL && old_addr != NULL){
-      sf_simple_remove_direct_link((linkaddr_t *)old_addr,node->slot_offset);
-      child_list_set_child_offsets(node,get_node_timeslot(&linkaddr_node_addr),channel_offset);
-      tsch_schedule_add_link(sf_unicast_sixtop,
-        LINK_OPTION_SHARED | LINK_OPTION_TX,
-        LINK_TYPE_NORMAL, &tsch_broadcast_address,
-        get_node_timeslot(&linkaddr_node_addr), channel_offset);
+    if(old_addr != NULL && new_addr != NULL){
+    sf_simple_switching_parent_callback((linkaddr_t *)old_addr,(linkaddr_t *)new_addr);
     }
-    
   }
 }
 /*---------------------------------------------------------------------------*/

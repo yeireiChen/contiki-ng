@@ -46,6 +46,7 @@
 #include "net/mac/tsch/sixtop/sixp-nbr.h"
 #include "net/mac/tsch/sixtop/sixp-pkt.h"
 #include "net/mac/tsch/sixtop/sixp-trans.h"
+#include "services/orchestra/orchestra.h"
 
 #include "moudle/self_maintain_childlist/childlist.h"
 #include "sf-simple.h"
@@ -58,6 +59,10 @@
 #define DEBUG DEBUG_PRINT
 #include "net/net-debug.h"
 #include "stdio.h"
+
+PROCESS(sf_wait_parent_switch_done_process, "sf wait parent switch done process");
+process_event_t sf_parent_switch_done;
+PROCESS(sf_wait_for_retry_process, "Wait for retry process");
 
 typedef struct {
   uint16_t timeslot_offset;
@@ -128,7 +133,7 @@ print_cell_list(const uint8_t *cell_list, uint16_t cell_list_len)
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
     read_cell(&cell_list[i], &cell);
-    printf("%u ", cell.timeslot_offset);
+    LOG_INFO("%u ", cell.timeslot_offset);
   }
 }
 
@@ -193,6 +198,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
     tsch_schedule_remove_link_by_timeslot(slotframe,
                                           cell.timeslot_offset);
   }
+  
 }
 
 static void
@@ -238,6 +244,11 @@ delete_response_sent_callback(void *arg, uint16_t arg_len,
                             &cell_list, &cell_list_len,
                             body, body_len) == 0 &&
      (nbr = sixp_nbr_find(dest_addr)) != NULL) {
+       child_node *node;
+       node = find_child(dest_addr);
+       if(node){
+         child_list_remove_child(node);
+       }
     remove_links_to_schedule(cell_list, cell_list_len);
   }
 }
@@ -591,6 +602,7 @@ response_input(sixp_pkt_rc_t rc,
          if(!slot_is_used(cell.timeslot_offset)){
           remove_links_to_schedule(cell_list, cell_list_len);
          }
+        process_post(&sf_wait_parent_switch_done_process,sf_parent_switch_done, NULL);
         break;
       case SIXP_PKT_CMD_RELOCATE:
          if(sixp_pkt_get_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
@@ -961,10 +973,112 @@ if(l==NULL){
   return 0;
 }
 
+void
+sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr)
+{
+  LOG_INFO("in sf_simple_switching_parent_callback\n");
+  child_node *node;
+  node = find_child(&linkaddr_node_addr);
+
+  if(node && sf_simple_remove_direct_link(old_addr,node->slot_offset) == 0){
+    LOG_INFO("Add to new parent success\n");
+    process_start(&sf_wait_parent_switch_done_process, old_addr);
+    
+  }
+
+}
+
+typedef struct {
+  sixp_pkt_cmd_t cmd;
+  const linkaddr_t *peer_addr;
+} process_data;
+
+static void
+timeout(sixp_pkt_cmd_t cmd, const linkaddr_t *peer_addr)
+{
+  LOG_INFO("transaction timeout\n");
+  process_data data_to_process = {cmd, peer_addr};
+  process_start(&sf_wait_for_retry_process, &data_to_process);
+}
+
+
+PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
+{
+  static struct etimer et;
+  static sixp_pkt_cmd_t cmd = 0x00;
+  static const linkaddr_t *peer_addr_c = NULL;
+  static linkaddr_t peer_addr; //const problem
+  uint8_t random_time = (((random_rand() & 0xFF)) % TIMEOUT_WAIT_FOR_RETRY_RANDOM)+3;
+  child_node *node;
+  PROCESS_BEGIN();
+  
+  etimer_set(&et, CLOCK_SECOND*random_time);
+  cmd = ((process_data *)data)->cmd;
+  peer_addr_c = ((process_data *)data)->peer_addr;
+  peer_addr = *peer_addr_c;
+  LOG_INFO("in sf_wait_for_retry_process cmd=%d node=%d\n", cmd, peer_addr.u8[7]);  
+
+  sixp_trans_t *trans = sixp_trans_find(&peer_addr);
+  if(trans != NULL) {
+    sixp_trans_state_t state;
+    state = sixp_trans_get_state(trans);
+    if (state == SIXP_TRANS_STATE_REQUEST_SENT || state == SIXP_TRANS_STATE_RESPONSE_SENT || state == SIXP_TRANS_STATE_CONFIRMATION_SENT) {
+      PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+      
+      switch (cmd) {
+      case SIXP_PKT_CMD_ADD:
+        LOG_INFO("Retry add (doing nothing now)\n");
+        //sf_simple_add_links(&peer_addr, 1);
+        break;
+      case SIXP_PKT_CMD_DELETE:
+        LOG_INFO("Retry delete\n");
+        node = find_child(&linkaddr_node_addr);
+        sf_simple_remove_direct_link(&peer_addr,node->slot_offset);
+        break;
+      default:
+        /* unsupported request */
+        break;
+      }
+    }
+  }
+    
+  etimer_reset(&et);  
+  PROCESS_END();
+}
+
+
+PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
+{
+  static linkaddr_t *old_addr = NULL;
+  static struct etimer et;
+
+  PROCESS_BEGIN();
+  etimer_set(&et, CLOCK_SECOND * 1);
+  old_addr = data;
+  PROCESS_WAIT_EVENT_UNTIL(ev == sf_parent_switch_done);
+  PROCESS_YIELD_UNTIL(etimer_expired(&et));
+  LOG_INFO("sf_trans_done\n");
+  child_node *node;
+    node = find_child(&linkaddr_node_addr);
+    if(node != NULL && old_addr != NULL){
+      child_list_set_child_offsets(node,get_node_timeslot(&linkaddr_node_addr),channel_offset);
+      tsch_schedule_add_link(sf_unicast_sixtop,
+        LINK_OPTION_SHARED | LINK_OPTION_TX,
+        LINK_TYPE_NORMAL, &tsch_broadcast_address,
+        get_node_timeslot(&linkaddr_node_addr), channel_offset);
+    }
+  PROCESS_END();
+}
+
+static void
+init(void)
+{
+  sf_parent_switch_done = process_alloc_event();
+}
 const sixtop_sf_t sf_simple_driver = {
   SF_SIMPLE_SFID,
-  CLOCK_SECOND,
-  NULL,
+  CLOCK_SECOND*10,
+  init,
   input,
-  NULL
+  timeout
 };

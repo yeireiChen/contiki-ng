@@ -49,6 +49,7 @@ int sf_simple_remove_links(linkaddr_t *peer_addr);
 /*Only support one cell now*/
 int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel);
 int sf_simple_remove_direct_link(linkaddr_t *peer_addr,uint16_t timeslot);
+void sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr);
 
 /*An interface for outer to set slotframe handle*/
 int sf_set_slotframe_handle(uint16_t handle);
@@ -63,6 +64,7 @@ int sf_set_slotframe_handle(uint16_t handle);
 
 #define SF_SIMPLE_MAX_LINKS  3
 #define SF_SIMPLE_SFID       0xf0
+#define TIMEOUT_WAIT_FOR_RETRY_RANDOM 5
 extern const sixtop_sf_t sf_simple_driver;
 
 #endif /* !_SIXTOP_SF_SIMPLE_H_ */
