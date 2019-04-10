@@ -70,8 +70,8 @@ typedef struct {
 } sf_simple_cell_t;
 
 static uint16_t slotframe_handle = 0;
-static uint8_t res_storage[4 + (SF_SIMPLE_MAX_LINKS+1) * 4];
-static uint8_t req_storage[4 + (SF_SIMPLE_MAX_LINKS+1) * 4];
+static uint8_t res_storage[4 + SF_SIMPLE_MAX_LINKS * 4];
+static uint8_t req_storage[4 + SF_SIMPLE_MAX_LINKS * 4];
 
 static void read_cell(const uint8_t *buf, sf_simple_cell_t *cell);
 static void print_cell_list(const uint8_t *cell_list, uint16_t cell_list_len);
@@ -481,9 +481,13 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
   if(num_cells > 0 && cell_list_len > 0) {
     memset(res_storage, 0, sizeof(res_storage));
     res_len = 0;
-
+     sixp_pkt_set_num_cells(SIXP_PKT_TYPE_REQUEST,
+                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
+                            1,
+                            req_storage,
+                            sizeof(req_storage));
     read_cell(rel_cell, &cell);
-    sixp_pkt_set_cand_cell_list(SIXP_PKT_TYPE_RESPONSE,
+    sixp_pkt_set_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
                                0,
@@ -882,7 +886,7 @@ LOG_INFO("sf-simple: Prepare to realocate");
         break; /* exit while loop */
       }
     }
-  } while(index < SF_SIMPLE_MAX_LINKS);
+  } while(index < SF_SIMPLE_MAX_LINKS-1);
 
   /* Create a Sixtop Add Request. Return 0 if Success */
   if(index == 0 ) {
