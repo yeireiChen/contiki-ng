@@ -587,7 +587,7 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("sf-simple: Received a 6P Delete Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
-        read_cell(&cell_list[i], &cell);
+        read_cell(&cell_list[0], &cell);
          if(!slot_is_used(cell.timeslot_offset)){
           remove_links_to_schedule(cell_list, cell_list_len);
          }
