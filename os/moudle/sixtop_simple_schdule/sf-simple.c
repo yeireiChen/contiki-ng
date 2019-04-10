@@ -411,7 +411,16 @@ delete_req_input(const uint8_t *body, uint16_t body_len,
     }
   }
   LOG_INFO("sf-simple:%d requested slots found\n",res_len);
-  
+  if(res_len == 0){
+    LOG_INFO("sf-simple:send a fake packet back\n");
+    cell.timeslot_offset= 0xffff;
+    cell.channel_offset= slotframe_handle;
+    sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
+                               (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
+                               (uint8_t *)&cell, sizeof(cell),
+                               0,
+                               res_storage, sizeof(res_storage));
+  }
   /* Links are feasible. Create Link Response packet */
   LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
   sixp_output(SIXP_PKT_TYPE_RESPONSE,
@@ -997,6 +1006,12 @@ typedef struct {
   const linkaddr_t *peer_addr;
 } process_data;
 
+typedef struct {
+  sixp_pkt_cmd_t cmd;
+  const linkaddr_t *peer_addr;
+  int count;
+} retry_counter;
+retry_counter counter= {-1,NULL,0};
 static void
 timeout(sixp_pkt_cmd_t cmd, const linkaddr_t *peer_addr)
 {
