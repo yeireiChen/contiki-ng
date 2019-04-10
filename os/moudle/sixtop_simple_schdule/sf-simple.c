@@ -1061,11 +1061,13 @@ PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
       case SIXP_PKT_CMD_DELETE:
         LOG_INFO("Retry delete\n");
         node = find_child(&linkaddr_node_addr);
+        if(node){
         sf_simple_remove_direct_link(&peer_addr,node->slot_offset);
+        }
         break;
       case SIXP_PKT_CMD_RELOCATE:
-       LOG_INFO("Retry relocate\n");
-        sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
+       LOG_INFO("Retry relocate %d %d\n",realocate_process_data.timeslot,realocate_process_data.channel);
+       // sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
        break;
       default:
         /* unsupported request */
