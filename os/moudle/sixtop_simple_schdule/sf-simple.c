@@ -565,9 +565,6 @@ response_input(sixp_pkt_rc_t rc,
   const uint8_t *cell_list;
   uint16_t cell_list_len;
 
-  const uint8_t *rel_cell;
-  uint16_t rel_cell_len;
-
   sf_simple_cell_t cell;
 
   sixp_nbr_t *nbr;
