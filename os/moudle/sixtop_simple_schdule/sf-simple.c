@@ -481,8 +481,8 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
   if(num_cells > 0 && cell_list_len > 0) {
     memset(res_storage, 0, sizeof(res_storage));
     res_len = 0;
-     sixp_pkt_set_num_cells(SIXP_PKT_TYPE_REQUEST,
-                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
+     sixp_pkt_set_num_cells(SIXP_PKT_TYPE_RESPONSE,
+                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                             1,
                             req_storage,
                             sizeof(req_storage));
