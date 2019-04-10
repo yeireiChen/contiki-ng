@@ -420,6 +420,7 @@ delete_req_input(const uint8_t *body, uint16_t body_len,
                                (uint8_t *)&cell, sizeof(cell),
                                0,
                                res_storage, sizeof(res_storage));
+    res_len += sizeof(cell);
   }
   /* Links are feasible. Create Link Response packet */
   LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
@@ -1006,12 +1007,7 @@ typedef struct {
   const linkaddr_t *peer_addr;
 } process_data;
 
-typedef struct {
-  sixp_pkt_cmd_t cmd;
-  const linkaddr_t *peer_addr;
-  int count;
-} retry_counter;
-retry_counter counter= {-1,NULL,0};
+
 static void
 timeout(sixp_pkt_cmd_t cmd, const linkaddr_t *peer_addr)
 {
