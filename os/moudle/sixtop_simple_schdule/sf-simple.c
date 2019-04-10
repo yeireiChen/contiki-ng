@@ -630,7 +630,7 @@ response_input(sixp_pkt_rc_t rc,
         }
         read_cell(&cell_list[0], &cell);
         if(!slot_is_used(cell.timeslot_offset)){
-          remove_links_to_schedule(&cell_list[0], rel_cell_len-1);
+          remove_links_to_schedule(&cell_list[0], cell_list_len-1);
         }
         
         break;
