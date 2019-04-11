@@ -495,13 +495,16 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
         i += sizeof(cell)) {
       read_cell(&cell_list[i], &cell);
       if(tsch_schedule_get_link_by_timeslot(slotframe,
-                                            cell.timeslot_offset) == NULL && !slot_is_used(cell.timeslot_offset)) {
+                                            cell.timeslot_offset) == NULL 
+                                            && !slot_is_used(cell.timeslot_offset) 
+                                            && cell.timeslot_offset<SF_CONF_SIX_TOP_SLOTFRAME_LENGTH) {
         sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
                                feasible_link,
                                res_storage, sizeof(res_storage));
         res_len += sizeof(cell);
+        feasible_link++;
       }
     }
 
