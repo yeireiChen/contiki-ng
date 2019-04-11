@@ -478,10 +478,10 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
   if(slotframe == NULL) {
     return;
   }
-
+  
   if(num_cells > 0 && cell_list_len > 0) {
     memset(res_storage, 0, sizeof(res_storage));
-    res_len = 0;
+    res_len = 1;
     read_cell(rel_cell, &cell);
     sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
