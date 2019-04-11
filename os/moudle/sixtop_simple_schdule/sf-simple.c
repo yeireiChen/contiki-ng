@@ -283,7 +283,7 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
         //add_links_to_schedule(peer_addr, LINK_OPTION_RX,&cell_list[1], cell_list_len-1);
         read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
         LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
-        node = find_child(peer_addr);
+        node = find_child(&linkaddr_node_addr);
         if(node){
           child_list_set_child_offsets(node,cell.timeslot_offset,cell.channel_offset);
         }
