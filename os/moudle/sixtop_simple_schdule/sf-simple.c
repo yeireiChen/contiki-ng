@@ -133,7 +133,7 @@ print_cell_list(const uint8_t *cell_list, uint16_t cell_list_len)
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
     read_cell(&cell_list[i], &cell);
-    LOG_INFO("%u ", cell.timeslot_offset);
+    PRINTF("%u ", cell.timeslot_offset);
   }
 }
 
@@ -501,7 +501,6 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                                feasible_link,
                                res_storage, sizeof(res_storage));
         res_len += sizeof(cell);
-        feasible_link++;
       }
     }
 
@@ -867,7 +866,7 @@ LOG_INFO("sf-simple: Prepare to realocate");
       if(slot_check == 1) {
         cell_list[index].timeslot_offset = random_slot;
         cell_list[index].channel_offset = slotframe_handle;
-  LOG_INFO("sf-simple:find %d %d\n",cell_list[index].timeslot_offset,cell_list[index].channel_offset);
+  LOG_INFO("sf-simple:find %d %d %d\n",cell_list[index].timeslot_offset,cell_list[index].channel_offset,index);
         index++;
         slot_check++;
       } else if(slot_check > SF_SIX_TOP_SLOTFRAME_LENGTH) {
@@ -877,7 +876,7 @@ LOG_INFO("sf-simple: Prepare to realocate");
       }
     }
   } while(index < SF_SIMPLE_MAX_LINKS-1);
-
+  LOG_INFO("sf-simple: index %d",index);
   /* Create a Sixtop Add Request. Return 0 if Success */
   if(index == 0 ) {
     return -1;
