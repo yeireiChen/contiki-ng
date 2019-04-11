@@ -267,6 +267,8 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
   uint16_t cell_list_len;
   sixp_nbr_t *nbr;
 
+  sf_simple_cell_t cell;
+  child_node *node;
   assert(body != NULL && dest_addr != NULL);
 
   if(status == SIXP_OUTPUT_STATUS_SUCCESS &&
