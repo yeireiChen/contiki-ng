@@ -132,7 +132,7 @@ print_cell_list(const uint8_t *cell_list, uint16_t cell_list_len)
   sf_simple_cell_t cell;
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
-    read_cell(&cell_list[i], &cell);
+    read_cell(cell_list+(i*sizeof(cell)), &cell);
     PRINTF("[%u ", cell.timeslot_offset);
     PRINTF(" %u] ", cell.channel_offset);
   }
