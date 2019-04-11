@@ -505,7 +505,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
       }
     }
 
-    if(feasible_link == num_cells) {
+    if(feasible_link == num_cells+1) {
       /* Links are feasible. Create Link Response packet */
       LOG_INFO("sf-simple: Send a 6P Response to node %d\n", peer_addr->u8[7]);
       sixp_output(SIXP_PKT_TYPE_RESPONSE,
