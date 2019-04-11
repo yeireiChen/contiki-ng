@@ -483,7 +483,6 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
     memset(res_storage, 0, sizeof(res_storage));
     res_len = sizeof(cell);
     read_cell(&rel_cell[0], &cell);
-    LOG_INFO("rel cell:%d\n",cell.timeslot_offset);
     sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
