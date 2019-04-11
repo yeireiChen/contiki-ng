@@ -836,7 +836,7 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   sf_simple_cell_t rel_cell;
   rel_cell.timeslot_offset=timeslot;
   rel_cell.channel_offset=channel;
-  sf_simple_cell_t cell_list[SF_SIMPLE_MAX_LINKS-1];
+  sf_simple_cell_t cell_list[SF_SIMPLE_MAX_LINKS];
 
   /* Flag to prevent repeated slots */
   uint8_t slot_check = 1;
@@ -882,14 +882,15 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   } while(index < SF_SIMPLE_MAX_LINKS-1);
   LOG_INFO("sf-simple: index %d\n",index);
 
-  
+  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
 
   /* Create a Sixtop Add Request. Return 0 if Success */
   if(index == 0 ) {
     return -1;
   }
-  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
+  
   memset(req_storage, 0, sizeof(req_storage));
+  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   if(sixp_pkt_set_cell_options(SIXP_PKT_TYPE_REQUEST,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
                                SIXP_PKT_CELL_OPTION_TX,
@@ -915,7 +916,7 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
     LOG_INFO("sf-simple: Build error on add request\n");
     return -1;
   }
-
+print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
     /* The length of fixed part is 4 bytes: Metadata, CellOptions, and NumCells 
       plus rel_cell & cand_cells
   */
