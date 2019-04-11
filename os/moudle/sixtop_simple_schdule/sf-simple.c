@@ -263,24 +263,22 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
   uint8_t *body = (uint8_t *)arg;
   uint16_t body_len = arg_len;
 
-
   const uint8_t *cell_list;
   uint16_t cell_list_len;
   sixp_nbr_t *nbr;
 
   assert(body != NULL && dest_addr != NULL);
 
-
-   if(status == SIXP_OUTPUT_STATUS_SUCCESS &&
-   ixp_pkt_get_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                          (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                          &cell_list, &cell_list_len,
-                          body, body_len) == 0 &&
+  if(status == SIXP_OUTPUT_STATUS_SUCCESS &&
+     sixp_pkt_get_cell_list(SIXP_PKT_TYPE_RESPONSE,
+                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
+                            &cell_list, &cell_list_len,
+                            body, body_len) == 0 &&
      (nbr = sixp_nbr_find(dest_addr)) != NULL) {
-        LOG_INFO("sf-simple:  6P realocate Response call back with LinkList : ");
+     LOG_INFO("sf-simple: 6P realocate Response callback with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
-        //add_links_to_schedule(peer_addr, LINK_OPTION_TX,&cell_list[1], cell_list_len-1);
+        //add_links_to_schedule(peer_addr, LINK_OPTION_RX,&cell_list[1], cell_list_len-1);
         read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
         LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
         node = find_child(peer_addr);
@@ -289,9 +287,8 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
         }
         read_cell((const uint8_t *)cell_list, &cell);
         LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
-        if(!slot_is_used(cell.timeslot_offset)){
-          //remove_links_to_schedule(&cell_list[0], cell_list_len-1);
-        }
+  }
+  
 }
 
 
