@@ -262,6 +262,7 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
                            const linkaddr_t *dest_addr,
                            sixp_output_status_t status)
 {
+   LOG_INFO("sf-simple:in realocate call back\n");
   uint8_t *body = (uint8_t *)arg;
   uint16_t body_len = arg_len;
 
