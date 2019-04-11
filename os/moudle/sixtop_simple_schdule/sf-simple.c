@@ -483,6 +483,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
     memset(res_storage, 0, sizeof(res_storage));
     res_len = sizeof(cell);
     read_cell(&rel_cell[0], &cell);
+    LOG_INFO("rel cell:%d\n",cell.timeslot_offset);
     sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                                (uint8_t *)&cell, sizeof(cell),
@@ -494,6 +495,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
         i < cell_list_len && feasible_link < num_cells+1;
         i += sizeof(cell)) {
       read_cell(&cell_list[i], &cell);
+      LOG_INFO("cell:%d\n",cell.timeslot_offset);
       if(tsch_schedule_get_link_by_timeslot(slotframe,
                                             cell.timeslot_offset) == NULL 
                                             && !slot_is_used(cell.timeslot_offset) 
@@ -516,8 +518,6 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                   SF_SIMPLE_SFID,
                   res_storage, res_len, peer_addr,
                   realocate_response_sent_callback, res_storage, res_len);
-      LOG_INFO("with LinkList :");
-      print_cell_list((const uint8_t *)cell_list, res_len);
     }
   }
 }
