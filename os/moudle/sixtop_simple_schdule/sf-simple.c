@@ -623,11 +623,13 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("\n");
         //add_links_to_schedule(peer_addr, LINK_OPTION_RX,&cell_list[1], cell_list_len-1);
         read_cell(&cell_list[1], &cell);
+        LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
         node = find_child(peer_addr);
         if(node){
           child_list_set_child_offsets(node,cell.timeslot_offset,cell.channel_offset);
         }
         read_cell(&cell_list[0], &cell);
+        LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
         if(!slot_is_used(cell.timeslot_offset)){
           //remove_links_to_schedule(&cell_list[0], cell_list_len-1);
         }
