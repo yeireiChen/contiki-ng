@@ -888,7 +888,7 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   } while(index < SF_SIMPLE_MAX_LINKS-1);
   LOG_INFO("sf-simple: index %d\n",index);
 
-  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
+  
 
   /* Create a Sixtop Add Request. Return 0 if Success */
   if(index == 0 ) {
@@ -916,13 +916,13 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
      sixp_pkt_set_cand_cell_list(SIXP_PKT_TYPE_REQUEST,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
                             (const uint8_t *)cell_list,
-                            index * sizeof(sf_simple_cell_t), 0,
+                            (index+1) * sizeof(sf_simple_cell_t), 0,
                             req_storage,
                             sizeof(req_storage)) != 0) {
     LOG_INFO("sf-simple: Build error on add request\n");
     return -1;
   }
-print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
+
     /* The length of fixed part is 4 bytes: Metadata, CellOptions, and NumCells 
       plus rel_cell & cand_cells
   */
