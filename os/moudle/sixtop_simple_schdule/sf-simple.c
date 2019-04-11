@@ -439,7 +439,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
   uint8_t i;
   sf_simple_cell_t cell;
   struct tsch_slotframe *slotframe;
-  int feasible_link;
+  int feasible_link = 0;
   uint8_t num_cells;
   
   const uint8_t *rel_cell;
@@ -448,6 +448,9 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
   const uint8_t *cell_list;
   uint16_t cell_list_len;
   uint16_t res_len;
+
+  sf_simple_cell_t res_cell_list[SF_SIMPLE_MAX_LINKS];
+  
 
   assert(body != NULL && peer_addr != NULL);
 
@@ -484,12 +487,9 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
     res_len = sizeof(cell);
     read_cell(&rel_cell[0], &cell);
     LOG_INFO("rel cell:%d\n",cell.timeslot_offset);
-    sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                               (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                               (uint8_t *)&cell, sizeof(cell),
-                               0,
-                               res_storage, sizeof(res_storage));
-
+    res_cell_list[feasible_link].timeslot_offset = cell.timeslot_offset;
+    res_cell_list[feasible_link].channel_offset = cell.channel_offset;
+    feasible_link++;
     /* checking availability for requested slots */
     for(i = 0, feasible_link = 1;
         i < cell_list_len && feasible_link < num_cells+1;
@@ -500,15 +500,17 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                                             cell.timeslot_offset) == NULL 
                                             && !slot_is_used(cell.timeslot_offset) 
                                             && cell.timeslot_offset<SF_CONF_SIX_TOP_SLOTFRAME_LENGTH) {
-        sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                               (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                               (uint8_t *)&cell, sizeof(cell),
-                               feasible_link,
-                               res_storage, sizeof(res_storage));
+        res_cell_list[feasible_link].timeslot_offset = cell.timeslot_offset;
+        res_cell_list[feasible_link].channel_offset = cell.channel_offset;
         res_len += sizeof(cell);
         feasible_link++;
       }
     }
+     sixp_pkt_set_cell_list(SIXP_PKT_TYPE_RESPONSE,
+                               (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
+                               (const uint8_t *)res_cell_list, feasible_link * sizeof(sf_simple_cell_t),
+                               0,
+                               res_storage, sizeof(res_storage));
 
     if(feasible_link == num_cells+1) {
       /* Links are feasible. Create Link Response packet */
@@ -518,6 +520,8 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                   SF_SIMPLE_SFID,
                   res_storage, res_len, peer_addr,
                   realocate_response_sent_callback, res_storage, res_len);
+    LOG_INFO("with LinkList :");
+    print_cell_list((const uint8_t *)res_cell_list, feasible_link * sizeof(sf_simple_cell_t));
     }
   }
 }
