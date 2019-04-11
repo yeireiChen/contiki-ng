@@ -135,6 +135,7 @@ print_cell_list(const uint8_t *cell_list, uint16_t cell_list_len)
     read_cell(&cell_list[i], &cell);
     PRINTF("%u ", cell.timeslot_offset);
   }
+  PRINTF("\n");
 }
 
 static void
@@ -827,7 +828,7 @@ int sf_simple_realocate_links(linkaddr_t *peer_addr,uint16_t timeslot,uint16_t c
 uint8_t i = 0, index = 0;
   struct tsch_slotframe *sf =
     tsch_schedule_get_slotframe_by_handle(slotframe_handle);
-LOG_INFO("sf-simple: Prepare to realocate");
+LOG_INFO("sf-simple: Prepare to realocate\n");
   uint8_t req_len;
   sf_simple_cell_t rel_cell;
   rel_cell.timeslot_offset=timeslot;
@@ -876,7 +877,8 @@ LOG_INFO("sf-simple: Prepare to realocate");
       }
     }
   } while(index < SF_SIMPLE_MAX_LINKS-1);
-  LOG_INFO("sf-simple: index %d",index);
+  LOG_INFO("sf-simple: index %d\n",index);
+  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   /* Create a Sixtop Add Request. Return 0 if Success */
   if(index == 0 ) {
     return -1;
