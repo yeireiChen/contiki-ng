@@ -271,7 +271,7 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
   assert(body != NULL && dest_addr != NULL);
 
 
-   if(status == SIXP_OUTPUT_STATUS_SUCCESS && s
+   if(status == SIXP_OUTPUT_STATUS_SUCCESS &&
    ixp_pkt_get_cell_list(SIXP_PKT_TYPE_RESPONSE,
                           (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                           &cell_list, &cell_list_len,
