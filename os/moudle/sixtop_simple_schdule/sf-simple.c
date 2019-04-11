@@ -222,6 +222,8 @@ add_response_sent_callback(void *arg, uint16_t arg_len,
                             &cell_list, &cell_list_len,
                             body, body_len) == 0 &&
      (nbr = sixp_nbr_find(dest_addr)) != NULL) {
+       LOG_INFO("sf-simple: 6P add Response callback with LinkList : ");
+        print_cell_list(cell_list, cell_list_len);
     add_links_to_schedule(dest_addr, LINK_OPTION_RX,
                           cell_list, cell_list_len);
   }
@@ -279,7 +281,6 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
      (nbr = sixp_nbr_find(dest_addr)) != NULL) {
      LOG_INFO("sf-simple: 6P realocate Response callback with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
-        LOG_INFO("\n");
         //add_links_to_schedule(peer_addr, LINK_OPTION_RX,&cell_list[1], cell_list_len-1);
         read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
         LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
