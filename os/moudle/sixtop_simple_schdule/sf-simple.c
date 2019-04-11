@@ -291,7 +291,7 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
         if(!slot_is_used(cell.timeslot_offset)){
           remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
         }
-        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d",node->slot_offset,node->channel_offset);
+        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
   }
   
 }
@@ -651,7 +651,7 @@ response_input(sixp_pkt_rc_t rc,
         if(!slot_is_used(cell.timeslot_offset)){
           remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
         }
-        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d",node->slot_offset,node->channel_offset);
+        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
         break;
       case SIXP_PKT_CMD_COUNT:
       case SIXP_PKT_CMD_LIST:
