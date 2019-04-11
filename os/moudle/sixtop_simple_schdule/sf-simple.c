@@ -158,7 +158,7 @@ add_links_to_schedule(const linkaddr_t *peer_addr, uint8_t link_option,
   }
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
-    read_cell(&cell_list[i], &cell);
+    read_cell(cell_list+(i*sizeof(cell)), &cell);
     if(cell.timeslot_offset == 0xffff) {
       continue;
     }
@@ -192,7 +192,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
   }
 
   for(i = 0; i < (cell_list_len / sizeof(cell)); i++) {
-    read_cell(&cell_list[i], &cell);
+    read_cell(cell_list+(i*sizeof(cell)), &cell);
     if(cell.timeslot_offset == 0xffff) {
       continue;
     }
@@ -263,8 +263,6 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
   uint8_t *body = (uint8_t *)arg;
   uint16_t body_len = arg_len;
 
-  const uint8_t *rel_cell;
-  uint16_t rel_cell_len;
 
   const uint8_t *cell_list;
   uint16_t cell_list_len;
@@ -272,20 +270,28 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
 
   assert(body != NULL && dest_addr != NULL);
 
-  if(status == SIXP_OUTPUT_STATUS_SUCCESS &&
-     sixp_pkt_get_rel_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                            &rel_cell, &rel_cell_len,
-                            body, body_len) == 0 &&
-     sixp_pkt_get_cand_cell_list(SIXP_PKT_TYPE_RESPONSE,
-                            (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
-                            &cell_list, &cell_list_len,
-                            body, body_len) == 0 &&
+
+   if(status == SIXP_OUTPUT_STATUS_SUCCESS && s
+   ixp_pkt_get_cell_list(SIXP_PKT_TYPE_RESPONSE,
+                          (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
+                          &cell_list, &cell_list_len,
+                          body, body_len) == 0 &&
      (nbr = sixp_nbr_find(dest_addr)) != NULL) {
-    add_links_to_schedule(dest_addr, LINK_OPTION_TX,
-                          cell_list, cell_list_len);
-    remove_links_to_schedule(rel_cell, rel_cell_len);
-  }
+        LOG_INFO("sf-simple:  6P realocate Response call back with LinkList : ");
+        print_cell_list(cell_list, cell_list_len);
+        LOG_INFO("\n");
+        //add_links_to_schedule(peer_addr, LINK_OPTION_TX,&cell_list[1], cell_list_len-1);
+        read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
+        LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
+        node = find_child(peer_addr);
+        if(node){
+          child_list_set_child_offsets(node,cell.timeslot_offset,cell.channel_offset);
+        }
+        read_cell((const uint8_t *)cell_list, &cell);
+        LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
+        if(!slot_is_used(cell.timeslot_offset)){
+          //remove_links_to_schedule(&cell_list[0], cell_list_len-1);
+        }
 }
 
 
@@ -939,11 +945,6 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   sf_simple_cell_t test;
-  LOG_INFO("sf-simple:%d %d %d\n",cell_list[index-1].timeslot_offset,cell_list[index-1].channel_offset,index);
-  LOG_INFO("sf-simple:%d %d %d\n",(&cell_list[index-1])->timeslot_offset,(&cell_list[index-1])->channel_offset,index);
-  read_cell((const uint8_t *)&cell_list[index-1],&test);
-  LOG_INFO("sf-simple:%d %d %d\n",test.timeslot_offset,test.channel_offset,index);
-  //realocate_process_data.timeslot = timeslot;
   //realocate_process_data.channel = channel;
   return 0;
 }
