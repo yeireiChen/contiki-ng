@@ -139,6 +139,7 @@
 #endif /* WITH_ORCHESTRA */
 
 #define SF_CONF_SIX_TOP_SLOTFRAME_LENGTH ORCHESTRA_CONF_SIXTOP_PERIOD
+#define SIXTOP_CONF_MAX_TRANSACTIONS      3
 
 #if CONTIKI_TARGET_Z1
 /* Save some space to fit the limited RAM of the z1 */
