@@ -833,7 +833,7 @@ LOG_INFO("sf-simple: Prepare to realocate");
   sf_simple_cell_t rel_cell;
   rel_cell.timeslot_offset=timeslot;
   rel_cell.channel_offset=channel;
-  sf_simple_cell_t cell_list[SF_SIMPLE_MAX_LINKS];
+  sf_simple_cell_t cell_list[SF_SIMPLE_MAX_LINKS-1];
 
   /* Flag to prevent repeated slots */
   uint8_t slot_check = 1;
@@ -867,7 +867,7 @@ LOG_INFO("sf-simple: Prepare to realocate");
       if(slot_check == 1) {
         cell_list[index].timeslot_offset = random_slot;
         cell_list[index].channel_offset = slotframe_handle;
-
+  LOG_INFO("sf-simple:find %d %d\n",cell_list[index].timeslot_offset,cell_list[index].channel_offset);
         index++;
         slot_check++;
       } else if(slot_check > SF_SIX_TOP_SLOTFRAME_LENGTH) {
