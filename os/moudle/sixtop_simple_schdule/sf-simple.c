@@ -916,7 +916,7 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
      sixp_pkt_set_cand_cell_list(SIXP_PKT_TYPE_REQUEST,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
                             (const uint8_t *)cell_list,
-                            (index+1) * sizeof(sf_simple_cell_t), 0,
+                            index * sizeof(sf_simple_cell_t), 0,
                             req_storage,
                             sizeof(req_storage)) != 0) {
     LOG_INFO("sf-simple: Build error on add request\n");
@@ -937,7 +937,8 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   print_cell_list((const uint8_t *)&rel_cell,sizeof(sf_simple_cell_t));
   LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
-  LOG_INFO("\n");
+  LOG_INFO("sf-simple:%d %d %d\n",cell_list[index-1].timeslot_offset,cell_list[index-1].channel_offset,index);
+  
   //realocate_process_data.timeslot = timeslot;
   //realocate_process_data.channel = channel;
   return 0;
