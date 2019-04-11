@@ -489,8 +489,8 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                                res_storage, sizeof(res_storage));
 
     /* checking availability for requested slots */
-    for(i = 0, feasible_link = 0;
-        i < cell_list_len && feasible_link < num_cells;
+    for(i = 0, feasible_link = 1;
+        i < cell_list_len && feasible_link < num_cells+1;
         i += sizeof(cell)) {
       read_cell(&cell_list[i], &cell);
       if(tsch_schedule_get_link_by_timeslot(slotframe,
