@@ -1030,6 +1030,23 @@ sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_addr,u
 
 }
 
+void realocate_faild_hack(const linkaddr_t *peer_addr,uint16_t timeslot,uint16_t channel){
+struct tsch_slotframe *sf =
+    tsch_schedule_get_slotframe_by_handle(slotframe_handle);
+  struct tsch_link *l;
+  uint8_t link_options = LINK_OPTION_RX;
+  l=tsch_schedule_get_link_by_timeslot(sf,timeslot);
+  if(l){
+   link_options |= l->link_options;
+  }
+  child_node *node;
+    node = find_child(peer_addr);
+   child_list_set_child_offsets(node,timeslot,channel);
+     /* Add/update link */
+      tsch_schedule_add_link(sf, link_options, LINK_TYPE_NORMAL, &tsch_broadcast_address,
+          timeslot, channel);
+}
+
 typedef struct {
   sixp_pkt_cmd_t cmd;
   const linkaddr_t *peer_addr;
@@ -1082,6 +1099,7 @@ PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
         break;
       case SIXP_PKT_CMD_RELOCATE:
        LOG_INFO("Retry relocate %d %d\n",realocate_process_data.timeslot,realocate_process_data.channel);
+       realocate_faild_hack(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
        //sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
        break;
       default:
