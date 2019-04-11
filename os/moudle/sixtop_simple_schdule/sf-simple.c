@@ -881,12 +881,14 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
     }
   } while(index < SF_SIMPLE_MAX_LINKS-1);
   LOG_INFO("sf-simple: index %d\n",index);
-  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
+
+  
+
   /* Create a Sixtop Add Request. Return 0 if Success */
   if(index == 0 ) {
     return -1;
   }
-
+  print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
   memset(req_storage, 0, sizeof(req_storage));
   if(sixp_pkt_set_cell_options(SIXP_PKT_TYPE_REQUEST,
                                (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
