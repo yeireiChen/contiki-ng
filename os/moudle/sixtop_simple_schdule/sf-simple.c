@@ -938,9 +938,11 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   print_cell_list((const uint8_t *)&rel_cell,sizeof(sf_simple_cell_t));
   LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
-  
+  sf_simple_cell_t test;
   LOG_INFO("sf-simple:%d %d %d\n",cell_list[index-1].timeslot_offset,cell_list[index-1].channel_offset,index);
   LOG_INFO("sf-simple:%d %d %d\n",(&cell_list[index-1])->timeslot_offset,(&cell_list[index-1])->channel_offset,index);
+  read_cell(&cell_list[index-1],&test);
+  LOG_INFO("sf-simple:%d %d %d\n",test.timeslot_offset,test.channel_offset,index);
   //realocate_process_data.timeslot = timeslot;
   //realocate_process_data.channel = channel;
   return 0;
