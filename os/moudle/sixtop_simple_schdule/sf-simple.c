@@ -943,7 +943,7 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
   print_cell_list((const uint8_t *)&rel_cell,sizeof(sf_simple_cell_t));
   LOG_INFO("with LinkList :");
   print_cell_list((const uint8_t *)cell_list, index * sizeof(sf_simple_cell_t));
-  sf_simple_cell_t test;
+  
   //realocate_process_data.channel = channel;
   return 0;
 }
