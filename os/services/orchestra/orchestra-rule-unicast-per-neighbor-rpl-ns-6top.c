@@ -90,7 +90,12 @@ add_uc_link(const linkaddr_t *linkaddr)
     }
     else
     {
-      sf_simple_realocate_links((linkaddr_t *)linkaddr,timeslot,channel_offset);
+      if(sf_simple_realocate_links((linkaddr_t *)linkaddr,timeslot,channel_offset)<0){
+         child_list_set_child_offsets(node,timeslot,channel_offset);
+         /* Add/update link */
+        tsch_schedule_add_link(sf_unicast_sixtop, link_options, LINK_TYPE_NORMAL, &tsch_broadcast_address,
+          timeslot, channel_offset);
+      }
     }
     }
   }
