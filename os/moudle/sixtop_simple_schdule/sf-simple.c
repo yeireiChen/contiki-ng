@@ -279,7 +279,7 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
      LOG_INFO("sf-simple: 6P realocate Response callback with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
-        //add_links_to_schedule(peer_addr, LINK_OPTION_RX,&cell_list[1], cell_list_len-1);
+        add_links_to_schedule(&linkaddr_node_addr, LINK_OPTION_TX,(const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), sizeof(sf_simple_cell_t));
         read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
         LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
         node = find_child(&linkaddr_node_addr);
@@ -288,6 +288,10 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
         }
         read_cell((const uint8_t *)cell_list, &cell);
         LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
+        if(!slot_is_used(cell.timeslot_offset)){
+          remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
+        }
+        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d",node->timeslot_offset,node->channel_offset);
   }
   
 }
@@ -635,7 +639,7 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("sf-simple: Received a 6P realocate Response with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
-        //add_links_to_schedule(peer_addr, LINK_OPTION_RX,(const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), sizeof(sf_simple_cell_t));
+        add_links_to_schedule(peer_addr, LINK_OPTION_RX,(const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), sizeof(sf_simple_cell_t));
         read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
         LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
         node = find_child(peer_addr);
@@ -645,8 +649,9 @@ response_input(sixp_pkt_rc_t rc,
         read_cell((const uint8_t *)cell_list, &cell);
         LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
         if(!slot_is_used(cell.timeslot_offset)){
-          //remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
+          remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
         }
+        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d",node->timeslot_offset,node->channel_offset);
         break;
       case SIXP_PKT_CMD_COUNT:
       case SIXP_PKT_CMD_LIST:
