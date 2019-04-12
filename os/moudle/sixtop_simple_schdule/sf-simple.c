@@ -275,7 +275,8 @@ realocate_response_sent_callback(void *arg, uint16_t arg_len,
      sixp_pkt_get_cell_list(SIXP_PKT_TYPE_RESPONSE,
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_RC_SUCCESS,
                             &cell_list, &cell_list_len,
-                            body, body_len) == 0 ) {
+                            body, body_len) == 0 &&
+                            (nbr = sixp_nbr_find(dest_addr)) != NULL) {
      LOG_INFO("sf-simple: 6P realocate Response callback with LinkList : ");
         print_cell_list(cell_list, cell_list_len);
         LOG_INFO("\n");
