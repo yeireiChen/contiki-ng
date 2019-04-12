@@ -239,7 +239,7 @@ sixp_trans_transit_state(sixp_trans_t *trans, sixp_trans_state_t new_state)
        */
       if((nbr = sixp_nbr_find(&trans->peer_addr)) == NULL) {
         LOG_ERR("6top: cannot increment next_seqno\n");
-        if(trans->peer_addr){
+        if(trans->peer_addr != NULL){
         LOG_ERR_LLADDR(&trans->peer_addr);
         }
         else
