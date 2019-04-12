@@ -71,6 +71,7 @@ sixp_nbr_find(const linkaddr_t *addr)
 {
   assert(addr != NULL);
   if(addr == NULL) {
+    LOG_ERR("6P-nbr: sixp_nbr_find() fails because of NULL addr\n");
     return NULL;
   }
   return (sixp_nbr_t *)nbr_table_get_from_lladdr(sixp_nbrs, addr);
