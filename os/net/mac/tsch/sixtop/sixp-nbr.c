@@ -103,6 +103,8 @@ sixp_nbr_alloc(const linkaddr_t *addr)
   }
 
   linkaddr_copy(&nbr->addr, addr);
+  LOG_INFO("6P-nbr: sixp_nbr_alloc() add nbr\n");
+  LOG_INFO_LLADDR(&nbr->addr);
   nbr->next_seqno = SIXP_INITIAL_SEQUENCE_NUMBER;
 
   return nbr;
