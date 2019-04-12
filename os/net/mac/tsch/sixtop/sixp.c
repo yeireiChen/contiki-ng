@@ -144,6 +144,7 @@ sixp_input(const uint8_t *buf, uint16_t len, const linkaddr_t *src_addr)
 
   assert(buf != NULL && src_addr != NULL);
   if(buf == NULL || src_addr == NULL) {
+    LOG_ERR("6P: sixp_input() no buf %d or no src_addr %d \n",buf == NULL , src_addr == NULL);
     return;
   }
 

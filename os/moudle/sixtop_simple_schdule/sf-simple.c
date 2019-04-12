@@ -445,6 +445,7 @@ delete_req_input(const uint8_t *body, uint16_t body_len,
 static void
 realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *peer_addr)
 {
+  LOG_INFO("sf-simple: Get realocate request\n");
   uint8_t i;
   sf_simple_cell_t cell;
   struct tsch_slotframe *slotframe;
@@ -475,7 +476,7 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
                             (sixp_pkt_code_t)(uint8_t)SIXP_PKT_CMD_RELOCATE,
                             &cell_list, &cell_list_len,
                             body, body_len) != 0) {
-    LOG_INFO("sf-simple: Parse error on add request\n");
+    LOG_INFO("sf-simple: Parse error on realocate request\n");
     return;
   }
 
