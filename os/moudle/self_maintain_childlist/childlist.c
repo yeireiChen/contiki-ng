@@ -88,7 +88,8 @@ child_node *child_list_add_child(const linkaddr_t *address){
             LOG_INFO_(" ");
             LOG_INFO_LLADDR(&node->address);
             LOG_INFO_("\n");
-            linkaddr_copy(&node->address,address);         
+            linkaddr_copy(&node->address,address);
+            child_list_set_child_offsets(node,0xffff,0xffff);         
              LOG_INFO_("child add 1: ");
             LOG_INFO_LLADDR(address);
             LOG_INFO_(" ");
