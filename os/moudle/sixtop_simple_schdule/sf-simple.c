@@ -1168,6 +1168,8 @@ void remove_link_not_in_child_list(){
       tsch_schedule_remove_link(slotframe,l);
     }
   }
+  print_child_list();
+  tsch_schedule_print();
 }
 
 
