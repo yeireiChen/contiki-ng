@@ -169,12 +169,13 @@ init(uint16_t sf_handle)
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
   sf_set_slotframe_handle(sf_handle);
+  
   sixtop_add_sf(&sf_simple_driver);
   child_list_ini();
   /* Slotframe for unicast transmissions */
   sf_unicast_sixtop = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_SIXTOP_PERIOD);
   tx_timeslot = get_node_timeslot(&linkaddr_node_addr);
-  
+  sf_set_default_slot(tx_timeslot);
   child_node *node;
     node = child_list_add_child(&linkaddr_node_addr);
     if(node){

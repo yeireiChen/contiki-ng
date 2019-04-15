@@ -70,6 +70,7 @@ typedef struct {
 } sf_simple_cell_t;
 
 static uint16_t slotframe_handle = 0;
+static uint16_t self_default_slot = 0;
 static uint8_t res_storage[4 + SF_SIMPLE_MAX_LINKS * 4];
 static uint8_t req_storage[4 + SF_SIMPLE_MAX_LINKS * 4];
 
@@ -111,6 +112,11 @@ int sf_set_slotframe_handle(uint16_t handle){
   slotframe_handle = handle;
   return (int)slotframe_handle;
 }
+int sf_set_default_slot(uint16_t slot){
+  self_default_slot = slot;
+  return (int)self_default_slot;
+}
+
 
 /*
  * scheduling policy:
@@ -511,7 +517,8 @@ realocate_req_input(const uint8_t *body, uint16_t body_len, const linkaddr_t *pe
       LOG_INFO("cell:%d\n",cell.timeslot_offset);
       if(tsch_schedule_get_link_by_timeslot(slotframe,
                                             cell.timeslot_offset) == NULL 
-                                            && !slot_is_used(cell.timeslot_offset) 
+                                            && !slot_is_used(cell.timeslot_offset)
+                                            && cell.timeslot_offset != self_default_slot
                                             && cell.timeslot_offset<SF_CONF_SIX_TOP_SLOTFRAME_LENGTH) {
         res_cell_list[feasible_link].timeslot_offset = cell.timeslot_offset;
         res_cell_list[feasible_link].channel_offset = cell.channel_offset;
@@ -645,7 +652,7 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO("\n");
         node = find_child(peer_addr);
         if(node){
-        print_child_list();
+        
         add_links_to_schedule(peer_addr, LINK_OPTION_RX,(const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), sizeof(sf_simple_cell_t));
         read_cell((const uint8_t *)(cell_list+sizeof(sf_simple_cell_t)), &cell);
         LOG_INFO("sf-simple: realocate to slot_offset: %d ,channel_offset %d",cell.timeslot_offset,cell.channel_offset);
@@ -656,7 +663,7 @@ response_input(sixp_pkt_rc_t rc,
           remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
           LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
         }
-        
+        print_child_list();
         }
         break;
       case SIXP_PKT_CMD_COUNT:
@@ -870,7 +877,7 @@ LOG_INFO("sf-simple: Prepare to realocate\n");
     /* Randomly select a slot offset within SF_SIX_TOP_SLOTFRAME_LENGTH */
     random_slot = ((random_rand() & 0xFF)) % SF_SIX_TOP_SLOTFRAME_LENGTH;
 
-    if(tsch_schedule_get_link_by_timeslot(sf, random_slot) == NULL && !slot_is_used(random_slot)) {
+    if(tsch_schedule_get_link_by_timeslot(sf, random_slot) == NULL && !slot_is_used(random_slot) && random_slot != self_default_slot) {
 
       /* To prevent repeated slots */
       for(i = 0; i < index; i++) {

@@ -53,6 +53,7 @@ void sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_a
 
 /*An interface for outer to set slotframe handle*/
 int sf_set_slotframe_handle(uint16_t handle);
+int sf_set_default_slot(uint16_t slot);
 
 
 
