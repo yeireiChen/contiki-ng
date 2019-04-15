@@ -132,6 +132,16 @@ int child_list_set_child_offsets(child_node *node,uint16_t slot_offset,uint16_t 
     return 0;
 }
 
+int exclude_node_slot_is_used(child_node *exclude,uint16_t slot_offset){
+    child_node *node;
+    for(node=child_list_head();node!=NULL;node=child_list_next(node)){
+        if( exclude != node && node->slot_offset == slot_offset){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int exclude_lladdr_slot_is_used(const linkaddr_t *exclude,uint16_t slot_offset){
     child_node *node;
     for(node=child_list_head();node!=NULL;node=child_list_next(node)){
@@ -145,7 +155,7 @@ int exclude_lladdr_slot_is_used(const linkaddr_t *exclude,uint16_t slot_offset){
 child_node *find_dupilcate_used_slot(){
    child_node *node;
     for(node=child_list_head();node!=NULL;node=child_list_next(node)){
-       if(exclude_lladdr_slot_is_used(&node->address,node->slot_offset)){
+       if(exclude_node_slot_is_used(node,node->slot_offset)){
         return node;
        }
     }
