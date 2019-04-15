@@ -131,3 +131,13 @@ int child_list_set_child_offsets(child_node *node,uint16_t slot_offset,uint16_t 
     }
     return 0;
 }
+
+int exclude_node_slot_is_used(child_node *exclude,uint16_t slot_offset){
+    child_node *node;
+    for(node=child_list_head();node!=NULL;node=child_list_next(node)){
+        if(node != exclude &&node->slot_offset == slot_offset){
+            return 1;
+        }
+    }
+    return 0;
+}

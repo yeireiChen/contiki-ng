@@ -651,7 +651,7 @@ response_input(sixp_pkt_rc_t rc,
         child_list_set_child_offsets(node,cell.timeslot_offset,cell.channel_offset);
         read_cell((const uint8_t *)cell_list, &cell);
         LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
-        if(!slot_is_used(cell.timeslot_offset)){
+        if(!exclude_node_slot_is_used(node,cell.timeslot_offset)){
           remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
         }
         LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
