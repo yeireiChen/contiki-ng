@@ -1184,7 +1184,9 @@ PROCESS_THREAD(sf_link_maintain_and_realocate_retry, ev, data)
     //retry realocate node in child list with same slot offset
     child_node *node;
     node = find_dupilcate_used_slot();
-    sf_simple_realocate_links(&node->address,node->slot_offset,node->channel_offset);
+    if(node){
+      sf_simple_realocate_links(&node->address,node->slot_offset,node->channel_offset);
+    }
   }
   PROCESS_END();
 }
