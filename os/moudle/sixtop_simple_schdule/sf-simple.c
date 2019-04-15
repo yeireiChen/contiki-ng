@@ -1103,7 +1103,7 @@ PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
         break;
       case SIXP_PKT_CMD_RELOCATE:
        LOG_INFO("Retry relocate %d %d\n",realocate_process_data.timeslot,realocate_process_data.channel);
-       //realocate_faild_hack(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
+       realocate_faild_hack(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
        //sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
 
        // use other method to maintain realocate faild
