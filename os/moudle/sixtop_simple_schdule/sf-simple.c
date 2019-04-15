@@ -653,8 +653,9 @@ response_input(sixp_pkt_rc_t rc,
         LOG_INFO(" frome slot_offset: %d ,channel_offset %d\n",cell.timeslot_offset,cell.channel_offset);
         if(!exclude_node_slot_is_used(node,cell.timeslot_offset)){
           remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
+          LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
         }
-        LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
+        
         }
         break;
       case SIXP_PKT_CMD_COUNT:
