@@ -172,6 +172,7 @@ add_links_to_schedule(const linkaddr_t *peer_addr, uint8_t link_option,
                            cell.timeslot_offset, cell.channel_offset);
     break;
   }
+  tsch_schedule_print();
 }
 
 static void
@@ -200,7 +201,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
     tsch_schedule_remove_link_by_timeslot(slotframe,
                                           cell.timeslot_offset);
   }
-  
+  tsch_schedule_print();
 }
 
 static void
@@ -1103,7 +1104,9 @@ PROCESS_THREAD(sf_wait_for_retry_process, ev, data)
       case SIXP_PKT_CMD_RELOCATE:
        LOG_INFO("Retry relocate %d %d\n",realocate_process_data.timeslot,realocate_process_data.channel);
        //realocate_faild_hack(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
-       sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
+       //sf_simple_realocate_links(&peer_addr,realocate_process_data.timeslot,realocate_process_data.channel);
+
+       // use other method to maintain realocate faild
        break;
       default:
         /* unsupported request */
