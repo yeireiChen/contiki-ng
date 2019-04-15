@@ -251,6 +251,7 @@ delete_response_sent_callback(void *arg, uint16_t arg_len,
        if(node){
          child_list_remove_child(node);
        }
+       print_child_list();
     remove_links_to_schedule(cell_list, cell_list_len);
   }
 }

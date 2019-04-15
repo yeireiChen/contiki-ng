@@ -50,9 +50,16 @@ void print_child_list(){
     child_node *current_node;
     LOG_INFO_("\nchild list: ");
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
-        LOG_INFO_LLADDR(&current_node->address);
-        LOG_INFO_(" ");
+        LOG_PRINT_LLADDR(&current_node->address);
+        if(&current_node->slot_offset){
+            LOG_PRINT(",slot_offset: %d",&current_node->slot_offset);    
+        }
+        if(&current_node->channel_offset){
+            LOG_PRINT(",channel_offset: %d",&current_node->channel_offset);    
+        }
+        LOG_PRINT(" ");
     }
+    LOG_PRINT("\n");
 }
 /*------------------------------------------------------------------------*/
 child_node *find_child(const linkaddr_t *address){

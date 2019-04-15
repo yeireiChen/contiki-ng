@@ -14,6 +14,7 @@ child_node head;
 
 
 void child_list_ini();
+void print_child_list();
 child_node *find_child(const linkaddr_t *address);
 child_node *child_list_add_child(const linkaddr_t *address);
 int child_list_remove_child(child_node *node);
