@@ -52,10 +52,10 @@ void print_child_list(){
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
         LOG_PRINT_LLADDR(&current_node->address);
         if(&current_node->slot_offset){
-            printf(",slot_offset: %d",&current_node->slot_offset);    
+            printf(",slot_offset: %d",current_node->slot_offset);    
         }
         if(&current_node->channel_offset){
-            printf(",channel_offset: %d",&current_node->channel_offset);    
+            printf(",channel_offset: %d",current_node->channel_offset);    
         }
         printf(" ");
     }
