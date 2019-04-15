@@ -57,9 +57,9 @@ void print_child_list(){
         if(&current_node->channel_offset){
             printf(",channel_offset: %d",current_node->channel_offset);    
         }
-        printf(" ");
+        printf("\n");
     }
-    printf("\n");
+    
 }
 /*------------------------------------------------------------------------*/
 child_node *find_child(const linkaddr_t *address){
