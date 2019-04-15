@@ -78,22 +78,23 @@ add_uc_link(const linkaddr_t *linkaddr)
       /* This is also our timeslot, add necessary flags */
       link_options |= LINK_OPTION_TX;
     }
-    printf("Timeslot:%d\n",timeslot);
-    print_child_list();
     child_node *node;
     node = find_child(linkaddr);
-    child_list_set_child_offsets(node,timeslot,channel_offset);
+    
+    printf("Timeslot:%d USED:%d\n",timeslot,slot_is_used(timeslot));
+    print_child_list();
+    
     if(node){
       if(!slot_is_used(timeslot)){
-      
+      child_list_set_child_offsets(node,timeslot,channel_offset);
      /* Add/update link */
       tsch_schedule_add_link(sf_unicast_sixtop, link_options, LINK_TYPE_NORMAL, &tsch_broadcast_address,
           timeslot, channel_offset);
     }
     else
     {
+      child_list_set_child_offsets(node,timeslot,channel_offset);
       if(sf_simple_realocate_links((linkaddr_t *)linkaddr,timeslot,channel_offset)<0){
-         child_list_set_child_offsets(node,timeslot,channel_offset);
          /* Add/update link */
         tsch_schedule_add_link(sf_unicast_sixtop, link_options, LINK_TYPE_NORMAL, &tsch_broadcast_address,
           timeslot, channel_offset);

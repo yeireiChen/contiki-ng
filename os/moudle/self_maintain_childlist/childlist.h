@@ -3,8 +3,8 @@
 
 struct child_node_s{
     linkaddr_t address;
-    uint16_t slot_offset;
-    uint16_t channel_offset;
+    uint16_t slot_offset = 0xffff;
+    uint16_t channel_offset = 0xffff;
     struct child_node_s *next;
 };
 
