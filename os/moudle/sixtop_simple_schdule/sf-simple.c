@@ -1173,6 +1173,8 @@ void remove_link_not_in_child_list(){
 
 PROCESS_THREAD(sf_link_maintain_and_realocate_retry, ev, data)
 {
+  static struct etimer etaa;
+  PROCESS_BEGIN();
   etimer_set(&etaa, CLOCK_SECOND * SF_LINK_MAINTAIN_PERIOD);
   while(1) {
     PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
@@ -1184,6 +1186,7 @@ PROCESS_THREAD(sf_link_maintain_and_realocate_retry, ev, data)
     node = find_dupilcate_used_slot();
     sf_simple_realocate_links(node->address,node->slot_offset,node->channel_offset);
   }
+  PROCESS_END();
 }
 
 static void
