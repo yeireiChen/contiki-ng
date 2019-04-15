@@ -52,14 +52,14 @@ void print_child_list(){
     for(current_node = child_list_head();current_node!= NULL;current_node=child_list_next(current_node)){
         LOG_PRINT_LLADDR(&current_node->address);
         if(&current_node->slot_offset){
-            LOG_PRINT(",slot_offset: %d",&current_node->slot_offset);    
+            PRINTF(",slot_offset: %d",&current_node->slot_offset);    
         }
         if(&current_node->channel_offset){
-            LOG_PRINT(",channel_offset: %d",&current_node->channel_offset);    
+            PRINTF(",channel_offset: %d",&current_node->channel_offset);    
         }
-        LOG_PRINT(" ");
+        PRINTF(" ");
     }
-    LOG_PRINT("\n");
+    PRINTF("\n");
 }
 /*------------------------------------------------------------------------*/
 child_node *find_child(const linkaddr_t *address){
