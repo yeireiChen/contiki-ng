@@ -145,7 +145,7 @@ int exclude_lladdr_slot_is_used(const linkaddr_t *exclude,uint16_t slot_offset){
 child_node *find_dupilcate_used_slot(){
    child_node *node;
     for(node=child_list_head();node!=NULL;node=child_list_next(node)){
-       if(slot_is_used(node->slot_offset)){
+       if(exclude_lladdr_slot_is_used(&node->address,node->slot_offset)){
         return node;
        }
     }
