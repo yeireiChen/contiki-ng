@@ -62,7 +62,7 @@
 PROCESS(sf_wait_parent_switch_done_process, "sf wait parent switch done process");
 process_event_t sf_parent_switch_done;
 PROCESS(sf_wait_for_retry_process, "Wait for retry process");
-
+PROCESS(sf_link_maintain_and_realocate_retry, "Start maintain links");
 
 typedef struct {
   uint16_t timeslot_offset;
@@ -1155,12 +1155,42 @@ PROCESS_THREAD(sf_wait_parent_switch_done_process, ev, data)
   PROCESS_END();
 }
 
+void remove_link_not_in_child_list(){
+  struct tsch_slotframe *slotframe;
+  struct tsch_link *l;
+  slotframe = tsch_schedule_get_slotframe_by_handle(slotframe_handle);
+  int i;
+  for(i=0;i<SF_SIX_TOP_SLOTFRAME_LENGTH;i++){
+    l=tsch_schedule_get_link_by_timeslot(slotframe,i);
+    if(l && !slot_is_used(l->timeslot)){
+      LOG_PRINT("Remove link: Link Options %02x, type %u, timeslot %u, channel offset %u, address %u\n",
+      l->link_options, l->link_type, l->timeslot, l->channel_offset, l->addr.u8[7]);
+      tsch_schedule_remove_link(slotframe,l);
+    }
+  }
+}
+
+
+PROCESS_THREAD(sf_link_maintain_and_realocate_retry, ev, data)
+{
+  etimer_set(&etaa, CLOCK_SECOND * SF_LINK_MAINTAIN_PERIOD);
+  while(1) {
+    PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
+    etimer_reset(&etaa);
+    LOG_INFO("start maintain\n");
+    remove_link_not_in_child_list();
+    //retry realocate node in child list with same slot offset
+    child_node *node;
+    node = find_dupilcate_used_slot();
+    sf_simple_realocate_links(node->address,node->slot_offset,node->channel_offset);
+  }
+}
 
 static void
 init(void)
 {
   sf_parent_switch_done = process_alloc_event();
-  
+  process_start(&sf_link_maintain_and_realocate_retry,NULL);
 }
 const sixtop_sf_t sf_simple_driver = {
   SF_SIMPLE_SFID,

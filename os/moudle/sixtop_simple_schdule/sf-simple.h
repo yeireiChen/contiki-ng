@@ -55,7 +55,7 @@ void sf_simple_switching_parent_callback(linkaddr_t *old_addr, linkaddr_t *new_a
 int sf_set_slotframe_handle(uint16_t handle);
 int sf_set_default_slot(uint16_t slot);
 
-
+#define SF_LINK_MAINTAIN_PERIOD 60
 
 #ifdef SF_CONF_SIX_TOP_SLOTFRAME_LENGTH
 #define SF_SIX_TOP_SLOTFRAME_LENGTH SF_CONF_SIX_TOP_SLOTFRAME_LENGTH

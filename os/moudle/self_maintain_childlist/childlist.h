@@ -17,6 +17,7 @@ void child_list_ini();
 void print_child_list();
 child_node *find_child(const linkaddr_t *address);
 child_node *child_list_add_child(const linkaddr_t *address);
+child_node *find_dupilcate_used_slot();
 int child_list_remove_child(child_node *node);
 int slot_is_used(uint16_t slot_offset);
 int exclude_lladdr_slot_is_used(const linkaddr_t *exclude,uint16_t slot_offset);
