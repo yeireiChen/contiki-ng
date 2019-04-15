@@ -78,6 +78,7 @@ add_uc_link(const linkaddr_t *linkaddr)
       /* This is also our timeslot, add necessary flags */
       link_options |= LINK_OPTION_TX;
     }
+    printf("Timeslot:%d\n",timeslot);
     print_child_list();
     child_node *node;
     node = find_child(linkaddr);
