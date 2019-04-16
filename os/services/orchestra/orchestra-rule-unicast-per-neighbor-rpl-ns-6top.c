@@ -126,7 +126,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null) && linkaddr_cmp(&orchestra_parent_linkaddr, dest) 
      && packetbuf_attr(PACKETBUF_ATTR_INSIDE_PROTO) == UIP_PROTO_UDP ) {
-      printf("send by 6top_sb! %d\n",get_node_timeslot(&linkaddr_node_addr));
+     
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
@@ -140,6 +140,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
         return 0;
       }
     }
+    printf("send by 6top_sb! %d\n",timeslot);
     return 1;
   }
   return 0;
