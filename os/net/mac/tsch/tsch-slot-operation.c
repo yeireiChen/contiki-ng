@@ -927,7 +927,7 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
 /*---------------------------------------------------------------------------*/
 /* Protothread for slot operation, called from rtimer interrupt
  * and scheduled from tsch_schedule_slot_operation */
- uint8_t p_count = 0;
+// uint8_t p_count = 0;
  static
 PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 {
@@ -953,11 +953,12 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       int is_active_slot;
       TSCH_DEBUG_SLOT_START();
       tsch_in_slot_operation = 1;
+      /*
       printf("\nslot op count: %d\n",p_count);
       p_count++;
       if(p_count == 0xff){
         p_count = 0;
-      }
+      }*/
       /* Reset drift correction */
       drift_correction = 0;
       is_drift_correction_used = 0;

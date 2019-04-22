@@ -422,26 +422,21 @@ tsch_schedule_create_minimal(void)
    * We set the link type to advertising, which is not compliant with 6TiSCH minimal schedule
    * but is required according to 802.15.4e if also used for EB transmission.
    * Timeslot: 0, channel offset: 0. */
-  tsch_schedule_add_link(sf_min,
+   int i;
+   int LINK_NUM = 5;
+   int link_count=0;
+   for(i=0;i<TSCH_SCHEDULE_DEFAULT_LENGTH,i++){
+     if(i%2==0){
+      tsch_schedule_add_link(sf_min,
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
       LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-      0, 0);
-  /*tsch_schedule_add_link(sf_min,
-      (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
-      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-      2, 0);
-  tsch_schedule_add_link(sf_min,
-      (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
-      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-      4, 0);
-  tsch_schedule_add_link(sf_min,
-      (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
-      LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-      6, 0);
-  tsch_schedule_add_link(sf_min,
-        (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
-        LINK_TYPE_ADVERTISING, &tsch_broadcast_address,
-        8, 0);*/
+      i, 0);
+      link_count++;
+      }
+      if(link_count == LINK_NUM){
+        break;
+      }
+  }
 }
 /*---------------------------------------------------------------------------*/
 struct tsch_slotframe *

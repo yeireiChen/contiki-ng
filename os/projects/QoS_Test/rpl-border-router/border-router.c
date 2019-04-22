@@ -40,7 +40,7 @@
 /* Declare and auto-start this file's process */
 PROCESS(contiki_ng_br, "Contiki-NG Border Router");
 AUTOSTART_PROCESSES(&contiki_ng_br);
-uint8_t count = 0;
+//uint8_t count = 0;
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(contiki_ng_br, ev, data)
 {
@@ -52,7 +52,7 @@ PROCESS_THREAD(contiki_ng_br, ev, data)
 #endif /* BORDER_ROUTER_CONF_WEBSERVER */
 
   LOG_INFO("Contiki-NG Border Router started\n");
-  static struct etimer etaa;
+ /* static struct etimer etaa;
   
   etimer_set(&etaa, CLOCK_SECOND * 10);
   while(1) {
@@ -63,7 +63,7 @@ PROCESS_THREAD(contiki_ng_br, ev, data)
     if(count == 0xff){
       count = 0;
     }
-  }
+  }*/
 
   PROCESS_END();
 }
