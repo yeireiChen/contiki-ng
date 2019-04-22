@@ -933,11 +933,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 {
   TSCH_DEBUG_INTERRUPT();
   PT_BEGIN(&slot_operation_pt);
-  printf("\nslot op count: %d\n",p_count);
-  p_count++;
-  if(p_count == 0xff){
-    p_count = 0;
-  }
+
 
   /* Loop over all active slots */
   while(tsch_is_associated) {
@@ -957,6 +953,11 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       int is_active_slot;
       TSCH_DEBUG_SLOT_START();
       tsch_in_slot_operation = 1;
+      printf("\nslot op count: %d\n",p_count);
+      p_count++;
+      if(p_count == 0xff){
+        p_count = 0;
+      }
       /* Reset drift correction */
       drift_correction = 0;
       is_drift_correction_used = 0;
