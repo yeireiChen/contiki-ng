@@ -425,7 +425,7 @@ tsch_schedule_create_minimal(void)
    int i;
    int LINK_NUM = 5;
    int link_count=0;
-   for(i=0;i<TSCH_SCHEDULE_DEFAULT_LENGTH,i++){
+   for(i=0;i<TSCH_SCHEDULE_DEFAULT_LENGTH;i++){
      if(i%2==0){
       tsch_schedule_add_link(sf_min,
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
