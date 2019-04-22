@@ -927,11 +927,16 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
 /*---------------------------------------------------------------------------*/
 /* Protothread for slot operation, called from rtimer interrupt
  * and scheduled from tsch_schedule_slot_operation */
-static
+ uint8_t p_count = 0;
+ static
 PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 {
   TSCH_DEBUG_INTERRUPT();
   PT_BEGIN(&slot_operation_pt);
+  printf("slot op count: %d",p_count++);
+  if(p_count == 0xff){
+    p_count = 0;
+  }
 
   /* Loop over all active slots */
   while(tsch_is_associated) {

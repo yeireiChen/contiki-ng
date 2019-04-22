@@ -52,6 +52,17 @@ PROCESS_THREAD(contiki_ng_br, ev, data)
 #endif /* BORDER_ROUTER_CONF_WEBSERVER */
 
   LOG_INFO("Contiki-NG Border Router started\n");
+  static struct etimer etaa;
+  uint8_t count = 0;
+  etimer_set(&etaa, CLOCK_SECOND * 10);
+  while(1) {
+    PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
+    etimer_reset(&etaa);
+    printf("main process count: %d",count++);
+    if(count == 0xff){
+      count = 0;
+    }
+  }
 
   PROCESS_END();
 }
