@@ -58,7 +58,8 @@ PROCESS_THREAD(contiki_ng_br, ev, data)
   while(1) {
     PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
     etimer_reset(&etaa);
-    printf("main process count: %d",count++);
+    printf("\nmain process count: %d\n",count);
+    count++;
     if(count == 0xff){
       count = 0;
     }

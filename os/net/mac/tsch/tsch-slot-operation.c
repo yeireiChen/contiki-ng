@@ -933,7 +933,8 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 {
   TSCH_DEBUG_INTERRUPT();
   PT_BEGIN(&slot_operation_pt);
-  printf("slot op count: %d",p_count++);
+  printf("\nslot op count: %d\n",p_count);
+  p_count++;
   if(p_count == 0xff){
     p_count = 0;
   }
