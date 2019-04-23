@@ -530,9 +530,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           /* send packet already in radio tx buffer */
           mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
           tx_count++;
-          TSCH_LOG_ADD(tsch_log_message,
-            snprintf(log->message, sizeof(log->message),
-                "TX_COUNT: %d", tx_count);
+           printf("TX_COUNT: %d",tx_count);
           /* Save tx timestamp */
           tx_start_time = current_slot_start + tsch_timing[tsch_ts_tx_offset];
           /* calculate TX duration based on sent packet len */
