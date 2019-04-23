@@ -6,7 +6,7 @@ PLATFORMS_EXCLUDE = sky
 
 # Include the CoAP implementation
 MODULES += os/net/app-layer/coap
-MODULES += os/services/orchestra
+#MODULES += os/services/orchestra
 # Include CoAP resources
 MODULES_REL += ./resources
 

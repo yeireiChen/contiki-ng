@@ -7,7 +7,7 @@ PLATFORMS_EXCLUDE = nrf52dk
 
 # Include RPL BR module
 MODULES += os/services/rpl-border-router
-MODULES += os/services/orchestra
+#MODULES += os/services/orchestra
 MAKE_MAC = MAKE_MAC_TSCH
 
 # Include webserver module
