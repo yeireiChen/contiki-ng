@@ -140,7 +140,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
         return 0;
       }
     }
-    printf("send by 6top_sb! %d\n",timeslot);
+    printf("send by 6top_sb! %d\n",(int)timeslot);
     return 1;
   }
   return 0;
