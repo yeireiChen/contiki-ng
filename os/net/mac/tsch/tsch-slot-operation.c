@@ -172,7 +172,7 @@ static int burst_link_scheduled = 0;
 /* Counts the length of the current burst */
 int tsch_current_burst_count = 0;
 
-long global_tx_count=0;
+//long global_tx_count=0;
 
 /* Protothread for association */
 PT_THREAD(tsch_scan(struct pt *pt));
@@ -532,8 +532,8 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           /* send packet already in radio tx buffer */
           mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
           tx_count++;
-          global_tx_count++;
-           printf("TX_COUNT: %d %d\n",(int)tx_count,(int)global_tx_count);
+          /*global_tx_count++;
+           printf("TX_COUNT: %d %d\n",(int)tx_count,(int)global_tx_count);*/
           /* Save tx timestamp */
           tx_start_time = current_slot_start + tsch_timing[tsch_ts_tx_offset];
           /* calculate TX duration based on sent packet len */
