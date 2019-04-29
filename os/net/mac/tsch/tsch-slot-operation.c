@@ -533,7 +533,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
           tx_count++;
           global_tx_count++;
-           printf("TX_COUNT: %d %d\n",tx_count,global_tx_count);
+           printf("TX_COUNT: %d %d\n",(int)tx_count,(int)global_tx_count);
           /* Save tx timestamp */
           tx_start_time = current_slot_start + tsch_timing[tsch_ts_tx_offset];
           /* calculate TX duration based on sent packet len */
