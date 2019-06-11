@@ -82,7 +82,7 @@ add_uc_link(const linkaddr_t *linkaddr)
     node = find_child(linkaddr);
     
     printf("Timeslot:%d USED:%d\n",timeslot,slot_is_used(timeslot));
-    print_child_list();
+    //print_child_list();
     
     if(node){
       if(!slot_is_used(timeslot)){
@@ -140,7 +140,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
         return 0;
       }
     }
-    printf("send by 6top_sb! %d\n",(int)timeslot);
+    //printf("send by 6top_sb! %d\n",(int)timeslot);
     return 1;
   }
   return 0;
