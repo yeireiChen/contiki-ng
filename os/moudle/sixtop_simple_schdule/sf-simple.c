@@ -178,7 +178,7 @@ add_links_to_schedule(const linkaddr_t *peer_addr, uint8_t link_option,
                            cell.timeslot_offset, cell.channel_offset);
     break;
   }
-  tsch_schedule_print();
+  //tsch_schedule_print();
 }
 
 static void
@@ -207,7 +207,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
     tsch_schedule_remove_link_by_timeslot(slotframe,
                                           cell.timeslot_offset);
   }
-  tsch_schedule_print();
+  //tsch_schedule_print();
 }
 
 static void
