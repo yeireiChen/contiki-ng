@@ -1188,8 +1188,8 @@ PROCESS_THREAD(sf_link_maintain_and_realocate_retry, ev, data)
     if(node){
       sf_simple_realocate_links(&node->address,node->slot_offset,node->channel_offset);
     }
-    print_child_list();
-    tsch_schedule_print();
+    //print_child_list();
+    //tsch_schedule_print();
   }
   PROCESS_END();
 }
