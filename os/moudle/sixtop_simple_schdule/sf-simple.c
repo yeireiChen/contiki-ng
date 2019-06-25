@@ -178,7 +178,7 @@ add_links_to_schedule(const linkaddr_t *peer_addr, uint8_t link_option,
                            cell.timeslot_offset, cell.channel_offset);
     break;
   }
-  tsch_schedule_print();
+  //tsch_schedule_print();
 }
 
 static void
@@ -207,7 +207,7 @@ remove_links_to_schedule(const uint8_t *cell_list, uint16_t cell_list_len)
     tsch_schedule_remove_link_by_timeslot(slotframe,
                                           cell.timeslot_offset);
   }
-  tsch_schedule_print();
+  //tsch_schedule_print();
 }
 
 static void
@@ -258,7 +258,7 @@ delete_response_sent_callback(void *arg, uint16_t arg_len,
        if(node){
          child_list_remove_child(node);
        }
-       print_child_list();
+      // print_child_list();
     remove_links_to_schedule(cell_list, cell_list_len);
   }
 }
@@ -663,7 +663,7 @@ response_input(sixp_pkt_rc_t rc,
           remove_links_to_schedule((const uint8_t *)cell_list, sizeof(sf_simple_cell_t));
           LOG_INFO("sf-simple:node  slot_offset: %d ,channel_offset %d\n",node->slot_offset,node->channel_offset);
         }
-        print_child_list();
+        //print_child_list();
         }
         break;
       case SIXP_PKT_CMD_COUNT:
@@ -1188,8 +1188,8 @@ PROCESS_THREAD(sf_link_maintain_and_realocate_retry, ev, data)
     if(node){
       sf_simple_realocate_links(&node->address,node->slot_offset,node->channel_offset);
     }
-    print_child_list();
-    tsch_schedule_print();
+    //print_child_list();
+    //tsch_schedule_print();
   }
   PROCESS_END();
 }
