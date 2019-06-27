@@ -53,6 +53,7 @@
 #include "lib/random.h"
 #include "net/queuebuf.h"
 #include "net/mac/tsch/tsch.h"
+#include "coap-observe.h"
 #include <string.h>
 #include <stdio.h>
 
