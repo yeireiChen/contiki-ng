@@ -57,10 +57,7 @@
 #define LOG_MODULE "coap"
 #define LOG_LEVEL  LOG_LEVEL_COAP
 
-uint8_t packet_priority = 0;
-int priority_flag = 0;
-uint8_t packet_localqueue = 0;
-int localqueue_flag = 0;
+
 
 /*---------------------------------------------------------------------------*/
 /*- Variables ---------------------------------------------------------------*/
@@ -72,6 +69,8 @@ const char *coap_error_message = "";
 
 uint8_t packet_priority = 0;
 int priority_flag = 0;
+uint8_t packet_localqueue = 0;
+int localqueue_flag = 0;
 /*---------------------------------------------------------------------------*/
 /*- Local helper functions --------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -1141,13 +1140,13 @@ coap_set_payload(coap_message_t *coap_pkt, const void *payload, size_t length)
   if(localqueue_flag){
     uint8_t temp_tcflow = 0;
     LOG_DBG("setting uip s-tasa flag\n");
-    UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow | packet_priority;
+    UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow | packet_localqueue;
     temp_tcflow = UIP_IP_BUF->tcflow;
-    temp_tcflow = temp_tcflow << 4
-    LOG_DBG("local queue = %02x ,local queue = %02x\n",packet_priority, temp_tcflow >> 4);
+    temp_tcflow = temp_tcflow << 4;
+    LOG_DBG("local queue = %02x ,local queue = %02x\n",packet_localqueue, temp_tcflow >> 4);
   }
   priority_flag = 0;
-  lcoalqueue_flag = 0;
+  localqueue_flag = 0;
   return coap_pkt->payload_len;
 }
 /*---------------------------------------------------------------------------*/
