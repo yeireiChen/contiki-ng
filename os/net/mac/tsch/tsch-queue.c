@@ -81,6 +81,9 @@ LIST(neighbor_list);
 /* Testing for QoS swap function.*/
 int8_t data_tcflow;
 
+int save_timeslot = 0;
+int tsch_schedule_table = 1;
+
 /* Broadcast and EB virtual neighbors */
 struct tsch_neighbor *n_broadcast;
 struct tsch_neighbor *n_eb;
@@ -297,6 +300,14 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
     }
   }
   LOG_ERR("! add packet failed: %u %p %d %p %p\n", tsch_is_locked(), n, put_index, p, p ? p->qb : NULL);
+#if WITH_CENTRALIZED_TASA
+  if(!tsch_is_locked()) {
+    /* Flush queue */
+    tsch_queue_flush_nbr_queue(n);
+    /* Reset backoff exponent */
+    tsch_queue_backoff_reset(n);
+  }
+#endif
   return 0;
 }
 /*---------------------------------------------------------------------------*/
@@ -534,7 +545,33 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
           return NULL;
         }
 #endif
+
+#if WITH_CENTRALIZED_TASA
+        /* Get localqueue frome attribute */
+        uint8_t localqueue = (uint8_t)queuebuf_attr(n->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+        if (localqueue && coap_has_observers("res/bcollect")) {
+          if(tsch_schedule_table && link->timeslot > 10 ) {
+              
+            LOG_INFO("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
+            LOG_INFO("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
+
+            return n->tx_array[get_index];
+          } else {
+            LOG_INFO("slotframe not correct timeslot : %d.\n", link->timeslot);
+            return NULL;
+          }
+        }
+        LOG_INFO("Out Going to next node. slotframe : %d , localqueue : %s , has_observes : %s \n", 
+            link->slotframe_handle,
+            localqueue? "YES":"NO",
+            coap_has_observers("res/bcollect")? "YES":"NO");
+
         return n->tx_array[get_index];
+#else
+
+        return n->tx_array[get_index];
+
+#endif /* WITH_CENTRALIZED_TASA */
       }
     }
   }
@@ -622,6 +659,28 @@ tsch_queue_update_all_backoff_windows(const linkaddr_t *dest_addr)
       n = list_item_next(n);
     }
   }
+}
+/* if occur parent changed, will remove observing resource and set coap flag to 0.*/
+void
+tsch_queue_disable_coap_flag_control(uip_ipaddr_t * addr)
+{
+  if (addr != NULL){
+    tsch_schedule_table = 0;
+    LOG_INFO("Waitting New schedule table .... \n");
+  }
+}
+
+void
+tsch_update_schedule_table(void)
+{
+  tsch_schedule_table = 1;
+  LOG_INFO("Update TSCH Schedule Table !!!!!!!!!!!!!!!!!!\n");
+}
+
+int
+tsch_get_schedule_table_event(void)
+{
+  return tsch_schedule_table;
 }
 /*---------------------------------------------------------------------------*/
 /* Initialize TSCH queue module */

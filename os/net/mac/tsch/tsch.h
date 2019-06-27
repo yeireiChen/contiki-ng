@@ -114,6 +114,22 @@ frequency hopping for enhanced reliability.
 
 #endif /* BUILD_WITH_ORCHESTRA */
 
+#if BUILD_WITH_S_TASA
+
+#ifdef TSCH_S_TASA_ADDED_SLOT
+#define TSCH_S_TASA_ADDED_SLOT s_tasa_add_slots_of_slotframe
+#endif /* TSCH_S_TASA_ADDED_SLOT */
+
+#ifdef TSCH_S_TASA_DEL_SLOT
+#define TSCH_S_TASA_DEL_SLOT s_tasa_del_slots_of_slotframe
+#endif /* TSCH_S_TASA_DEL_SLOT */
+
+#ifdef TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE
+#define TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE s_tasa_wait_asn_update_schedule
+#endif /* TSCH_CALLBACK_TASA_PACKET_READY */
+
+#endif /* BUILD_WITH_S_TASA */
+
 /* Called by TSCH when joining a network */
 #ifdef TSCH_CALLBACK_JOINING_NETWORK
 void TSCH_CALLBACK_JOINING_NETWORK();
@@ -145,6 +161,18 @@ void TSCH_CALLBACK_NEW_TIME_SOURCE(const struct tsch_neighbor *old, const struct
 #ifdef TSCH_CALLBACK_PACKET_READY
 void TSCH_CALLBACK_PACKET_READY(void);
 #endif
+
+#ifdef TSCH_S_TASA_ADDED_SLOT
+int TSCH_S_TASA_ADDED_SLOT(uint16_t timeslot, uint16_t channel_offset, int slot_numbers, uint8_t linkoptions);
+#endif
+
+#ifdef TSCH_S_TASA_DEL_SLOT
+void TSCH_S_TASA_DEL_SLOT(void);
+#endif
+
+#ifdef TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE
+void TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE(uint32_t temp_asn);
+#endif /* TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE */
 
 /***** External Variables *****/
 

@@ -957,12 +957,30 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       int is_active_slot;
       TSCH_DEBUG_SLOT_START();
       tsch_in_slot_operation = 1;
-      /*
-      printf("\nslot op count: %d\n",p_count);
-      p_count++;
-      if(p_count == 0xff){
-        p_count = 0;
-      }*/
+
+#if WITH_CENTRALIZED_TASA
+      /* got the asn */
+      if((got_temp_asn = getTempASN())) {
+        uint32_t test;
+        if (got_temp_asn < tsch_current_asn.ls4b) {
+          test = 2265;
+        } else {
+          test = got_temp_asn - tsch_current_asn.ls4b;
+          if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
+        }
+        slotframe_offset = test / TSCH_SCHEDULE_DEFAULT_LENGTH;
+        printf("IN slot_operation got the asn : %lu \n", got_temp_asn);
+        printf("IN slot_operation next trigger asn : %lu \n", test);
+        printf("Got the slotframe offset : %d \n", slotframe_offset);
+      }
+
+      if (slotframe_offset > 0 && current_link->timeslot == 0) {
+        slotframe_offset = slotframe_offset - 1;
+        printf("Count Down the slotframe offset : %d \n", slotframe_offset);
+        if ((slotframe_offset == 0)) tsch_update_schedule_table();
+      }
+#endif /* WITH_CENTRALIZED_TASA */
+
       /* Reset drift correction */
       drift_correction = 0;
       is_drift_correction_used = 0;

@@ -57,6 +57,11 @@
 #define LOG_MODULE "coap"
 #define LOG_LEVEL  LOG_LEVEL_COAP
 
+uint8_t packet_priority = 0;
+int priority_flag = 0;
+uint8_t packet_localqueue = 0;
+int localqueue_flag = 0;
+
 /*---------------------------------------------------------------------------*/
 /*- Variables ---------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -1128,12 +1133,21 @@ coap_set_payload(coap_message_t *coap_pkt, const void *payload, size_t length)
 {
   coap_pkt->payload = (uint8_t *)payload;
   coap_pkt->payload_len = MIN(COAP_MAX_CHUNK_SIZE, length);
-  if(priority_flag==1){
+  if(priority_flag){
     LOG_DBG("setting uip tc flow\n");
-    UIP_IP_BUF->tcflow = packet_priority;
-    LOG_DBG("pp= %02x ,tcf= %02x\n",packet_priority, UIP_IP_BUF->tcflow);
+    UIP_IP_BUF->tcflow = packet_priority << 4 ;
+    LOG_DBG("pp= %02x ,tcf= %02x\n",packet_priority, UIP_IP_BUF->tcflow >> 4);
   } 
+  if(localqueue_flag){
+    uint8_t temp_tcflow = 0;
+    LOG_DBG("setting uip s-tasa flag\n");
+    UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow | packet_priority;
+    temp_tcflow = UIP_IP_BUF->tcflow;
+    temp_tcflow = temp_tcflow << 4
+    LOG_DBG("local queue = %02x ,local queue = %02x\n",packet_priority, temp_tcflow >> 4);
+  }
   priority_flag = 0;
+  lcoalqueue_flag = 0;
   return coap_pkt->payload_len;
 }
 /*---------------------------------------------------------------------------*/
@@ -1143,4 +1157,11 @@ coap_set_uip_traffic_class(uint8_t priority)
 {
   packet_priority = priority;
   priority_flag = 1;
+}
+
+void
+coap_set_uip_stasa(uint8_t localqueue)
+{
+  packet_localqueue = localqueue;
+  localqueue_flag = 1;
 }

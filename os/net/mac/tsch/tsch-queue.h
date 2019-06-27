@@ -184,6 +184,9 @@ void tsch_queue_init(void);
 void tsch_queue_resorting_ringbuf_priority(struct tsch_neighbor *n,struct tsch_packet *p);
 void pkt_priority_sorting(struct tsch_neighbor *n,struct tsch_packet *p);
 
+void tsch_queue_disable_coap_flag_control(uip_ipaddr_t * addr);
+void tsch_update_schedule_table(void);
+int tsch_get_schedule_table_event(void);
 
 #endif /* __TSCH_QUEUE_H__ */
 /** @} */

@@ -56,6 +56,8 @@
 /*---------------------------------------------------------------------------*/
 MEMB(observers_memb, coap_observer_t, COAP_MAX_OBSERVERS);
 LIST(observers_list);
+
+coap_observer_t *old_ob;
 /*---------------------------------------------------------------------------*/
 /*- Internal API ------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -244,7 +246,7 @@ coap_notify_observers_sub(coap_resource_t *resource, const char *subpath)
       /*TODO implement special transaction for CON, sharing the same buffer to allow for more observers */
 
       if((transaction = coap_new_transaction(coap_get_mid(), &obs->endpoint))) {
-        if(obs->obs_counter % COAP_OBSERVE_REFRESH_INTERVAL == 0) {
+        if(obs->obs_counter % COAP_OBSERVE_REFRESH_INTERVAL == 0 && 0) {
           LOG_DBG("           Force Confirmable for\n");
           notification->type = COAP_TYPE_CON;
         }
@@ -326,6 +328,7 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
           coap_set_header_observe(coap_res, (obs->obs_counter)++);
           /* mask out to keep the CoAP observe option length <= 3 bytes */
           obs->obs_counter &= 0xffffff;
+          old_ob = obs;
           /*
            * Following payload is for demonstration purposes only.
            * A subscription should return the same representation as a normal GET.
@@ -342,6 +345,8 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
         } else {
           coap_res->code = SERVICE_UNAVAILABLE_5_03;
           coap_set_payload(coap_res, "TooManyObservers", 16);
+          coap_remove_observer(old_ob);
+
         }
       } else if(coap_req->observe == 1) {
 

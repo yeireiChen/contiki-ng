@@ -240,6 +240,8 @@ enum {
   
   /* Add traffic class attribute*/
   PACKETBUF_ATTR_TCFLOW,
+  /* Add Centralized Flag */
+  PACKETBUF_ATTR_STASA,
   
   /* Scope 2 attributes: used between end-to-end nodes. */
   /* These must be last */

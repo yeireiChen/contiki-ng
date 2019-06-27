@@ -74,6 +74,9 @@
 #if BUILD_WITH_SHELL
 #include "serial-shell.h"
 #endif /* BUILD_WITH_SHELL */
+#if BUILD_WITH_S_TASA
+#include "s-tasa.h"
+#endif /* BUILD_WITH_S_TASA */
 
 /* JNI-defined functions, depends on the environment variable CLASSNAME */
 #ifndef CLASSNAME
