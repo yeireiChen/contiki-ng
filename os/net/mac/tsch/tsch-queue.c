@@ -556,7 +556,6 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
             LOG_INFO("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
             LOG_INFO("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
 
-            return n->tx_array[get_index];
           } else {
             LOG_INFO("slotframe not correct timeslot : %d.\n", link->timeslot);
             return NULL;
@@ -567,12 +566,8 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
             localqueue? "YES":"NO",
             coap_has_observers("res/bcollect")? "YES":"NO");
 
-        return n->tx_array[get_index];
-#else
-
-        return n->tx_array[get_index];
-
 #endif /* WITH_CENTRALIZED_TASA */
+        return n->tx_array[get_index];
       }
     }
   }
