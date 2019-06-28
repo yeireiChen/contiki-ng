@@ -73,7 +73,7 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
   } else {
     sf_cent = tsch_schedule_add_slotframe(slotframe_handle, TSCH_SCHEDULE_DEFAULT_LENGTH);
     LOG_INFO("Adding tasa schedule\n");
-    tsch_schedule_print();
+    //tsch_schedule_print();
   }
 
   if (linkoptions == 0x01) {
@@ -93,7 +93,7 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
     if(!tsch_is_locked()){
       for(i=0 ; i<slot_numbers ; i++){
         tsch_schedule_add_link(sf_cent,
-        linkoptions,
+        linkoptions | LINK_OPTION_SHARED,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         timeslot+i, channel_offset);
         LOG_INFO("TSCH add link %u to current slotframe was successful.\n", linkoptions);
@@ -105,7 +105,7 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
   }else {
     LOG_INFO("Can't find current slotframe.\n");
   }
-  tsch_schedule_print();
+  //tsch_schedule_print();
   return 0;
 
 }

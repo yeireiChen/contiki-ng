@@ -962,12 +962,12 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       TSCH_DEBUG_SLOT_START();
       tsch_in_slot_operation = 1;
 
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
       /* got the asn */
       if((got_temp_asn = getTempASN())) {
         uint32_t test;
         if (got_temp_asn < tsch_current_asn.ls4b) {
-          test = 2265;
+          test = 453;
         } else {
           test = got_temp_asn - tsch_current_asn.ls4b;
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;

@@ -77,6 +77,7 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
   
   if (accept == -1) {
     coap_get_payload(request, &request_content);
+    printf("requeset_content : %s \n", (char *)request_content);
     pch = strtok((char *)request_content, "[':] ");
     uint8_t slot_s=0;
     uint8_t channel_c=0;
@@ -106,5 +107,6 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
       index++;
       pch = strtok(NULL, "[':] ");
     }
+    tsch_schedule_print();
   }
 }

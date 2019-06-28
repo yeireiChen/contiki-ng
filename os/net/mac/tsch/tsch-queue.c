@@ -547,7 +547,7 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
         }
 #endif
 
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
         /* Get localqueue frome attribute */
         uint8_t localqueue = (uint8_t)queuebuf_attr(n->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
         if (localqueue && coap_has_observers("res/bcollect")) {
