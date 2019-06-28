@@ -945,9 +945,27 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
   /* Loop over all active slots */
   while(tsch_is_associated) {
+#if WITH_CENTRALIZED_TASA
+
+    int nullFlag = 0;
+    int16_t get_index = ringbufindex_peek_get(&current_neighbor->tx_ringbuf);
+    uint8_t localqueue = (uint8_t)queuebuf_attr(current_neighbor->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+
+    if(localqueue) {
+      if(current_link->timeslot < 10) {
+        nullflag = 1;
+      }
+    }
+
+    if(current_link == NULL || tsch_lock_requested || nullflag) { /* Skip slot operation if there is no link
+                                                          or if there is a pending request for getting the lock */
+#else
 
     if(current_link == NULL || tsch_lock_requested) { /* Skip slot operation if there is no link
                                                           or if there is a pending request for getting the lock */
+                                                        
+#endif /* WITH_CENTRALIZED_TASA */
+
       /* Issue a log whenever skipping a slot */
       TSCH_LOG_ADD(tsch_log_message,
                       snprintf(log->message, sizeof(log->message),
@@ -967,7 +985,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       if((got_temp_asn = getTempASN())) {
         uint32_t test;
         if (got_temp_asn < tsch_current_asn.ls4b) {
-          test = 453;
+          test = TSCH_SCHEDULE_DEFAULT_LENGTH * 3;
         } else {
           test = got_temp_asn - tsch_current_asn.ls4b;
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
