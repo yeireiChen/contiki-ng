@@ -53,6 +53,7 @@
 #include "net/mac/framer/framer-802154.h"
 #include "net/mac/tsch/tsch.h"
 #include "s-tasa.h"
+#include "coap-observe.h"
 #if CONTIKI_TARGET_COOJA
 #include "lib/simEnvChange.h"
 #include "sys/cooja_mt.h"
@@ -945,30 +946,9 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
   /* Loop over all active slots */
   while(tsch_is_associated) {
-#if WITH_CENTRALIZED_TASA
-
-    int nullFlag = 0;
-
-    if (current_link != NULL && !tsch_lock_requested) {
-      int16_t get_index = ringbufindex_peek_get(&current_neighbor->tx_ringbuf);
-      uint8_t localqueue = (uint8_t)queuebuf_attr(current_neighbor->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-      if(localqueue) {
-        if(current_link->timeslot < 10) {
-          nullFlag = 1;
-        }
-      }
-    }
-
-
-    if(current_link == NULL || tsch_lock_requested || nullFlag) { /* Skip slot operation if there is no link
-                                                          or if there is a pending request for getting the lock */
-#else
 
     if(current_link == NULL || tsch_lock_requested) { /* Skip slot operation if there is no link
                                                           or if there is a pending request for getting the lock */
-                                                        
-#endif /* WITH_CENTRALIZED_TASA */
-
       /* Issue a log whenever skipping a slot */
       TSCH_LOG_ADD(tsch_log_message,
                       snprintf(log->message, sizeof(log->message),
@@ -979,9 +959,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       );
 
     } else {
-      int is_active_slot;
-      TSCH_DEBUG_SLOT_START();
-      tsch_in_slot_operation = 1;
 
 #if WITH_CENTRALIZED_TASA && 0
       /* got the asn */
@@ -1005,6 +982,23 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         if ((slotframe_offset == 0)) tsch_update_schedule_table();
       }
 #endif /* WITH_CENTRALIZED_TASA */
+
+
+#if WITH_CENTRALIZED_TASA
+
+      int16_t get_index = ringbufindex_peek_get(&current_neighbor->tx_ringbuf);
+      uint8_t localqueue = (uint8_t)queuebuf_attr(current_neighbor->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+      if(localqueue && coap_has_observers("res/bcollect")) {
+        if(current_link->timeslot < 10) {
+          goto fail:
+        }
+      }
+      
+#endif /* WITH_CENTRALIZED_TASA */
+
+      int is_active_slot;
+      TSCH_DEBUG_SLOT_START();
+      tsch_in_slot_operation = 1;
 
       /* Reset drift correction */
       drift_correction = 0;
@@ -1052,8 +1046,11 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         burst_link_scheduled = 0;
       }
       TSCH_DEBUG_SLOT_END();
+      goto fail;
     }
 
+    fail:
+      
     /* End of slot operation, schedule next slot or resynchronize */
 
     /* Do we need to resynchronize? i.e., wait for EB again */
