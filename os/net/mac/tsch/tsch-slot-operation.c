@@ -983,22 +983,37 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       }
 #endif /* WITH_CENTRALIZED_TASA */
 
+#if WITH_CENTRALIZED_TASA
 
-#if WITH_CENTRALIZED_TASA && 0
-
+      struct tsch_neighbor *n = NULL;
       n = tsch_queue_get_nbr(&current_link->addr);
       if(!tsch_is_locked()) {
-        int is_shared_link = current_link != NULL && current_link->link_options & LINK_OPTION_SHARED;
-        if (n != NULL) {
-          int16_t get_index = ringbufindex_peek_get(&n->tx_ringbuf);
-          if(get_index != -1 && !(is_shared_link && !tsch_queue_backoff_expired(n))) {
-            uint8_t localqueue = (uint8_t)queuebuf_attr(n->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-            if(localqueue && coap_has_observers("res/bcollect")) {
-              if(current_link->timeslot < 10) {
-                goto fail;
-              }
+        if (n == n_broadcast) {
+          struct tsch_neighbor *curr_nbr = list_head(tsch_get_nbr_list_from_queue());
+          while(curr_nbr != NULL) {
+            if(!curr_nbr->is_broadcast && curr_nbr->tx_links_count == 0) {
+              int is_shared_link = current_link != NULL && current_link->link_options & LINK_OPTION_SHARED;
+              int16_t get_index = ringbufindex_peek_get(&curr_nbr->tx_ringbuf);
+              if(get_index != -1 &&
+                !(is_shared_link && !tsch_queue_backoff_expired(curr_nbr))) {
+                  uint8_t localqueue = (uint8_t)queuebuf_attr(curr_nbr->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+                  // printf("localqueue : %u , timeslot_offset : %u , has_observes : %s \n", 
+                  //         localqueue, 
+                  //         current_link->timeslot, 
+                  //         coap_has_observers("res/bcollect")? "YES":"NO");
+
+                  if(localqueue && coap_has_observers("res/bcollect")) {
+                    if(current_link->timeslot < 10) {
+                      //printf("Goto fail.\n");
+                      goto fail;
+                    }
+                  }
+                  break;
+                }
             }
+            curr_nbr = list_item_next(curr_nbr);
           }
+          //printf("Got correct time slot.\n");
         }
       }
       
@@ -1007,7 +1022,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       int is_active_slot;
       TSCH_DEBUG_SLOT_START();
       tsch_in_slot_operation = 1;
-
       /* Reset drift correction */
       drift_correction = 0;
       is_drift_correction_used = 0;
@@ -1055,8 +1069,9 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       }
       TSCH_DEBUG_SLOT_END();
     }
-
+#if WITH_CENTRALIZED_TASA
     fail:
+#endif
       
     /* End of slot operation, schedule next slot or resynchronize */
 

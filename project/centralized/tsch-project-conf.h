@@ -98,7 +98,7 @@
 
 #endif /* WITH_SECURITY */
 
-#define COAP_OBSERVE_REFRESH_INTERVAL 9999
+// #define COAP_OBSERVE_REFRESH_INTERVAL 20
 
 /*******************************************************/
 /*************** Enable S-TASA **********************/
@@ -111,7 +111,7 @@
 #if WITH_CENTRALIZED_TASA
 
 #undef SICSLOWPAN_CONF_FRAG
-#define SICSLOWPAN_CONF_FRAG 1
+#define SICSLOWPAN_CONF_FRAG 0
 
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 1 /* with 6TiSCH minimal schedule */
 #define TSCH_CONF_WITH_LINK_SELECTOR 0 /* centralized requires per-packet link selection, not need. */

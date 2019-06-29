@@ -678,6 +678,11 @@ tsch_get_schedule_table_event(void)
 {
   return tsch_schedule_table;
 }
+list_t
+tsch_get_nbr_list_from_queue(void)
+{
+  return neighbor_list;
+}
 /*---------------------------------------------------------------------------*/
 /* Initialize TSCH queue module */
 void

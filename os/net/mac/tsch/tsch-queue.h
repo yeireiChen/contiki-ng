@@ -188,5 +188,7 @@ void tsch_queue_disable_coap_flag_control(uip_ipaddr_t * addr);
 void tsch_update_schedule_table(void);
 int tsch_get_schedule_table_event(void);
 
+list_t tsch_get_nbr_list_from_queue(void);
+
 #endif /* __TSCH_QUEUE_H__ */
 /** @} */
