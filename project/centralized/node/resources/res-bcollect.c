@@ -154,7 +154,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
 
   memcpy(buffer, &message, sizeof(message));
 
-  //coap_set_uip_traffic_class(packet_priority);
+  coap_set_uip_traffic_class(packet_priority);
   coap_set_uip_stasa(local_queue);
   coap_set_payload(response, buffer, sizeof(message));
 

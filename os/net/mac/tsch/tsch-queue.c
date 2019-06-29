@@ -80,7 +80,7 @@ MEMB(neighbor_memb, struct tsch_neighbor, TSCH_QUEUE_MAX_NEIGHBOR_QUEUES);
 LIST(neighbor_list);
 
 /* Testing for QoS swap function.*/
-int8_t data_tcflow = 0;
+int8_t data_tcflow;
 
 int save_timeslot = 0;
 int tsch_schedule_table = 1;
@@ -280,7 +280,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 3] == 0xff )
             {
               /*Get tcflow frome attribute*/
-              //data_tcflow = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_TCFLOW); 
+              data_tcflow = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_TCFLOW); 
               LOG_DBG("Traffic classes In TSCH queue frome attr : %02x\n" ,data_tcflow);
             }
 

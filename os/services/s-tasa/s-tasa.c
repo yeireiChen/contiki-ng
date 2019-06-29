@@ -93,7 +93,7 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
     if(!tsch_is_locked()){
       for(i=0 ; i<slot_numbers ; i++){
         tsch_schedule_add_link(sf_cent,
-        linkoptions,
+        linkoptions | LINK_OPTION_SHARED,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         timeslot+i, channel_offset);
         LOG_INFO("TSCH add link %u to current slotframe was successful.\n", linkoptions);
@@ -121,7 +121,7 @@ s_tasa_del_slots_of_slotframe()
 
   if (sf_cent) {
     if(!tsch_is_locked()) {
-      printf("Remove the slotframe : %s \n",tsch_schedule_remove_slotframe(sf_cent)? "YES": "NO" );
+      LOG_INFO("Remove the slotframe : %s \n",tsch_schedule_remove_slotframe(sf_cent)? "YES": "NO" );
       sf_cent = NULL;
     } else {
       LOG_INFO("TSCH was locking.\n");

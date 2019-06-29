@@ -741,14 +741,12 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
 
   /* IPHC format of tc is ECN | DSCP , original is DSCP | ECN */
 
-  printf("UIP_IP_BUG tcflow = %x \n", UIP_IP_BUF->tcflow);
-  packetbuf_set_attr(PACKETBUF_ATTR_STASA,UIP_IP_BUF->tcflow);
-
-  // packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow >> 4);
-  // printf("Set packetbuf attr tcflow, tcflow=%02x\n",UIP_IP_BUF->tcflow >> 4);
-  // UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow << 4;
-  // packetbuf_set_attr(PACKETBUF_ATTR_STASA,UIP_IP_BUF->tcflow >> 4);
-  // printf("Set packetbuf attr stasa, localqueue=%02x\n",UIP_IP_BUF->tcflow >> 4);
+  
+  packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow >> 4);
+  LOG_DBG("Set packetbuf attr tcflow, tcflow=%02x\n",UIP_IP_BUF->tcflow >> 4);
+  UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow << 4;
+  packetbuf_set_attr(PACKETBUF_ATTR_STASA,UIP_IP_BUF->tcflow >> 4);
+  LOG_DBG("Set packetbuf attr stasa, localqueue=%02x\n",UIP_IP_BUF->tcflow >> 4);
   
   tmp = (UIP_IP_BUF->vtc << 4) | (UIP_IP_BUF->tcflow >> 4);
   tmp = ((tmp & 0x03) << 6) | (tmp >> 2);
