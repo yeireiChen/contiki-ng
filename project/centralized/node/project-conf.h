@@ -45,7 +45,7 @@
 
 /* QoS function optional*/
 #ifndef ENABLE_QOS
-#define ENABLE_QOS           1
+#define ENABLE_QOS           0
 #endif
 
 #include "../tsch-project-conf.h"

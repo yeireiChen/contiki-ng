@@ -943,7 +943,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
   TSCH_DEBUG_INTERRUPT();
   PT_BEGIN(&slot_operation_pt);
 
-
   /* Loop over all active slots */
   while(tsch_is_associated) {
 
@@ -982,7 +981,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         if ((slotframe_offset == 0)) tsch_update_schedule_table();
       }
 #endif /* WITH_CENTRALIZED_TASA */
-
+      
 #if WITH_CENTRALIZED_TASA
 
       struct tsch_neighbor *n = NULL;
@@ -995,16 +994,19 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
               int is_shared_link = current_link != NULL && current_link->link_options & LINK_OPTION_SHARED;
               int16_t get_index = ringbufindex_peek_get(&curr_nbr->tx_ringbuf);
               if(get_index != -1 &&
-                !(is_shared_link && !tsch_queue_backoff_expired(curr_nbr))) {
-                  uint8_t localqueue = (uint8_t)queuebuf_attr(curr_nbr->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-                  // printf("localqueue : %u , timeslot_offset : %u , has_observes : %s \n", 
-                  //         localqueue, 
-                  //         current_link->timeslot, 
-                  //         coap_has_observers("res/bcollect")? "YES":"NO");
+                !(is_shared_link && !tsch_queue_backoff_expired(curr_nbr))) { 
+                  int localqueue = queuebuf_attr(curr_nbr->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+
+                  printf("localqueue : %d , timeslot_offset : %u , has_observes : %s , ringbufindex : %d \n", 
+                          localqueue, 
+                          current_link->timeslot, 
+                          coap_has_observers("res/bcollect")? "YES":"NO",
+                          ringbufindex_elements(&curr_nbr->tx_ringbuf));
 
                   if(localqueue && coap_has_observers("res/bcollect")) {
                     if(current_link->timeslot < 10) {
-                      //printf("Goto fail.\n");
+                      printf("Goto fail.\n");
+                      burst_link_scheduled = 0;
                       goto fail;
                     }
                   }
