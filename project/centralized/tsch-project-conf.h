@@ -111,7 +111,7 @@
 #if WITH_CENTRALIZED_TASA
 
 #undef SICSLOWPAN_CONF_FRAG
-#define SICSLOWPAN_CONF_FRAG 0
+#define SICSLOWPAN_CONF_FRAG 1
 
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 1 /* with 6TiSCH minimal schedule */
 #define TSCH_CONF_WITH_LINK_SELECTOR 0 /* centralized requires per-packet link selection, not need. */

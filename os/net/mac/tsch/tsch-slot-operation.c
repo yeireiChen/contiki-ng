@@ -1005,6 +1005,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
                   if(localqueue && coap_has_observers("res/bcollect")) {
                     if(current_link->timeslot < 10) {
                       //printf("Goto fail.\n");
+                      burst_link_scheduled = 0;
                       goto fail;
                     }
                   }
