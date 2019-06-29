@@ -984,13 +984,21 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 #endif /* WITH_CENTRALIZED_TASA */
 
 
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
 
-      int16_t get_index = ringbufindex_peek_get(&current_neighbor->tx_ringbuf);
-      uint8_t localqueue = (uint8_t)queuebuf_attr(current_neighbor->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-      if(localqueue && coap_has_observers("res/bcollect")) {
-        if(current_link->timeslot < 10) {
-          goto fail:
+      n = tsch_queue_get_nbr(&current_link->addr);
+      if(!tsch_is_locked()) {
+        int is_shared_link = current_link != NULL && current_link->link_options & LINK_OPTION_SHARED;
+        if (n != NULL) {
+          int16_t get_index = ringbufindex_peek_get(&n->tx_ringbuf);
+          if(get_index != -1 && !(is_shared_link && !tsch_queue_backoff_expired(n))) {
+            uint8_t localqueue = (uint8_t)queuebuf_attr(n->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+            if(localqueue && coap_has_observers("res/bcollect")) {
+              if(current_link->timeslot < 10) {
+                goto fail;
+              }
+            }
+          }
         }
       }
       
@@ -1046,7 +1054,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         burst_link_scheduled = 0;
       }
       TSCH_DEBUG_SLOT_END();
-      goto fail;
     }
 
     fail:
