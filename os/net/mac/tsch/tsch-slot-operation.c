@@ -997,6 +997,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
               if(get_index != -1 &&
                 !(is_shared_link && !tsch_queue_backoff_expired(curr_nbr))) {
                   uint8_t localqueue = (uint8_t)queuebuf_attr(curr_nbr->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
+                  
                   // printf("localqueue : %u , timeslot_offset : %u , has_observes : %s \n", 
                   //         localqueue, 
                   //         current_link->timeslot, 
