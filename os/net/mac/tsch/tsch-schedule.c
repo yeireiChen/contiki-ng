@@ -423,10 +423,10 @@ tsch_schedule_create_minimal(void)
    * but is required according to 802.15.4e if also used for EB transmission.
    * Timeslot: 0, channel offset: 0. */
    int i;
-   int LINK_NUM = 5;
+   int LINK_NUM = 10;
    int link_count=0;
    for(i=0;i<TSCH_SCHEDULE_DEFAULT_LENGTH;i++){
-     if(i%2==0){
+     if(i%1==0){
       tsch_schedule_add_link(sf_min,
       (LINK_OPTION_RX | LINK_OPTION_TX | LINK_OPTION_SHARED | LINK_OPTION_TIME_KEEPING),
       LINK_TYPE_ADVERTISING, &tsch_broadcast_address,

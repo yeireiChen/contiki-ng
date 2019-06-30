@@ -948,7 +948,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
   /* Loop over all active slots */
   while(tsch_is_associated) {
 
-    uint8_t temp_timeslot_diff = 0;
+    //uint8_t temp_timeslot_diff = 0;
     if(current_link == NULL || tsch_lock_requested) { /* Skip slot operation if there is no link
                                                           or if there is a pending request for getting the lock */
       /* Issue a log whenever skipping a slot */
@@ -985,10 +985,10 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       }
 #endif /* WITH_CENTRALIZED_TASA */
 
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
 
       struct tsch_neighbor *n = NULL;
-      uint8_t temp_localqueue = 0;
+      uint8_t temp_ring_elements = 0;
       n = tsch_queue_get_nbr(&current_link->addr);
       if(!tsch_is_locked()) {
         if (n == n_broadcast) {
@@ -1000,7 +1000,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
               if(get_index != -1 &&
                 !(is_shared_link && !tsch_queue_backoff_expired(curr_nbr))) {
                   uint8_t localqueue = (uint8_t)queuebuf_attr(curr_nbr->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-                  temp_localqueue = ringbufindex_elements(&curr_nbr->tx_ringbuf);
+                  temp_ring_elements = ringbufindex_elements(&curr_nbr->tx_ringbuf);
                   printf("localqueue : %u , ringbug_elements : %d, timeslot_offset : %u , has_observes : %s \n", 
                           localqueue, 
                           ringbufindex_elements(&curr_nbr->tx_ringbuf),
@@ -1008,7 +1008,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
                           coap_has_observers("res/bcollect")? "YES":"NO");
 
                   if(localqueue && coap_has_observers("res/bcollect")) {
-                    if(current_link->timeslot < 10) {
+                    if(current_link->timeslot < 9) {
                       //printf("Goto fail.\n");
                       burst_link_scheduled = 0;
                       goto fail;
@@ -1019,7 +1019,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
             }
             curr_nbr = list_item_next(curr_nbr);
           }
-          if (temp_localqueue > 1 && current_link->timeslot > 9){
+          if (temp_ring_elements > 1 && current_link->timeslot > 9){
             uint16_t * slots_list;
             slots_list = getTimeslots();
             int i = 0;
@@ -1028,14 +1028,14 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
               //printf("slot list [%d] : %u , next : %u \n", i , *(slots_list + i), *(slots_list + (i + 1)));
               if (*(slots_list + i) == current_link->timeslot) {
                 temp_timeslot_diff = *(slots_list + (i + 1)) - current_link->timeslot;
-                printf("temp_localqueue : %u, slots_list : %u, timeslot_offset : %u, timeslot_diff : %u \n",
-                  temp_localqueue,
+                printf("temp_ring_elements : %u, slots_list : %u, timeslot_offset : %u, timeslot_diff : %u \n",
+                  temp_ring_elements,
                   *(slots_list + i),
                   current_link->timeslot,
                   temp_timeslot_diff);
-                if(temp_timeslot_diff > 150) {
-                  temp_timeslot_diff = 0;
-                }
+                // if(temp_timeslot_diff > 150) {
+                //   temp_timeslot_diff = 0;
+                // }
                 // if(temp_timeslot_diff < 150) {
                 //   burst_link_scheduled = 0;
                 //   goto fail;
@@ -1099,7 +1099,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       }
       TSCH_DEBUG_SLOT_END();
     }
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
     fail:
 #endif
       
@@ -1152,43 +1152,16 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
             tsch_current_burst_count = 0;
           }
         }
-        if (temp_timeslot_diff && current_link->timeslot > 10) {
-          /* Update ASN */
-          TSCH_ASN_INC(tsch_current_asn, temp_timeslot_diff);
-          /* Time to next wake up */
-          time_to_next_active_slot = temp_timeslot_diff * tsch_timing[tsch_ts_timeslot_length] + drift_correction;
-          printf(" 1156 time_to_next_active_slot : %u, timeslot_diff : %u, drift_correction : %u \n",
-              time_to_next_active_slot, 
-              temp_timeslot_diff, 
-              drift_correction);
-
-          time_to_next_active_slot += tsch_timesync_adaptive_compensate(time_to_next_active_slot);
-          printf(" 1162 time_to_next_active_slot : %u \n",time_to_next_active_slot);
-          drift_correction = 0;
-          is_drift_correction_used = 0;
-          /* Update current slot start */
-          prev_slot_start = current_slot_start;
-          //printf(" 1167 prev_slot_start : %u \n",prev_slot_start);
-          current_slot_start += time_to_next_active_slot;
-        } else {
-          /* Update ASN */
-          TSCH_ASN_INC(tsch_current_asn, timeslot_diff);
-          /* Time to next wake up */
-          time_to_next_active_slot = timeslot_diff * tsch_timing[tsch_ts_timeslot_length] + drift_correction;
-          // printf(" 1174 time_to_next_active_slot : %u, timeslot_diff : %u, drift_correction : %u \n",
-          //     time_to_next_active_slot, 
-          //     timeslot_diff, 
-          //     drift_correction);
-
-          time_to_next_active_slot += tsch_timesync_adaptive_compensate(time_to_next_active_slot);
-          //printf(" 1180 time_to_next_active_slot : %u \n",time_to_next_active_slot);
-          drift_correction = 0;
-          is_drift_correction_used = 0;
-          /* Update current slot start */
-          prev_slot_start = current_slot_start;
-          //printf(" 1185 prev_slot_start : %u \n",prev_slot_start);
-          current_slot_start += time_to_next_active_slot;
-        }
+        /* Update ASN */
+        TSCH_ASN_INC(tsch_current_asn, timeslot_diff);
+        /* Time to next wake up */
+        time_to_next_active_slot = timeslot_diff * tsch_timing[tsch_ts_timeslot_length] + drift_correction;
+        time_to_next_active_slot += tsch_timesync_adaptive_compensate(time_to_next_active_slot);
+        drift_correction = 0;
+        is_drift_correction_used = 0;
+        /* Update current slot start */
+        prev_slot_start = current_slot_start;
+        current_slot_start += time_to_next_active_slot;
       } while(!tsch_schedule_slot_operation(t, prev_slot_start, time_to_next_active_slot, "main"));
     }
 

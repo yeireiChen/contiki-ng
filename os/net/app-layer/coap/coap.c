@@ -46,6 +46,7 @@
 
 
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "sys/cc.h"
 
@@ -1132,18 +1133,19 @@ coap_set_payload(coap_message_t *coap_pkt, const void *payload, size_t length)
 {
   coap_pkt->payload = (uint8_t *)payload;
   coap_pkt->payload_len = MIN(COAP_MAX_CHUNK_SIZE, length);
-  if(priority_flag){
+  if(priority_flag && 0){
     LOG_DBG("setting uip tc flow\n");
     UIP_IP_BUF->tcflow = packet_priority << 4 ;
     LOG_DBG("pp= %02x ,tcf= %02x\n",packet_priority, UIP_IP_BUF->tcflow >> 4);
   } 
   if(localqueue_flag){
-    uint8_t temp_tcflow = 0;
+    //uint8_t temp_tcflow = 0;
     LOG_DBG("setting uip s-tasa flag\n");
-    UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow | packet_localqueue;
-    temp_tcflow = UIP_IP_BUF->tcflow;
-    temp_tcflow = temp_tcflow << 4;
-    LOG_DBG("local queue = %02x ,local queue = %02x\n",packet_localqueue, temp_tcflow >> 4);
+    UIP_IP_BUF->tcflow = packet_localqueue;
+    // UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow | packet_localqueue;
+    // temp_tcflow = UIP_IP_BUF->tcflow;
+    // temp_tcflow = temp_tcflow << 4;
+    printf("local queue = %02x ,local queue = %02x\n",packet_localqueue, UIP_IP_BUF->tcflow);
   }
   priority_flag = 0;
   localqueue_flag = 0;

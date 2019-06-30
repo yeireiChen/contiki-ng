@@ -54,6 +54,7 @@
 #include "net/queuebuf.h"
 #include "net/mac/tsch/tsch.h"
 #include "coap-observe.h"
+#include "s-tasa.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -80,7 +81,8 @@ MEMB(neighbor_memb, struct tsch_neighbor, TSCH_QUEUE_MAX_NEIGHBOR_QUEUES);
 LIST(neighbor_list);
 
 /* Testing for QoS swap function.*/
-int8_t data_tcflow;
+uint8_t data_tcflow;
+//uint8_t localqueue;
 
 int save_timeslot = 0;
 int tsch_schedule_table = 1;
@@ -279,6 +281,8 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 4] == 0xf0 &&
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 3] == 0xff )
             {
+              // localqueue = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_STASA); 
+              // printf("CoAP Packet In TSCH queue frome attr : %02x\n" ,localqueue);
               /*Get tcflow frome attribute*/
               data_tcflow = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_TCFLOW); 
               LOG_DBG("Traffic classes In TSCH queue frome attr : %02x\n" ,data_tcflow);
@@ -547,26 +551,51 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
         }
 #endif
 
-#if WITH_CENTRALIZED_TASA && 0
+#if WITH_CENTRALIZED_TASA
+
         /* Get localqueue frome attribute */
         uint8_t localqueue = (uint8_t)queuebuf_attr(n->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-        if (localqueue && coap_has_observers("res/bcollect")) {
-          if(tsch_schedule_table && link->timeslot > 10 ) {
-              
-            LOG_INFO("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
-            LOG_INFO("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
+        if (localqueue && 
+            coap_has_observers("res/bcollect") &&
+            queuebuf_datalen(n->tx_array[get_index]->qb) > 100) {
+          //if(tsch_schedule_table && link->timeslot > 10 ) {
+          int flag = 0;
+          if(link->timeslot > 9 ) {
+            
+            uint16_t * slots_list;
+            slots_list = getTimeslots();
+            int i = 0;
+
+            if (link->timeslot > 9 && save_timeslot != link->timeslot) {
+              for (i=0;i<20;i++) {
+                if (*(slots_list + i) == link->timeslot) {
+                  save_timeslot = link->timeslot;
+                  flag = 1;
+                } else if (*(slots_list + i) == 0) break;
+              }
+            }
+            printf("Flag  :  %d \n",flag);
+            if (flag != 1) return NULL;
+
+            printf("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
+            printf("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
 
           } else {
-            LOG_INFO("slotframe not correct timeslot : %d.\n", link->timeslot);
+            printf("slotframe not correct timeslot : %d.\n", link->timeslot);
             return NULL;
           }
+          if (flag && ringbufindex_elements(&n->tx_ringbuf) == 1) save_timeslot = 0;
+
         }
-        LOG_INFO("Out Going to next node. slotframe : %d , localqueue : %s , has_observes : %s \n", 
-            link->slotframe_handle,
-            localqueue? "YES":"NO",
-            coap_has_observers("res/bcollect")? "YES":"NO");
+        
+
+        // printf("Out Going to next node. slotframe : %d , localqueue : %s , has_observes : %s \n", 
+        //     link->slotframe_handle,
+        //     localqueue? "YES":"NO",
+        //     coap_has_observers("res/bcollect")? "YES":"NO");
 
 #endif /* WITH_CENTRALIZED_TASA */
+
         return n->tx_array[get_index];
       }
     }

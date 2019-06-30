@@ -76,18 +76,18 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
     //tsch_schedule_print();
   }
 
-  //if (linkoptions == 0x01) {
-  for (i=0; i<LENGTH; i++) {
-    if (slot_list[i] == 0) {
-      if (slot_list[i-1] == timeslot) break; // if retransmit packet, just break,
-      slot_list[i] = timeslot;
-      printf("add slot_list[ %d ] the value = %u\n",i,timeslot);
-      ++number_count;
-      break;
+  if (linkoptions == 0x01) {
+    for (i=0; i<LENGTH; i++) {
+      if (slot_list[i] == 0) {
+        if (slot_list[i-1] == timeslot) break; // if retransmit packet, just break,
+        slot_list[i] = timeslot;
+        printf("add slot_list[ %d ] the value = %u\n",i,timeslot);
+        ++number_count;
+        break;
+      }
     }
-  }
     // tx_slot = InsertTXslot(tx_slot, NULL, timeslot);
-  //}
+  }
 
   if(sf_cent != NULL && timeslot > 0x00){
     if(!tsch_is_locked()){
