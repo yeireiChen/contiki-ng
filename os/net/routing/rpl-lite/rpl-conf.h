@@ -387,6 +387,10 @@
 #define RPL_CALLBACK_NEW_DIO_INTERVAL tsch_rpl_callback_new_dio_interval
 #endif /* RPL_CALLBACK_NEW_DIO_INTERVAL */
 
+#ifndef RPL_CALLBACK_COAP_PARENT_CHANGED
+#define RPL_CALLBACK_COAP_PARENT_CHANGED tsch_rpl_callback_if_parent_changed
+#endif /* RPL_CALLBACK_COAP_PARENT_CHANGED */
+
 #endif /* MAC_CONF_WITH_TSCH */
 
 /** @} */

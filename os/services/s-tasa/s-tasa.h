@@ -49,6 +49,14 @@ void s_tasa_del_slots_of_slotframe(void);
 
 void s_tasa_wait_asn_update_schedule(uint32_t temp_asn);
 
+void s_tasa_cache_schedule_table(const uint8_t * getpayload_data);
+
+/* count down trigger to flush new schedule table */
+void flash_new_schedule_table(void);
+
+/* strtok read string write to schedule table. */
+void strtok_string_from_payload(const uint8_t * getpayload_data);
+
 uint32_t getTempASN(void);
 
 uint16_t * getTimeslots(void);

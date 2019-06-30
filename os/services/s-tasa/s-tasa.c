@@ -62,6 +62,10 @@ struct tsch_slotframe *sf_cent = NULL;
 uint16_t slot_list[LENGTH] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 uint32_t backup_temp_asn = 0;
 
+static uint8_t *temp_sch_table_1 = NULL;
+static uint8_t *temp_sch_table_2 = NULL;
+static uint8_t *temp_sch_table_3 = NULL;
+
 int 
 s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int slot_numbers, uint8_t linkoptions)
 {
@@ -131,6 +135,85 @@ s_tasa_del_slots_of_slotframe()
   }
   LOG_INFO("TSCH schedule removing\n");
   
+}
+
+void 
+s_tasa_cache_schedule_table(const uint8_t * getpayload_data)
+{
+  if (temp_sch_table_1 == NULL) {
+    temp_sch_table_1 = getpayload_data;
+    printf("temp_sch_table_1 : %s \n", (char *)temp_sch_table_1);
+
+  } else {
+    if (temp_sch_table_2 == NULL) {
+      temp_sch_table_2 = getpayload_data;
+      printf("temp_sch_table_2 : %s \n", (char *)temp_sch_table_2);
+
+    } else {
+      if (temp_sch_table_3 == NULL) {
+        temp_sch_table_3 = getpayload_data;
+        printf("temp_sch_table_3 : %s \n", (char *)temp_sch_table_3);
+      }
+    }
+  }
+}
+
+void 
+flash_new_schedule_table()
+{
+  s_tasa_del_slots_of_slotframe();
+  if (temp_sch_table_1 != NULL ) {
+    printf("temp_sch_table_1 : %s \n", (char *)temp_sch_table_1);
+    strtok_string_from_payload(temp_sch_table_1);
+    temp_sch_table_1 = NULL;
+  } else {
+    if (temp_sch_table_2 != NULL ) {
+      printf("temp_sch_table_2 : %s \n", (char *)temp_sch_table_2);
+      strtok_string_from_payload(temp_sch_table_2);
+      temp_sch_table_2 = NULL;
+    } else {
+      if (temp_sch_table_3 != NULL ) {
+        printf("temp_sch_table_3 : %s \n", (char *)temp_sch_table_3);
+        strtok_string_from_payload(temp_sch_table_3);
+        temp_sch_table_3 = NULL;
+      }
+    }
+  }
+  
+    
+}
+
+void
+strtok_string_from_payload(const uint8_t * getpayload_data)
+{
+  uint8_t slot_s=0;
+  uint8_t channel_c=0;
+  uint8_t link_l=0;
+  char *pch;
+  pch = strtok((char *)getpayload_data, "[':] ");
+  int index = 0;
+  while(pch != NULL) {
+    /* Slot Offset */
+    if(index % 3 == 0) {
+      printf("Slot offset : %s ,",pch);
+      slot_s = (uint8_t)atoi(pch);
+    }
+    /* Channel Offset */
+    if(index % 3 == 1) {
+      printf("Channel offset : %s ,",pch);
+      channel_c = (uint8_t)atoi(pch);
+    }
+    /* Link Options */
+    if(index % 3 == 2) {
+      printf("Link Options : %s .\n",pch);
+      if (strncmp(pch, "TX", 2) == 0) {link_l = 0x01;}
+      else {link_l = 0x02;}
+      printf("Send Out Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
+    }
+    s_tasa_add_slots_of_slotframe(slot_s, channel_c, 1, link_l);
+    index++;
+    pch = strtok(NULL, "[':] ");
+  }
 }
 
 uint16_t *

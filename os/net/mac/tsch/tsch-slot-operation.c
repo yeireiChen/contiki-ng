@@ -962,7 +962,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
     } else {
 
-#if WITH_CENTRALIZED_TASA && 0
+#if WITH_CENTRALIZED_TASA
       /* got the asn */
       if((got_temp_asn = getTempASN())) {
         uint32_t test;
@@ -973,9 +973,9 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
         }
         slotframe_offset = test / TSCH_SCHEDULE_DEFAULT_LENGTH;
-        printf("IN slot_operation got the asn : %lu \n", got_temp_asn);
-        printf("IN slot_operation next trigger asn : %lu \n", test);
-        printf("Got the slotframe offset : %d \n", slotframe_offset);
+        // printf("IN slot_operation got the asn : %lu \n", got_temp_asn);
+        // printf("IN slot_operation next trigger asn : %lu \n", test);
+        // printf("Got the slotframe offset : %d \n", slotframe_offset);
       }
 
       if (slotframe_offset > 0 && current_link->timeslot == 0) {

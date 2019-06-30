@@ -310,7 +310,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
     /* Flush queue */
     tsch_queue_flush_nbr_queue(n);
     /* Reset backoff exponent */
-    tsch_queue_backoff_reset(n);
+    //tsch_queue_backoff_reset(n);
   }
 #endif
   return 0;
@@ -558,37 +558,42 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
         if (localqueue && 
             coap_has_observers("res/bcollect") &&
             queuebuf_datalen(n->tx_array[get_index]->qb) > 100) {
-          //if(tsch_schedule_table && link->timeslot > 10 ) {
-          int flag = 0;
-          if(link->timeslot > 9 ) {
-            
-            uint16_t * slots_list;
-            slots_list = getTimeslots();
-            int i = 0;
+              if (tsch_schedule_table) { // correct new schedule table.
+                int flag = 0;
+                if(link->timeslot > 9 ) {
+                  
+                  uint16_t * slots_list;
+                  slots_list = getTimeslots();
+                  int i = 0;
 
-            if (link->timeslot > 9 && save_timeslot != link->timeslot) {
-              for (i=0;i<20;i++) {
-                if (*(slots_list + i) == link->timeslot) {
-                  save_timeslot = link->timeslot;
-                  flag = 1;
-                } else if (*(slots_list + i) == 0) break;
+                  if (link->timeslot > 9 && save_timeslot != link->timeslot) {
+                    for (i=0;i<20;i++) {
+                      if (*(slots_list + i) == link->timeslot) {
+                        save_timeslot = link->timeslot;
+                        flag = 1;
+                      } else if (*(slots_list + i) == 0) break;
+                    }
+                  }
+                  printf("Flag  :  %d \n",flag);
+                  if (flag != 1) return NULL;
+
+                  printf("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
+                  printf("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
+
+                } else {
+                  printf("slotframe not correct timeslot : %d.\n", link->timeslot);
+                  return NULL;
+                }
+                if (flag && ringbufindex_elements(&n->tx_ringbuf) == 1) save_timeslot = 0;
+              } else {
+                printf("slotframe not correct timeslot : %d.\n", link->timeslot);
+                if (ringbufindex_elements(&n->tx_ringbuf) > 16) {
+                  // if more queue, to flush it.
+                  tsch_queue_flush_nbr_queue(n);
+                }
+                return NULL;
               }
-            }
-            printf("Flag  :  %d \n",flag);
-            if (flag != 1) return NULL;
-
-            printf("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
-            printf("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
-
-          } else {
-            printf("slotframe not correct timeslot : %d.\n", link->timeslot);
-            return NULL;
-          }
-          if (flag && ringbufindex_elements(&n->tx_ringbuf) == 1) save_timeslot = 0;
-
         }
-        
-
         // printf("Out Going to next node. slotframe : %d , localqueue : %s , has_observes : %s \n", 
         //     link->slotframe_handle,
         //     localqueue? "YES":"NO",

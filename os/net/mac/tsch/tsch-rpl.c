@@ -136,5 +136,13 @@ tsch_rpl_callback_parent_switch(rpl_parent_t *old, rpl_parent_t *new)
         rpl_parent_get_ipaddr(new)));
   }
 }
+/* if occur parent changed, will remove observing resource and set coap flag to 0.*/
+void
+tsch_rpl_callback_if_parent_changed(uip_ipaddr_t * addr)
+{
+  tsch_queue_disable_coap_flag_control(addr);
+}
+
+
 #endif /* UIP_CONF_IPV6_RPL */
 /** @} */

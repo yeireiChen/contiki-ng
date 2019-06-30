@@ -58,6 +58,10 @@
 void RPL_CALLBACK_PARENT_SWITCH(rpl_nbr_t *old, rpl_nbr_t *new);
 #endif /* RPL_CALLBACK_PARENT_SWITCH */
 
+#ifdef RPL_CALLBACK_COAP_PARENT_CHANGED
+void RPL_CALLBACK_COAP_PARENT_CHANGED(uip_ipaddr_t * addr);
+#endif /* RPL_CALLBACK_COAP_PARENT_CHANGED */
+
 static rpl_nbr_t * best_parent(int fresh_only);
 
 /*---------------------------------------------------------------------------*/
@@ -302,6 +306,10 @@ rpl_neighbor_set_preferred_parent(rpl_nbr_t *nbr)
 #ifdef RPL_CALLBACK_PARENT_SWITCH
     RPL_CALLBACK_PARENT_SWITCH(curr_instance.dag.preferred_parent, nbr);
 #endif /* RPL_CALLBACK_PARENT_SWITCH */
+
+#ifdef RPL_CALLBACK_COAP_PARENT_CHANGED
+    RPL_CALLBACK_COAP_PARENT_CHANGED(rpl_neighbor_get_ipaddr(nbr));
+#endif /* RPL_CALLBACK_COAP_PARENT_CHANGED */
 
     /* Always keep the preferred parent locked, so it remains in the
      * neighbor table. */

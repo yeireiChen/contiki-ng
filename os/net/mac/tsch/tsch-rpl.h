@@ -80,5 +80,8 @@ void tsch_rpl_callback_new_dio_interval(clock_time_t dio_interval);
  */
 void tsch_rpl_callback_parent_switch(rpl_parent_t *old, rpl_parent_t *new);
 
+/* if occur parent changed, will remove observing resource and set coap flag to 0.*/
+void tsch_rpl_callback_if_parent_changed(uip_ipaddr_t * addr);
+
 #endif /* __TSCH_RPL_H__ */
 /** @} */
