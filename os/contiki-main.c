@@ -51,6 +51,7 @@
 #include "net/app-layer/coap/coap-engine.h"
 #include "services/rpl-border-router/rpl-border-router.h"
 #include "services/orchestra/orchestra.h"
+#include "services/s-tasa/s-tasa.h"
 #include "services/shell/serial-shell.h"
 #include "services/simple-energest/simple-energest.h"
 
@@ -131,6 +132,11 @@ main(void)
   orchestra_init();
   LOG_DBG("With Orchestra\n");
 #endif /* BUILD_WITH_ORCHESTRA */
+
+#if BUILD_WITH_S_TASA
+  s_tasa_init();
+  LOG_DBG("With S-TASA\n");
+#endif /* BUILD_WITH_S_TASA */
 
 #if BUILD_WITH_SHELL
   serial_shell_init();

@@ -36,6 +36,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "lib/memb.h"
+#include "lib/list.h"
 #include "contiki.h"
 #include "s-tasa.h"
 #include "net/packetbuf.h"
@@ -62,9 +64,9 @@ struct tsch_slotframe *sf_cent = NULL;
 uint16_t slot_list[LENGTH] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 uint32_t backup_temp_asn = 0;
 
-static uint8_t *temp_sch_table_1 = NULL;
-static uint8_t *temp_sch_table_2 = NULL;
-static uint8_t *temp_sch_table_3 = NULL;
+static int ID = 0;
+MEMB(temp_sche_table_memb,tsch_new_table, 48);
+//LIST(temp_sche_table_list);
 
 int 
 s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int slot_numbers, uint8_t linkoptions)
@@ -138,53 +140,58 @@ s_tasa_del_slots_of_slotframe()
 }
 
 void 
-s_tasa_cache_schedule_table(const uint8_t * getpayload_data)
+s_tasa_cache_schedule_table(uint8_t * getpayload_data)
 {
-  if (temp_sch_table_1 == NULL) {
-    temp_sch_table_1 = getpayload_data;
-    printf("temp_sch_table_1 : %s \n", (char *)temp_sch_table_1);
-
-  } else {
-    if (temp_sch_table_2 == NULL) {
-      temp_sch_table_2 = getpayload_data;
-      printf("temp_sch_table_2 : %s \n", (char *)temp_sch_table_2);
-
-    } else {
-      if (temp_sch_table_3 == NULL) {
-        temp_sch_table_3 = getpayload_data;
-        printf("temp_sch_table_3 : %s \n", (char *)temp_sch_table_3);
-      }
+  ID = ID + 1;
+  tsch_new_table *table;
+  table = table_list_add_child(ID);
+  if (table) {
+    if(sch_table_list_set_query(table, getpayload_data)) {
+      printf("temp_sch_table data : %s \n", (char *)find_table(ID)->sche_payload);
+      printf("source_sch_table payload data : %s \n", (char *)getpayload_data);
     }
   }
+  
+  // struct tsch_new_schedule *sche = NULL;
+  // sche = memb_alloc(&temp_sche_table_memb);
+
+  // if (sche) {
+  //   //memcpy(sche->temp_sch_table, &getpayload_data, sizeof(getpayload_data));
+  //   sche->temp_sch_table = getpayload_data;
+  //   // int index = 0;
+  //   // for (index = 0; index < 48; index++) {
+  //   //   printf("temp_sch_table data : %u \n",sche->temp_sch_table[index]);
+  //   // }
+  //   printf("temp_sch_table data : %s , getpayload_data data : %s \n",(char *)sche->temp_sch_table, (char *)getpayload_data);
+  //   printf("temp_sch_table address : %d , getpayload_data addr : %d \n",sche->temp_sch_table, getpayload_data);
+
+  //   list_add(temp_sche_table_list, sche);
+  // }
 }
 
 void 
 flash_new_schedule_table()
 {
-  s_tasa_del_slots_of_slotframe();
-  if (temp_sch_table_1 != NULL ) {
-    printf("temp_sch_table_1 : %s \n", (char *)temp_sch_table_1);
-    strtok_string_from_payload(temp_sch_table_1);
-    temp_sch_table_1 = NULL;
-  } else {
-    if (temp_sch_table_2 != NULL ) {
-      printf("temp_sch_table_2 : %s \n", (char *)temp_sch_table_2);
-      strtok_string_from_payload(temp_sch_table_2);
-      temp_sch_table_2 = NULL;
-    } else {
-      if (temp_sch_table_3 != NULL ) {
-        printf("temp_sch_table_3 : %s \n", (char *)temp_sch_table_3);
-        strtok_string_from_payload(temp_sch_table_3);
-        temp_sch_table_3 = NULL;
-      }
-    }
+  tsch_new_table *table;
+  table = find_table(ID);
+  while (table != NULL) {
+    printf("flush_temp_sch_table data : %s \n", (char *)table->sche_payload);
+    table_list_remove(table);
+    ID = ID - 1;
+    table = find_table(ID);
   }
-  
-    
+  // struct tsch_new_schedule *sche = list_head(temp_sche_table_list);
+
+  // while(sche != NULL) {
+  //   printf("temp_sch_table data : %s \n",(char *)sche->temp_sch_table);
+  //   printf("temp_sch_table address : %d \n",sche->temp_sch_table);
+
+  //   sche = list_item_next(sche);
+  // }
 }
 
 void
-strtok_string_from_payload(const uint8_t * getpayload_data)
+strtok_string_from_payload(uint8_t * getpayload_data)
 {
   uint8_t slot_s=0;
   uint8_t channel_c=0;
@@ -197,6 +204,7 @@ strtok_string_from_payload(const uint8_t * getpayload_data)
     if(index % 3 == 0) {
       printf("Slot offset : %s ,",pch);
       slot_s = (uint8_t)atoi(pch);
+      if (slot_s > 0x96) slot_s = slot_s - 0xc8;
     }
     /* Channel Offset */
     if(index % 3 == 1) {
@@ -210,10 +218,11 @@ strtok_string_from_payload(const uint8_t * getpayload_data)
       else {link_l = 0x02;}
       printf("Send Out Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
     }
-    s_tasa_add_slots_of_slotframe(slot_s, channel_c, 1, link_l);
+    //s_tasa_add_slots_of_slotframe(slot_s, channel_c, 1, link_l);
     index++;
     pch = strtok(NULL, "[':] ");
   }
+  //getpayload_data = NULL;
 }
 
 uint16_t *
@@ -242,4 +251,89 @@ getTempASN(void)
   uint32_t temp_asn = backup_temp_asn;
   backup_temp_asn = 0;
   return temp_asn;
+}
+
+tsch_new_table *sch_table_list_head() {
+  return head.next;
+}
+
+tsch_new_table *sch_table_list_next(tsch_new_table *table) {
+  return table->next;
+}
+
+void sch_table_list_push(tsch_new_table *table) {
+  tsch_new_table* current_head = head.next;
+  head.next = table;
+  table->next = current_head;
+}
+
+void sch_table_list_remove(tsch_new_table * table) {
+  tsch_new_table* current_table;
+  tsch_new_table* privious_table = &head;
+
+  for (current_table = sch_table_list_head(); 
+        current_table != NULL;
+        current_table = sch_table_list_next(current_table) ) {
+
+          if(current_table == table) {
+            privious_table->next = current_table->next;
+            break;
+          }
+          privious_table = current_table;
+        }
+}
+
+tsch_new_table *find_table(int ID){
+  tsch_new_table *table;
+  for(table = sch_table_list_head();
+      table != NULL;
+      table = sch_table_list_next(table)) {
+        if(ID == table->ID) {
+          return table;
+        }
+      }
+  return NULL;
+}
+
+tsch_new_table *table_list_add_child(int ID) {
+  tsch_new_table *table;
+  table = find_table(ID);
+  if (table && table_list_remove(table)) {
+    table = NULL;
+  }
+
+  if(table == NULL) {
+    table = memb_alloc(&temp_sche_table_memb);
+    printf("Allocate new memb \n");
+
+    if(table) {
+      table->ID = ID;
+      //strcpy((int *)table->ID, (const int *)ID);
+      // linkaddr_copy(&table->address, address);
+      sch_table_list_push(table);
+      return table;
+    }
+  }
+  return NULL;
+}
+
+int table_list_remove(tsch_new_table* table){
+  sch_table_list_remove(table);
+  return memb_free(&temp_sche_table_memb, table) == 0? 1:0;
+}
+
+int sch_table_list_set_query(tsch_new_table *table, uint8_t *payload_data){
+  if (table) {
+    table->sche_payload = payload_data;
+    return 1;
+  }
+  return 0;
+}
+
+int
+s_tasa_init()
+{
+  memb_init(&temp_sche_table_memb);
+  head.next = NULL;
+  return 1;
 }

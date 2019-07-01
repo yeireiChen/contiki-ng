@@ -42,7 +42,6 @@ static void
 res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
 
-
   const char *asn_c = NULL;
   const char *option_c = NULL;
   const uint8_t *request_content = NULL;
@@ -66,7 +65,7 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
     option = (uint8_t)atoi(option_c);
     printf("Got the Option : %u \n",option);
     if (option == 2) {
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
       TSCH_S_TASA_DEL_SLOT();
 #endif
     }
@@ -74,42 +73,47 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
 
   unsigned int accept = -1;
   coap_get_header_accept(request, &accept);
-  
   if (accept == -1) {
     coap_get_payload(request, &request_content);
     printf("requeset_content : %s \n", (char *)request_content);
-    // pch = strtok((char *)request_content, "[':] ");
-    // uint8_t slot_s=0;
-    // uint8_t channel_c=0;
-    // uint8_t link_l=0;
-    // while(pch != NULL) {
-    //   /* Slot Offset */
-    //   if(index % 3 == 0) {
-    //     printf("Slot offset : %s ,",pch);
-    //     slot_s = (uint8_t)atoi(pch);
-    //   }
-    //   /* Channel Offset */
-    //   if(index % 3 == 1) {
-    //     printf("Channel offset : %s ,",pch);
-    //     channel_c = (uint8_t)atoi(pch);
-    //   }
-    //   /* Link Options */
-    //   if(index % 3 == 2) {
-    //     printf("Link Options : %s .\n",pch);
-    //     if (strncmp(pch, "TX", 2) == 0) {link_l = 0x01;}
-    //     else {link_l = 0x02;}
-    //     printf("Send Out Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
+    printf("address : %d \n", &request_content);
+    // uint8_t temp_buffer = 0;
+    // memcpy(temp_buffer, request_content, sizeof())
 #if WITH_CENTRALIZED_TASA
-        TSCH_S_TASA_CACHE_SCHEDULE_TABLE(request_content);
+    TSCH_S_TASA_CACHE_SCHEDULE_TABLE((uint8_t *)request_content);
 #endif /*WITH_CENTRALIZED_TASA*/
 
-#if WITH_CENTRALIZED_TASA && 0
+#if WITH_CENTRALIZED_TASA
+    pch = strtok((char *)request_content, "[':] ");
+    uint8_t slot_s=0;
+    uint8_t channel_c=0;
+    uint8_t link_l=0;
+    while(pch != NULL) {
+      /* Slot Offset */
+      if(index % 3 == 0) {
+        printf("Slot offset : %s ,",pch);
+        slot_s = (uint8_t)atoi(pch);
+      }
+      /* Channel Offset */
+      if(index % 3 == 1) {
+        printf("Channel offset : %s ,",pch);
+        channel_c = (uint8_t)atoi(pch);
+      }
+      /* Link Options */
+      if(index % 3 == 2) {
+        printf("Link Options : %s .\n",pch);
+        if (strncmp(pch, "TX", 2) == 0) {link_l = 0x01;}
+        else {link_l = 0x02;}
+        printf("Send Out Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
+
+
         TSCH_S_TASA_ADDED_SLOT(slot_s, channel_c, 1, link_l);
+
+      }
+      index++;
+      pch = strtok(NULL, "[':] ");
+    }
 #endif /*WITH_CENTRALIZED_TASA*/
-    //   }
-    //   index++;
-    //   pch = strtok(NULL, "[':] ");
-    // }
-    // tsch_schedule_print();
+    tsch_schedule_print();
   }
 }

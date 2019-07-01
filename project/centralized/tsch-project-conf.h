@@ -122,13 +122,13 @@
 // #define TSCH_START_NEW_S_ASA_SCHEDULE_TABLE s_tasa_start_new_schedule_table
 // #define TSCH_STOP_S_ASA_SCHEDULE_TABLE_WAIT s_tasa_stop_wait
 
-/* Multiplies with chunk size, be aware of memory constraints. */
-#undef COAP_MAX_OPEN_TRANSACTIONS
-#define COAP_MAX_OPEN_TRANSACTIONS     4
+// /* Multiplies with chunk size, be aware of memory constraints. */
+// #undef COAP_MAX_OPEN_TRANSACTIONS
+// #define COAP_MAX_OPEN_TRANSACTIONS     4
 
-/* Must be <= open transactions, default is COAP_MAX_OPEN_TRANSACTIONS-1. */
-#undef COAP_MAX_OBSERVERS
-#define COAP_MAX_OBSERVERS             2
+// /* Must be <= open transactions, default is COAP_MAX_OPEN_TRANSACTIONS-1. */
+// #undef COAP_MAX_OBSERVERS
+// #define COAP_MAX_OBSERVERS             2
 
 #endif
 

@@ -128,6 +128,11 @@ frequency hopping for enhanced reliability.
 #define TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE s_tasa_wait_asn_update_schedule
 #endif /* TSCH_CALLBACK_TASA_PACKET_READY */
 
+#ifdef TSCH_S_TASA_CACHE_SCHEDULE_TABLE
+#define TSCH_S_TASA_CACHE_SCHEDULE_TABLE s_tasa_cache_schedule_table
+#endif /* TSCH_S_TASA_CACHE_SCHEDULE_TABLE */
+
+
 #endif /* BUILD_WITH_S_TASA */
 
 /* Called by TSCH when joining a network */
@@ -173,6 +178,10 @@ void TSCH_S_TASA_DEL_SLOT(void);
 #ifdef TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE
 void TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE(uint32_t temp_asn);
 #endif /* TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE */
+
+#ifdef TSCH_S_TASA_CACHE_SCHEDULE_TABLE
+void TSCH_S_TASA_CACHE_SCHEDULE_TABLE(uint8_t * getpayload_data);
+#endif 
 
 /***** External Variables *****/
 
