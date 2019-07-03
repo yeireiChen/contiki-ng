@@ -80,6 +80,10 @@ MEMB(packet_memb, struct tsch_packet, QUEUEBUF_NUM);
 MEMB(neighbor_memb, struct tsch_neighbor, TSCH_QUEUE_MAX_NEIGHBOR_QUEUES);
 LIST(neighbor_list);
 
+// #define LENGTH_table 80
+// static uint8_t sche_table[LENGTH_table] = {};
+// static int index_table = 0;
+
 /* Testing for QoS swap function.*/
 uint8_t data_tcflow;
 //uint8_t localqueue;
@@ -714,11 +718,14 @@ tsch_get_schedule_table_event(void)
 {
   return tsch_schedule_table;
 }
+
 list_t
 tsch_get_nbr_list_from_queue(void)
 {
   return neighbor_list;
 }
+
+
 /*---------------------------------------------------------------------------*/
 /* Initialize TSCH queue module */
 void

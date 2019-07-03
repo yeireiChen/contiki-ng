@@ -65,7 +65,7 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
     option = (uint8_t)atoi(option_c);
     printf("Got the Option : %u \n",option);
     if (option == 2) {
-#if WITH_CENTRALIZED_TASA && 0
+#if WITH_CENTRALIZED_TASA
       TSCH_S_TASA_DEL_SLOT();
 #endif
     }
@@ -75,14 +75,6 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
   coap_get_header_accept(request, &accept);
   if (accept == -1) {
     coap_get_payload(request, &request_content);
-    printf("requeset_content : %s \n", (char *)request_content);
-    printf("address : %d \n", &request_content);
-    // uint8_t temp_buffer = 0;
-    // memcpy(temp_buffer, request_content, sizeof())
-#if WITH_CENTRALIZED_TASA
-    TSCH_S_TASA_CACHE_SCHEDULE_TABLE((uint8_t *)request_content);
-#endif /*WITH_CENTRALIZED_TASA*/
-
 #if WITH_CENTRALIZED_TASA
     pch = strtok((char *)request_content, "[':] ");
     uint8_t slot_s=0;
@@ -105,10 +97,8 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
         if (strncmp(pch, "TX", 2) == 0) {link_l = 0x01;}
         else {link_l = 0x02;}
         printf("Send Out Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
-
-
         TSCH_S_TASA_ADDED_SLOT(slot_s, channel_c, 1, link_l);
-
+        //TSCH_S_TASA_CACHE_SCHEDULE_TABLE(slot_s, channel_c, link_l);
       }
       index++;
       pch = strtok(NULL, "[':] ");

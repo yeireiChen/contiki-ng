@@ -57,7 +57,7 @@
 MEMB(observers_memb, coap_observer_t, COAP_MAX_OBSERVERS);
 LIST(observers_list);
 
-// coap_observer_t *old_ob;
+//coap_observer_t *old_ob;
 /*---------------------------------------------------------------------------*/
 /*- Internal API ------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -321,6 +321,7 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
       if(src_ep == NULL) {
         /* No source endpoint, can not add */
       } else if(coap_req->observe == 0) {
+        //coap_remove_observer(old_ob);
         obs = add_observer(src_ep,
                            coap_req->token, coap_req->token_len,
                            coap_req->uri_path, coap_req->uri_path_len);

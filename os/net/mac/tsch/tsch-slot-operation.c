@@ -982,7 +982,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         slotframe_offset = slotframe_offset - 1;
         printf("Count Down the slotframe offset : %d \n", slotframe_offset);
         if ((slotframe_offset == 0)) {
-          flash_new_schedule_table();
+          TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
           tsch_update_schedule_table();
         }
       }

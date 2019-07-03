@@ -37,25 +37,15 @@
 #ifndef __S_TASA_H__
 #define __S_TASA_H__
 
-#include "net/linkaddr.h"
 #include "net/mac/tsch/tsch.h"
 #include "s-tasa-conf.h"
 
 
-// struct tsch_new_schedule {
-//     uint8_t *temp_sch_table;
-// };
-
-struct tsch_new_table_list_s
-{   
-    int ID;
-    uint8_t *sche_payload;
-    struct tsch_new_table_list_s *next;
+struct tsch_new_schedule {
+    uint8_t timeslot;
+    uint8_t channel_offset;
+    uint8_t link_option;
 };
-
-typedef struct tsch_new_table_list_s tsch_new_table;
-tsch_new_table head;
-
 
 /* ADD slot / return 1 was success, return 0 was false. */
 int s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int slot_numbers, uint8_t linkoptions);
@@ -65,13 +55,10 @@ void s_tasa_del_slots_of_slotframe(void);
 
 void s_tasa_wait_asn_update_schedule(uint32_t temp_asn);
 
-void s_tasa_cache_schedule_table(uint8_t * getpayload_data);
+void s_tasa_cache_schedule_table(uint8_t timeslot, uint8_t channel_offset, uint8_t link_option);
 
 /* count down trigger to flush new schedule table */
 void flash_new_schedule_table(void);
-
-/* strtok read string write to schedule table. */
-void strtok_string_from_payload(uint8_t * getpayload_data);
 
 uint32_t getTempASN(void);
 
@@ -80,11 +67,6 @@ uint16_t * getTimeslots(void);
 void first_created_self_packet(void);
 
 int s_tasa_init(void);
-
-tsch_new_table *find_table(int ID);
-tsch_new_table *table_list_add_child(int ID);
-int table_list_remove(tsch_new_table* table);
-int sch_table_list_set_query(tsch_new_table *table, uint8_t *payload_data);
 
 
 #endif /* __S_TASA_H__ */

@@ -58,6 +58,7 @@
  */
 extern coap_resource_t
   res_bcollect,
+  res_bcollect_2,
   res_slotframe;
 
 
@@ -79,6 +80,7 @@ PROCESS_THREAD(er_example_server, ev, data)
    * All static variables are the same for each URI path.
    */
   coap_activate_resource(&res_bcollect, "res/bcollect");
+  coap_activate_resource(&res_bcollect, "res/bcollect_2");
   coap_activate_resource(&res_slotframe, "res/slotframe");
 
 
