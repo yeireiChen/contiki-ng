@@ -110,8 +110,16 @@
 
 #if WITH_CENTRALIZED_TASA
 
+/* IP buffer size must match all other hops, in particular the border router. */
+#undef UIP_CONF_BUFFER_SIZE
+#define UIP_CONF_BUFFER_SIZE           1280
+
+/* Increase rpl-border-router IP-buffer when using more than 64. */
+#undef REST_MAX_CHUNK_SIZE
+#define REST_MAX_CHUNK_SIZE            128
+
 #undef SICSLOWPAN_CONF_FRAG
-#define SICSLOWPAN_CONF_FRAG 1
+#define SICSLOWPAN_CONF_FRAG           1
 
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 1 /* with 6TiSCH minimal schedule */
 #define TSCH_CONF_WITH_LINK_SELECTOR 0 /* centralized requires per-packet link selection, not need. */

@@ -87,6 +87,7 @@ LIST(neighbor_list);
 /* Testing for QoS swap function.*/
 uint8_t data_tcflow;
 //uint8_t localqueue;
+uip_ipaddr_t *backup_addr;
 
 int save_timeslot = 0;
 int tsch_schedule_table = 1;
@@ -558,10 +559,10 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
 
         /* Get localqueue frome attribute */
         uint8_t localqueue = (uint8_t)queuebuf_attr(n->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-        if (localqueue == 1 && 
-            coap_has_observers("res/bcollect") &&
-            queuebuf_datalen(n->tx_array[get_index]->qb) > 100) {
-              if (tsch_schedule_table || 1) { // correct new schedule table.
+        if ( ((localqueue == 1) || (localqueue == 2)) && 
+             (coap_has_observers("res/bcollect") || coap_has_observers("res/bcollect_2")) &&
+             queuebuf_datalen(n->tx_array[get_index]->qb) > 100) {
+              if (tsch_schedule_table) { // correct new schedule table.
                 int flag = 0;
                 if(link->timeslot > 9 ) {
                   
@@ -575,6 +576,7 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
                       if (*(slots_list + i) == link->timeslot) {
                         save_timeslot = link->timeslot;
                         flag = 1;
+                        break;
                       } else if (*(slots_list + i) == 0) break;
                     }
                   }
@@ -592,11 +594,7 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
                 }
                 if (flag && ringbufindex_elements(&n->tx_ringbuf) == 1) save_timeslot = 0;
               } else {
-                printf("slotframe not correct timeslot : %d.\n", link->timeslot);
-                // if (ringbufindex_elements(&n->tx_ringbuf) > 16) {
-                //   // if more queue, to flush it.
-                //   tsch_queue_flush_nbr_queue(n);
-                // }
+                printf("Watting New schedule table : %d , slotframe not correct timeslot : %d.\n",tsch_schedule_table ,link->timeslot);
                 return NULL;
               }
         }
@@ -700,7 +698,11 @@ tsch_queue_update_all_backoff_windows(const linkaddr_t *dest_addr)
 void
 tsch_queue_disable_coap_flag_control(uip_ipaddr_t * addr)
 {
-  if (addr != NULL){
+  if(backup_addr == NULL) {
+    backup_addr = addr;
+  }
+  if (addr != NULL && backup_addr != addr){
+    backup_addr = addr; // first check.
     tsch_schedule_table = 0;
     LOG_INFO("Waitting New schedule table .... \n");
   }

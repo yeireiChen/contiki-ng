@@ -982,13 +982,13 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         slotframe_offset = slotframe_offset - 1;
         printf("Count Down the slotframe offset : %d \n", slotframe_offset);
         if ((slotframe_offset == 0)) {
-          TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
+          //TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
           tsch_update_schedule_table();
         }
       }
 #endif /* WITH_CENTRALIZED_TASA */
 
-#if WITH_CENTRALIZED_TASA && 0
+#if 0
 
       struct tsch_neighbor *n = NULL;
       uint8_t temp_ring_elements = 0;

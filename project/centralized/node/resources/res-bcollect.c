@@ -222,7 +222,7 @@ res_periodic_handler()
 #if WITH_CENTRALIZED_TASA
     if (coap_has_observers("res/bcollect")) {
       if (tsch_get_schedule_table_event()) {
-        PRINTF("Numbers of Observe : %u \n", coap_has_observer_numbers());
+        //PRINTF("Numbers of Observe : %u \n", coap_has_observer_numbers());
         ++packet_counter;
         PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
         /* Notify the registered observers which will trigger the res_get_handler to create the response. */
