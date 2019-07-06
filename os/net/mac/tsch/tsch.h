@@ -132,9 +132,9 @@ frequency hopping for enhanced reliability.
 #define TSCH_S_TASA_CACHE_SCHEDULE_TABLE s_tasa_cache_schedule_table
 #endif /* TSCH_S_TASA_CACHE_SCHEDULE_TABLE */
 
-#ifdef TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE
-#define TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE flash_new_schedule_table
-#endif /* TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE */ 
+// #ifdef TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE
+// #define TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE flash_new_schedule_table
+// #endif /* TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE */ 
 
 
 #endif /* BUILD_WITH_S_TASA */
@@ -187,9 +187,9 @@ void TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE(uint32_t temp_asn);
 void TSCH_S_TASA_CACHE_SCHEDULE_TABLE(uint8_t timeslot, uint8_t channel_offset, uint8_t link_option);
 #endif 
 
-#ifdef TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE
-void TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE(void);
-#endif /* TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE */ 
+// #ifdef TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE
+// void TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE(void);
+// #endif /* TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE */ 
 
 /***** External Variables *****/
 

@@ -17,6 +17,7 @@
 #include "net/routing/routing.h"
 #include "net/link-stats.h"
 #include "net/mac/tsch/tsch.h"
+//#include "s-tasa.h"
 
 #include "../../tsch-project-conf.h"
 
@@ -97,8 +98,9 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
         if (strncmp(pch, "TX", 2) == 0) {link_l = 0x01;}
         else {link_l = 0x02;}
         printf("Pass to S-TASA Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
-        TSCH_S_TASA_ADDED_SLOT(slot_s, channel_c, 1, link_l);
-        //TSCH_S_TASA_CACHE_SCHEDULE_TABLE(slot_s, channel_c, link_l);
+        //TSCH_S_TASA_ADDED_SLOT(slot_s, channel_c, 1, link_l);
+        //s_tasa_cache_schedule_table(slot_s, channel_c, link_l);
+        TSCH_S_TASA_CACHE_SCHEDULE_TABLE(slot_s, channel_c, link_l);
       }
       index++;
       pch = strtok(NULL, "[':] ");

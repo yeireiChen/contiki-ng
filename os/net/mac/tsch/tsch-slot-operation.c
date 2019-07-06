@@ -980,77 +980,15 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
       if (slotframe_offset > 0 && current_link->timeslot == 0) {
         slotframe_offset = slotframe_offset - 1;
-        printf("Count Down the slotframe offset : %d \n", slotframe_offset);
+        printf("Count Down the slotframe offset : %u \n", slotframe_offset);
         if ((slotframe_offset == 0)) {
           //TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
+          flash_new_schedule_table();
           tsch_update_schedule_table();
         }
       }
 #endif /* WITH_CENTRALIZED_TASA */
 
-#if 0
-
-      struct tsch_neighbor *n = NULL;
-      uint8_t temp_ring_elements = 0;
-      n = tsch_queue_get_nbr(&current_link->addr);
-      if(!tsch_is_locked()) {
-        if (n == n_broadcast) {
-          struct tsch_neighbor *curr_nbr = list_head(tsch_get_nbr_list_from_queue());
-          while(curr_nbr != NULL) {
-            if(!curr_nbr->is_broadcast && curr_nbr->tx_links_count == 0) {
-              int is_shared_link = current_link != NULL && current_link->link_options & LINK_OPTION_SHARED;
-              int16_t get_index = ringbufindex_peek_get(&curr_nbr->tx_ringbuf);
-              if(get_index != -1 &&
-                !(is_shared_link && !tsch_queue_backoff_expired(curr_nbr))) {
-                  uint8_t localqueue = (uint8_t)queuebuf_attr(curr_nbr->tx_array[get_index]->qb,PACKETBUF_ATTR_STASA);
-                  temp_ring_elements = ringbufindex_elements(&curr_nbr->tx_ringbuf);
-                  printf("localqueue : %u , ringbug_elements : %d, timeslot_offset : %u , has_observes : %s \n", 
-                          localqueue, 
-                          ringbufindex_elements(&curr_nbr->tx_ringbuf),
-                          current_link->timeslot, 
-                          coap_has_observers("res/bcollect")? "YES":"NO");
-
-                  if(localqueue && coap_has_observers("res/bcollect")) {
-                    if(current_link->timeslot < 9) {
-                      //printf("Goto fail.\n");
-                      burst_link_scheduled = 0;
-                      goto fail;
-                    }
-                  }
-                  break;
-                }
-            }
-            curr_nbr = list_item_next(curr_nbr);
-          }
-          if (temp_ring_elements > 1 && current_link->timeslot > 9){
-            uint16_t * slots_list;
-            slots_list = getTimeslots();
-            int i = 0;
-
-            for (i=0; i<20; i++) {
-              //printf("slot list [%d] : %u , next : %u \n", i , *(slots_list + i), *(slots_list + (i + 1)));
-              if (*(slots_list + i) == current_link->timeslot) {
-                temp_timeslot_diff = *(slots_list + (i + 1)) - current_link->timeslot;
-                printf("temp_ring_elements : %u, slots_list : %u, timeslot_offset : %u, timeslot_diff : %u \n",
-                  temp_ring_elements,
-                  *(slots_list + i),
-                  current_link->timeslot,
-                  temp_timeslot_diff);
-                // if(temp_timeslot_diff > 150) {
-                //   temp_timeslot_diff = 0;
-                // }
-                // if(temp_timeslot_diff < 150) {
-                //   burst_link_scheduled = 0;
-                //   goto fail;
-                // }
-              } else if (*(slots_list + i) == 0) break;
-            }
-          }
-          //printf("Got correct time slot.\n");
-        }
-      }
-      
-#endif /* WITH_CENTRALIZED_TASA */
 
       int is_active_slot;
       TSCH_DEBUG_SLOT_START();
@@ -1088,6 +1026,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
            * 2. update_backoff_state(current_neighbor)
            * 3. post tx callback
            **/
+          //printf("Enable Tx sendout Packet. packet info : %p , timeslot : %u \n",current_packet? current_packet->qb:NULL, current_link->timeslot);
           static struct pt slot_tx_pt;
           PT_SPAWN(&slot_operation_pt, &slot_tx_pt, tsch_tx_slot(&slot_tx_pt, t));
         } else {
@@ -1102,9 +1041,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       }
       TSCH_DEBUG_SLOT_END();
     }
-#if WITH_CENTRALIZED_TASA && 0
-    fail:
-#endif
       
     /* End of slot operation, schedule next slot or resynchronize */
 

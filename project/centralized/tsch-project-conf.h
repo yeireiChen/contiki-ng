@@ -127,7 +127,7 @@
 #define TSCH_S_TASA_DEL_SLOT s_tasa_del_slots_of_slotframe
 #define TSCH_S_TASA_WAIT_ASN_UPDATE_SCHEDULE s_tasa_wait_asn_update_schedule
 #define TSCH_S_TASA_CACHE_SCHEDULE_TABLE s_tasa_cache_schedule_table
-#define TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE flash_new_schedule_table
+// s#define TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE flash_new_schedule_table
 // #define TSCH_START_NEW_S_ASA_SCHEDULE_TABLE s_tasa_start_new_schedule_table
 // #define TSCH_STOP_S_ASA_SCHEDULE_TABLE_WAIT s_tasa_stop_wait
 
