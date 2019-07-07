@@ -110,6 +110,14 @@
 
 #if WITH_CENTRALIZED_TASA
 
+/* Queues */
+#undef QUEUEBUF_CONF_NUM
+#define QUEUEBUF_CONF_NUM 32
+
+/* Timeslot timing */
+#undef TSCH_CONF_DEFAULT_TIMESLOT_LENGTH
+#define TSCH_CONF_DEFAULT_TIMESLOT_LENGTH 10000
+
 /* IP buffer size must match all other hops, in particular the border router. */
 #undef UIP_CONF_BUFFER_SIZE
 #define UIP_CONF_BUFFER_SIZE           1280

@@ -49,9 +49,13 @@ PERIODIC_RESOURCE(res_bcollect,
  */
 static uint32_t event_counter = 0;
 
+#if CONTIKI_TARGET_COOJA
 /* inter-packet time we generate a packet to send to observer */
 static uint8_t event_threshold = 20;
-
+#else
+/* inter-packet time we generate a packet to send to observer */
+static uint8_t event_threshold = 140;
+#endif
 /* record last change event threshold's event_counter */
 static uint32_t event_threshold_last_change = 0;
 
@@ -61,6 +65,8 @@ static uint32_t packet_counter = 0;
 static uint8_t packet_priority = 0;
 
 static uint8_t local_queue = 1;
+
+static int count = 0;
 
 #include "net/mac/tsch/tsch.h"
 extern struct tsch_asn_t tsch_current_asn;
@@ -224,14 +230,20 @@ res_periodic_handler()
       if (tsch_get_schedule_table_event()) {
         //PRINTF("Numbers of Observe : %u \n", coap_has_observer_numbers());
         ++packet_counter;
-        PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
+        //PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
         /* Notify the registered observers which will trigger the res_get_handler to create the response. */
         coap_notify_observers(&res_bcollect);
+      } else {
+        count = count + 1;
+        if(count == 3) {
+          tsch_update_schedule_table();
+          count = 0;
+        }
       }
     }
 #else
     ++packet_counter;
-    PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
+    //PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
     /* Notify the registered observers which will trigger the res_get_handler to create the response. */
     coap_notify_observers(&res_bcollect);
 #endif /* WITH_CENTRALIZED_TASA */

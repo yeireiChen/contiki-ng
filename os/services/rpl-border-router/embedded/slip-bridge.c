@@ -41,6 +41,7 @@
 #include "net/ipv6/uip.h"
 #include "net/ipv6/uip-ds6.h"
 #include "dev/slip.h"
+#include "tsch-conf.h"
 #include <string.h>
 /*---------------------------------------------------------------------------*/
 #define UIP_IP_BUF        ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
@@ -181,9 +182,10 @@ output(void)
       PRINTF("\nStart_ASN_Numbers:%08x\n",(unsigned int)startASN);
       PRINTF("End_ASN_Numbers:%08x\n",(unsigned int)tsch_current_asn.ls4b);
       //PRINTF("Event_Counter:%d\n",eventCounter);
-      PRINTF("The_Packet_Latancy_is:%u",(unsigned int)(((tsch_current_asn.ls4b - startASN)) * 10)); //ms time.
+      //PRINTF("The_Packet_Latancy_is:%u",(unsigned int)(((tsch_current_asn.ls4b - startASN)) * 10)); //ms time.
+      PRINTF("The_Packet_Latancy_is:%u",(unsigned int)(((tsch_current_asn.ls4b - startASN)) * (TSCH_CONF_DEFAULT_TIMESLOT_LENGTH/1000))); //ms time.
       PRINTF(" ms\n");
-      //PRINTF("The Packet Latancy is %u ms. \n",((tsch_current_asn.ls4b - startASN) - 4294967296) * 10 ); //ms time.                                       
+      //PRINTF("The Packet Latancy is %u ms. \n",((tsch_current_asn.ls4b - startASN) - 4294967296) * TSCH_CONF_DEFAULT_TIMESLOT_LENGTH ); //ms time.                                       
       //PRINTF("Traffic_Classes:%02x. \n",UIP_IP_BUF->tcflow);
       PRINTF("Traffic_Classes:%d. \n",priority);
      

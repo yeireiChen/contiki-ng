@@ -966,10 +966,10 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       /* got the asn */
       if((got_temp_asn = getTempASN())) {
         uint32_t test;
-        if (got_temp_asn < tsch_current_asn.ls4b) {
+        if ((got_temp_asn-1) < tsch_current_asn.ls4b) {
           test = TSCH_SCHEDULE_DEFAULT_LENGTH * 3;
         } else {
-          test = got_temp_asn - tsch_current_asn.ls4b;
+          test = (got_temp_asn-1) - tsch_current_asn.ls4b;
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
         }
         slotframe_offset = test / TSCH_SCHEDULE_DEFAULT_LENGTH;
@@ -980,7 +980,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
       if (slotframe_offset > 0 && current_link->timeslot == 0) {
         slotframe_offset = slotframe_offset - 1;
-        printf("Count Down the slotframe offset : %u \n", slotframe_offset);
+        //printf("Count Down the slotframe offset : %u \n", slotframe_offset);
         if ((slotframe_offset == 0)) {
           //TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
           flash_new_schedule_table();

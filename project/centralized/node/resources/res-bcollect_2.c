@@ -49,8 +49,13 @@ PERIODIC_RESOURCE(res_bcollect_2,
  */
 static uint32_t event_counter = 0;
 
+#if CONTIKI_TARGET_COOJA
 /* inter-packet time we generate a packet to send to observer */
 static uint8_t event_threshold = 20;
+#else
+/* inter-packet time we generate a packet to send to observer */
+static uint8_t event_threshold = 140;
+#endif
 
 /* record last change event threshold's event_counter */
 static uint32_t event_threshold_last_change = 0;

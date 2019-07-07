@@ -87,7 +87,7 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
       if (slot_list[i] == 0) {
         if (slot_list[i-1] == timeslot) break; // if retransmit packet, just break,
         slot_list[i] = timeslot;
-        printf("add slot_list[ %d ] the value = %u\n",i,timeslot);
+        LOG_INFO("add slot_list[ %d ] the value = %u\n",i,timeslot);
         ++number_count;
         break;
       }
@@ -127,7 +127,7 @@ s_tasa_del_slots_of_slotframe()
 
   if (sf_cent) {
     if(!tsch_is_locked()) {
-      printf("Remove the slotframe : %s \n",tsch_schedule_remove_slotframe(sf_cent)? "YES": "NO" );
+      LOG_INFO("Remove the slotframe : %s \n",tsch_schedule_remove_slotframe(sf_cent)? "YES": "NO" );
       sf_cent = NULL;
     } else {
       LOG_INFO("TSCH was locking.\n");
@@ -147,27 +147,11 @@ s_tasa_cache_schedule_table(uint8_t timeslot, uint8_t channel_offset, uint8_t li
   table = table_list_add_child(ID);
   if (table) {
     if(sch_table_list_set_query(table, timeslot, channel_offset, linkoptions)) {
-      printf("Timeslot : %u ,",timeslot);
-      printf("Channel_offset : %u ,",channel_offset);
-      printf("linkoptions : %u .\n",linkoptions);
+      LOG_INFO("Timeslot : %u ,",timeslot);
+      LOG_INFO("Channel_offset : %u ,",channel_offset);
+      LOG_INFO("linkoptions : %u .\n",linkoptions);
     }
   }
-  
-  // struct tsch_new_schedule *sche = NULL;
-  // sche = memb_alloc(&temp_sche_table_memb);
-
-  // if (sche) {
-  //   //memcpy(sche->temp_sch_table, &getpayload_data, sizeof(getpayload_data));
-  //   sche->temp_sch_table = getpayload_data;
-  //   // int index = 0;
-  //   // for (index = 0; index < 48; index++) {
-  //   //   printf("temp_sch_table data : %u \n",sche->temp_sch_table[index]);
-  //   // }
-  //   printf("temp_sch_table data : %s , getpayload_data data : %s \n",(char *)sche->temp_sch_table, (char *)getpayload_data);
-  //   printf("temp_sch_table address : %d , getpayload_data addr : %d \n",sche->temp_sch_table, getpayload_data);
-
-  //   list_add(temp_sche_table_list, sche);
-  // }
 }
 
 void 
@@ -176,59 +160,16 @@ flash_new_schedule_table()
   tsch_new_table *table;
   table = find_table(ID);
   while (table != NULL) {
-    printf("Timeslot : %u ,",table->timeslot);
-    printf("Channel_offset : %u ,",table->channel_offset);
-    printf("linkoptions : %u .\n",table->linkoptions);
+    LOG_INFO("Timeslot : %u ,",table->timeslot);
+    LOG_INFO("Channel_offset : %u ,",table->channel_offset);
+    LOG_INFO("linkoptions : %u .\n",table->linkoptions);
     //printf("flush_temp_sch_table data : %s \n", (char *)table->sche_payload);
     s_tasa_add_slots_of_slotframe(table->timeslot, table->channel_offset, 1,table->linkoptions);
     table_list_remove(table);
     ID = ID - 1;
     table = find_table(ID);
   }
-  // struct tsch_new_schedule *sche = list_head(temp_sche_table_list);
-
-  // while(sche != NULL) {
-  //   printf("temp_sch_table data : %s \n",(char *)sche->temp_sch_table);
-  //   printf("temp_sch_table address : %d \n",sche->temp_sch_table);
-
-  //   sche = list_item_next(sche);
-  // }
 }
-
-// void
-// strtok_string_from_payload(uint8_t * getpayload_data)
-// {
-//   uint8_t slot_s=0;
-//   uint8_t channel_c=0;
-//   uint8_t link_l=0;
-//   char *pch;
-//   pch = strtok((char *)getpayload_data, "[':] ");
-//   int index = 0;
-//   while(pch != NULL) {
-//     /* Slot Offset */
-//     if(index % 3 == 0) {
-//       printf("Slot offset : %s ,",pch);
-//       slot_s = (uint8_t)atoi(pch);
-//       if (slot_s > 0x96) slot_s = slot_s - 0xc8;
-//     }
-//     /* Channel Offset */
-//     if(index % 3 == 1) {
-//       printf("Channel offset : %s ,",pch);
-//       channel_c = (uint8_t)atoi(pch);
-//     }
-//     /* Link Options */
-//     if(index % 3 == 2) {
-//       printf("Link Options : %s .\n",pch);
-//       if (strncmp(pch, "TX", 2) == 0) {link_l = 0x01;}
-//       else {link_l = 0x02;}
-//       printf("Send Out Slot:%u Channel:%u Link:%u \n",slot_s, channel_c, link_l);
-//     }
-//     //s_tasa_add_slots_of_slotframe(slot_s, channel_c, 1, link_l);
-//     index++;
-//     pch = strtok(NULL, "[':] ");
-//   }
-//   //getpayload_data = NULL;
-// }
 
 uint16_t *
 getTimeslots() 
@@ -309,7 +250,7 @@ tsch_new_table *table_list_add_child(int ID) {
 
   if(table == NULL) {
     table = memb_alloc(&temp_sche_table_memb);
-    printf("Allocate new memb \n");
+    LOG_INFO("Allocate new memb \n");
 
     if(table) {
       table->ID = ID;

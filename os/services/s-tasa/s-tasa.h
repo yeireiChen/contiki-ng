@@ -67,9 +67,6 @@ void s_tasa_cache_schedule_table(uint8_t timeslot, uint8_t channel_offset, uint8
 /* count down trigger to flush new schedule table */
 void flash_new_schedule_table(void);
 
-/* strtok read string write to schedule table. */
-//void strtok_string_from_payload(uint8_t * getpayload_data);
-
 uint32_t getTempASN(void);
 
 uint16_t * getTimeslots(void);

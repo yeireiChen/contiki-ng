@@ -1145,7 +1145,7 @@ coap_set_payload(coap_message_t *coap_pkt, const void *payload, size_t length)
     // UIP_IP_BUF->tcflow = UIP_IP_BUF->tcflow | packet_localqueue;
     // temp_tcflow = UIP_IP_BUF->tcflow;
     // temp_tcflow = temp_tcflow << 4;
-    printf("local queue = %02x ,local queue = %02x\n",packet_localqueue, UIP_IP_BUF->tcflow);
+    LOG_DBG("local queue = %02x ,local queue = %02x\n",packet_localqueue, UIP_IP_BUF->tcflow);
   }
   priority_flag = 0;
   localqueue_flag = 0;

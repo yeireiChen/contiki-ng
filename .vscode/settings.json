@@ -6,6 +6,7 @@
         "rpl.h": "c",
         "log.h": "c",
         "routing.h": "c",
-        "orchestra.h": "c"
+        "orchestra.h": "c",
+        "coap-engine.h": "c"
     }
 }

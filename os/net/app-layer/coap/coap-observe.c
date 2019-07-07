@@ -57,7 +57,7 @@
 MEMB(observers_memb, coap_observer_t, COAP_MAX_OBSERVERS);
 LIST(observers_list);
 
-//coap_observer_t *old_ob;
+coap_observer_t *old_ob;
 /*---------------------------------------------------------------------------*/
 /*- Internal API ------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -329,7 +329,7 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
           coap_set_header_observe(coap_res, (obs->obs_counter)++);
           /* mask out to keep the CoAP observe option length <= 3 bytes */
           obs->obs_counter &= 0xffffff;
-          //old_ob = obs;
+          old_ob = obs;
           /*
            * Following payload is for demonstration purposes only.
            * A subscription should return the same representation as a normal GET.
@@ -346,7 +346,7 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
         } else {
           coap_res->code = SERVICE_UNAVAILABLE_5_03;
           coap_set_payload(coap_res, "TooManyObservers", 16);
-          // coap_remove_observer(old_ob);
+          coap_remove_observer(old_ob);
           // coap_remove_observer(obs);
         }
       } else if(coap_req->observe == 1) {
