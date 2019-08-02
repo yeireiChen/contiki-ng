@@ -321,7 +321,6 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
       if(src_ep == NULL) {
         /* No source endpoint, can not add */
       } else if(coap_req->observe == 0) {
-        //coap_remove_observer(old_ob);
         obs = add_observer(src_ep,
                            coap_req->token, coap_req->token_len,
                            coap_req->uri_path, coap_req->uri_path_len);
@@ -346,8 +345,8 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
         } else {
           coap_res->code = SERVICE_UNAVAILABLE_5_03;
           coap_set_payload(coap_res, "TooManyObservers", 16);
-          coap_remove_observer(old_ob);
-          // coap_remove_observer(obs);
+          //coap_remove_observer(old_ob);
+          //coap_remove_observer(obs);
         }
       } else if(coap_req->observe == 1) {
 

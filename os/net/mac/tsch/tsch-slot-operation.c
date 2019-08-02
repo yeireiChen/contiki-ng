@@ -177,6 +177,7 @@ int tsch_current_burst_count = 0;
 uint32_t got_temp_asn = 0;
 uint32_t slotframe_offset = 0;
 uint8_t temp_queue = 0;
+static int flag = 0;
 
 //long global_tx_count=0;
 
@@ -964,11 +965,14 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
 #if WITH_CENTRALIZED_TASA
       /* got the asn */
+      
       if((got_temp_asn = getTempASN())) {
         uint32_t test;
         if ((got_temp_asn-1) < tsch_current_asn.ls4b) {
+          flag = 0;
           test = TSCH_SCHEDULE_DEFAULT_LENGTH * 3;
         } else {
+          flag = 1;
           test = (got_temp_asn-1) - tsch_current_asn.ls4b;
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
         }
@@ -983,7 +987,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         //printf("Count Down the slotframe offset : %u \n", slotframe_offset);
         if ((slotframe_offset == 0)) {
           //TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
-          flash_new_schedule_table();
+          flash_new_schedule_table(flag);
           tsch_update_schedule_table();
         }
       }
