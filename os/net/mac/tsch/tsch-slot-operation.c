@@ -81,6 +81,9 @@
 #define TSCH_DEBUG_SLOT_END()
 #endif
 
+#define LOG_MODULE "TSCH SlotOP"
+#define LOG_LEVEL LOG_LEVEL_MAC
+
 /* Check if TSCH_MAX_INCOMING_PACKETS is power of two */
 #if (TSCH_MAX_INCOMING_PACKETS & (TSCH_MAX_INCOMING_PACKETS - 1)) != 0
 #error TSCH_MAX_INCOMING_PACKETS must be power of two
@@ -178,7 +181,6 @@ uint32_t got_temp_asn = 0;
 uint32_t slotframe_offset = 0;
 uint8_t temp_queue = 0;
 
-//long global_tx_count=0;
 
 /* Protothread for association */
 PT_THREAD(tsch_scan(struct pt *pt));
@@ -189,6 +191,18 @@ static struct pt slot_operation_pt;
 /* Sub-protothreads of tsch_slot_operation */
 static PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t));
 static PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t));
+
+
+/* blackList */
+
+#define channelBlock 17
+
+uint32_t global_tx_count=0;
+
+uint8_t phyRange = 11;
+uint8_t badChannel = 0;
+uint8_t channelTx[channelBlock] = {0};
+uint8_t channelTxAck[channelBlock] = {0};
 
 /*---------------------------------------------------------------------------*/
 /* TSCH locking system. TSCH is locked during slot operations */
@@ -537,9 +551,6 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           TSCH_DEBUG_TX_EVENT();
           /* send packet already in radio tx buffer */
           mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
-          tx_count++;
-          //global_tx_count++;
-           //printf("TX_COUNT: %d %d\n",tx_count,global_tx_count);
           /* Save tx timestamp */
           tx_start_time = current_slot_start + tsch_timing[tsch_ts_tx_offset];
           /* calculate TX duration based on sent packet len */
@@ -548,9 +559,17 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           tx_duration = MIN(tx_duration, tsch_timing[tsch_ts_max_tx]);
           /* turn tadio off -- will turn on again to wait for ACK if needed */
           tsch_radio_off(TSCH_RADIO_CMD_OFF_WITHIN_TIMESLOT);
-
+          
           if(mac_tx_status == RADIO_TX_OK) {
             if(!is_broadcast) {
+
+              global_tx_count++;
+              LOG_PRINT("unicast_TX_COUNT: %d\n",global_tx_count);
+              LOG_PRINT("current timeslot %u, current channelOfSet %u\n",current_link->timeslot,current_link->channel_offset);
+
+              channelTx[tsch_current_channel-phyRange]++;
+              LOG_PRINT("current phyChannel %u,phyChannelCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
+
               uint8_t ackbuf[TSCH_PACKET_MAX_LEN];
               int ack_len;
               rtimer_clock_t ack_start_time;
@@ -643,6 +662,9 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                   tsch_schedule_keepalive();
                 }
                 mac_tx_status = MAC_TX_OK;
+
+                channelTxAck[tsch_current_channel-phyRange]++;
+                LOG_PRINT("current phyChannel %u,current phyChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
 
                 /* We requested an extra slot and got an ack. This means
                 the extra slot will be scheduled at the received */
@@ -1139,6 +1161,16 @@ tsch_slot_operation_start(void)
   } while(!tsch_schedule_slot_operation(&slot_operation_timer, prev_slot_start, time_to_next_active_slot, "assoc"));
 }
 /*---------------------------------------------------------------------------*/
+/* Get Dirty channel & clean array for recalculate
+*/
+
+uint8_t
+tsch_slot_operation_getDirtyChannel(void){
+
+  return badChannel;
+}
+
+/*----------------------------------------------------------------------------*/
 /* Start actual slot operation */
 void
 tsch_slot_operation_sync(rtimer_clock_t next_slot_start,
