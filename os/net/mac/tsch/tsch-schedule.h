@@ -158,5 +158,12 @@ struct tsch_slotframe *tsch_schedule_slotframe_head(void);
  */
 struct tsch_slotframe *tsch_schedule_slotframe_next(struct tsch_slotframe *sf);
 
+
+/** 
+*\ randyTest
+*\ print channelList
+*/
+void tsch_channel_print(void);
+
 #endif /* __TSCH_SCHEDULE_H__ */
 /** @} */

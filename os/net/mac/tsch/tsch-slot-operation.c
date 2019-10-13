@@ -564,11 +564,11 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
             if(!is_broadcast) {
 
               global_tx_count++;
-              LOG_PRINT("unicast_TX_COUNT: %d\n",global_tx_count);
-              LOG_PRINT("current timeslot %u, current channelOfSet %u\n",current_link->timeslot,current_link->channel_offset);
+              //LOG_PRINT("unicast_TX_COUNT: %d\n",global_tx_count);
+              //LOG_PRINT("current timeslot %u, current channelOfSet %u\n",current_link->timeslot,current_link->channel_offset);
 
               channelTx[tsch_current_channel-phyRange]++;
-              LOG_PRINT("current phyChannel %u,phyChannelCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
+              //LOG_PRINT("current phyChannel %u,phyChannelCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
 
               uint8_t ackbuf[TSCH_PACKET_MAX_LEN];
               int ack_len;
@@ -664,7 +664,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                 mac_tx_status = MAC_TX_OK;
 
                 channelTxAck[tsch_current_channel-phyRange]++;
-                LOG_PRINT("current phyChannel %u,current phyChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
+                //LOG_PRINT("current phyChannel %u,current phyChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
 
                 /* We requested an extra slot and got an ack. This means
                 the extra slot will be scheduled at the received */

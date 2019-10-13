@@ -478,4 +478,18 @@ tsch_schedule_print(void)
   }
 }
 /*---------------------------------------------------------------------------*/
+/*randyTest channelList Print*/
+void 
+tsch_channel_print(void){
+
+  int index ;
+  for(index =0 ;index < sizeof(tsch_black_hopping_sequence) ; index++){
+    LOG_PRINT(" %d ",tsch_black_hopping_sequence[index]);
+  }
+  LOG_PRINT("\n");
+}
+
+/*---------------------------------------------------------------------------*/
+
+
 /** @} */

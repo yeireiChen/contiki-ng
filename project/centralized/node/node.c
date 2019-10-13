@@ -59,7 +59,9 @@
 extern coap_resource_t
   res_bcollect,
   res_bcollect_2,
-  res_slotframe;
+  res_slotframe,
+  res_blacklist,
+  res_check;
 
 
 PROCESS(er_example_server, "Erbium Example Server");
@@ -82,6 +84,9 @@ PROCESS_THREAD(er_example_server, ev, data)
   coap_activate_resource(&res_bcollect, "res/bcollect");
   coap_activate_resource(&res_bcollect_2, "res/bcollect_2");
   coap_activate_resource(&res_slotframe, "res/slotframe");
+  coap_activate_resource(&res_blacklist, "res/blacklist");
+  coap_activate_resource(&res_check, "res/check");
+
 
 
   /* Define application-specific events here. */

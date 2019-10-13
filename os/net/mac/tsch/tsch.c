@@ -101,6 +101,10 @@ NBR_TABLE(struct eb_stat, eb_stats);
 uint8_t tsch_hopping_sequence[TSCH_HOPPING_SEQUENCE_MAX_LEN];
 struct tsch_asn_divisor_t tsch_hopping_sequence_length;
 
+/* BlackList temp channel hopping sequence*/
+uint8_t tsch_black_hopping_sequence[TSCH_HOPPING_SEQUENCE_MAX_LEN];
+struct tsch_asn_divisor_t tsch_black_hopping_sequence_length;
+
 /* Default TSCH timeslot timing (in micro-second) */
 static const uint16_t tsch_default_timing_us[tsch_ts_elements_count] = {
   TSCH_DEFAULT_TS_CCA_OFFSET,
@@ -482,6 +486,11 @@ tsch_start_coordinator(void)
   /* Initialize hopping sequence as default */
   memcpy(tsch_hopping_sequence, TSCH_DEFAULT_HOPPING_SEQUENCE, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
   TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_length, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
+
+  /* Initialize blacklist hopping sequence test*/
+  memcpy(tsch_black_hopping_sequence, TSCH_DEFAULT_HOPPING_SEQUENCE, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
+  TSCH_ASN_DIVISOR_INIT(tsch_black_hopping_sequence_length, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
+
 #if TSCH_SCHEDULE_WITH_6TISCH_MINIMAL
   tsch_schedule_create_minimal();
 #endif
@@ -573,6 +582,11 @@ tsch_associate(const struct input_packet *input_eb, rtimer_clock_t timestamp)
   if(ies.ie_channel_hopping_sequence_id == 0) {
     memcpy(tsch_hopping_sequence, TSCH_DEFAULT_HOPPING_SEQUENCE, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
     TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_length, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
+
+    /* test*/
+    memcpy(tsch_black_hopping_sequence, TSCH_DEFAULT_HOPPING_SEQUENCE, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
+    TSCH_ASN_DIVISOR_INIT(tsch_black_hopping_sequence_length, sizeof(TSCH_DEFAULT_HOPPING_SEQUENCE));
+
   } else {
     if(ies.ie_hopping_sequence_len <= sizeof(tsch_hopping_sequence)) {
       memcpy(tsch_hopping_sequence, ies.ie_hopping_sequence_list, ies.ie_hopping_sequence_len);

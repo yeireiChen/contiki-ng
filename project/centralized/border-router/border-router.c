@@ -40,7 +40,9 @@
 
 extern coap_resource_t
   res_bcollect,
-  res_slotframe;
+  res_slotframe,
+  res_blacklist,
+  res_check;
 
 /* Declare and auto-start this file's process */
 PROCESS(contiki_ng_br, "Contiki-NG Border Router");
@@ -77,6 +79,8 @@ PROCESS_THREAD(er_example_server, ev, data)
    */
   coap_activate_resource(&res_bcollect, "res/bcollect");
   coap_activate_resource(&res_slotframe, "res/slotframe");
+  coap_activate_resource(&res_blacklist, "res/blacklist");
+  coap_activate_resource(&res_check, "res/check");
 
 
   /* Define application-specific events here. */

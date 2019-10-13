@@ -11,6 +11,8 @@ MODULES += os/services/rpl-border-router
 
 # Include TASA Centralized module
 MODULES += os/services/s-tasa
+# Include Blacklist module
+MODULES += os/services/blacklist
 # Include CoAP resources
 MODULES_REL += ../node/resources
 # Include the CoAP implementation

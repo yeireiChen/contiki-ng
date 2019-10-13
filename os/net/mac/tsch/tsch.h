@@ -139,6 +139,20 @@ frequency hopping for enhanced reliability.
 
 #endif /* BUILD_WITH_S_TASA */
 
+#if BUILD_WITH_BLACK
+
+#ifdef TSCH_BLACK_CHANGE_CHANNEL
+#define TSCH_BLACK_CHANGE_CHANNEL black_changeChannel;
+#endif
+
+
+#endif /* BUILD_WITH_BLACK*/
+
+#ifdef TSCH_BLACK_CHANGE_CHANNEL
+void TSCH_BLACK_CHANGE_CHANNEL(uint8_t ch1, uint8_t ch2);
+#endif
+
+
 /* Called by TSCH when joining a network */
 #ifdef TSCH_CALLBACK_JOINING_NETWORK
 void TSCH_CALLBACK_JOINING_NETWORK();
@@ -214,6 +228,10 @@ extern uint8_t tsch_current_channel;
 /* TSCH channel hopping sequence */
 extern uint8_t tsch_hopping_sequence[TSCH_HOPPING_SEQUENCE_MAX_LEN];
 extern struct tsch_asn_divisor_t tsch_hopping_sequence_length;
+
+extern uint8_t tsch_black_hopping_sequence[TSCH_HOPPING_SEQUENCE_MAX_LEN];
+extern struct tsch_asn_divisor_t tsch_black_hopping_sequence_length;
+
 /* TSCH timeslot timing (in rtimer ticks) */
 extern rtimer_clock_t tsch_timing[tsch_ts_elements_count];
 /* Statistics on the current session */

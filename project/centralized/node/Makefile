@@ -8,6 +8,8 @@ PLATFORMS_EXCLUDE = sky
 MODULES += os/net/app-layer/coap
 #MODULES += os/services/orchestra
 
+# Include Blacklist module
+MODULES += os/services/blacklist
 # Include TASA Centralized module
 MODULES += os/services/s-tasa
 # Include CoAP resources

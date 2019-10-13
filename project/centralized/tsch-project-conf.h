@@ -58,10 +58,10 @@
 /* TSCH logging. 0: disabled. 1: basic log. 2: with delayed
  * log messages from interrupt */
 #undef TSCH_LOG_CONF_LEVEL
-#define TSCH_LOG_CONF_LEVEL 0
+#define TSCH_LOG_CONF_LEVEL 1
 
 // #define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 14, 18, 22, 26 }
-#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 11,13,15,17 }
+#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 18,20,22 }
 
 /* 6TiSCH minimal schedule length.
  * Larger values result in less frequent active slots: reduces capacity and saves energy. */
@@ -99,6 +99,25 @@
 #endif /* WITH_SECURITY */
 
 // #define COAP_OBSERVE_REFRESH_INTERVAL 20
+
+/*******************************************************/
+/*************** Enable Blacklist **********************/
+/*******************************************************/
+
+#ifndef WITH_FAKE_FAILURE
+#define WITH_FAKE_FAILURE 0
+#endif /* WITH_FAKE_FAILURE */
+
+#ifndef WITH_BLACKLIST
+#define WITH_BLACKLIST 1
+#endif /* WITH_FAKE_FAILURE */ 
+
+#if WITH_BLACKLIST
+
+#define TSCH_BLACK_CHANGE_CHANNEL black_changeChannel
+
+#endif
+
 
 /*******************************************************/
 /*************** Enable S-TASA **********************/

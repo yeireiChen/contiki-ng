@@ -52,6 +52,7 @@
 #include "services/rpl-border-router/rpl-border-router.h"
 #include "services/orchestra/orchestra.h"
 #include "services/s-tasa/s-tasa.h"
+#include "services/blacklist/blacklist.h"
 #include "services/shell/serial-shell.h"
 #include "services/simple-energest/simple-energest.h"
 
