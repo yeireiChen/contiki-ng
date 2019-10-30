@@ -480,12 +480,19 @@ tsch_schedule_print(void)
 /*---------------------------------------------------------------------------*/
 /*randyTest channelList Print*/
 void 
-tsch_channel_print(void){
+tsch_channel_print(uint8_t choice){
 
   int index ;
-  for(index =0 ;index < sizeof(tsch_black_hopping_sequence) ; index++){
+  if(choice==0){
+    for(index =0 ;index < sizeof(tsch_black_hopping_sequence) ; index++){
     LOG_PRINT(" %d ",tsch_black_hopping_sequence[index]);
   }
+  }else{
+    for(index =0 ;index < sizeof(tsch_hopping_sequence) ; index++){
+    LOG_PRINT(" %d ",tsch_hopping_sequence[index]);
+  }
+  }
+  
   LOG_PRINT("\n");
 }
 

@@ -163,7 +163,7 @@ struct tsch_slotframe *tsch_schedule_slotframe_next(struct tsch_slotframe *sf);
 *\ randyTest
 *\ print channelList
 */
-void tsch_channel_print(void);
+void tsch_channel_print(uint8_t choice);
 
 #endif /* __TSCH_SCHEDULE_H__ */
 /** @} */
