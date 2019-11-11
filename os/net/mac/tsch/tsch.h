@@ -145,12 +145,30 @@ frequency hopping for enhanced reliability.
 #define TSCH_BLACK_CHANGE_CHANNEL black_changeChannel;
 #endif
 
+#ifdef TSCH_BLACK_CHANGE
+#define TSCH_BLACK_CHANGE black_change;
+#endif
+
+#ifdef TSCH_BLACK_WAIT_CHANGE
+#define TSCH_BLACK_WAIT_CHANGE black_wait_asn_change;
+#endif
+
 
 #endif /* BUILD_WITH_BLACK*/
 
 #ifdef TSCH_BLACK_CHANGE_CHANNEL
-void TSCH_BLACK_CHANGE_CHANNEL(uint8_t ch1, uint8_t ch2);
+void TSCH_BLACK_CHANGE_CHANNEL(uint8_t ch1, uint8_t ch2, uint8_t ch3);
 #endif
+
+#ifdef TSCH_BLACK_CHANGE
+void TSCH_BLACK_CHANGE(void);
+#endif
+
+#ifdef TSCH_BLACK_WAIT_CHANGE
+void TSCH_BLACK_WAIT_CHANGE(uint32_t asn);
+#endif
+
+
 
 
 /* Called by TSCH when joining a network */

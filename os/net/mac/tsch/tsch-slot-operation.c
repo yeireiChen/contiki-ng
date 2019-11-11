@@ -53,6 +53,7 @@
 #include "net/mac/framer/framer-802154.h"
 #include "net/mac/tsch/tsch.h"
 #include "s-tasa.h"
+#include "blacklist.h"
 #include "coap-observe.h"
 #if CONTIKI_TARGET_COOJA
 #include "lib/simEnvChange.h"
@@ -179,6 +180,8 @@ int tsch_current_burst_count = 0;
 
 uint32_t got_temp_asn = 0;
 uint32_t slotframe_offset = 0;
+uint32_t black_temp_asn = 0;
+uint32_t black_slotframeOffset = 0;
 uint8_t temp_queue = 0;
 
 
@@ -1002,14 +1005,40 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 
       if (slotframe_offset > 0 && current_link->timeslot == 0) {
         slotframe_offset = slotframe_offset - 1;
-        //printf("Count Down the slotframe offset : %u \n", slotframe_offset);
+        printf("Count Down the slotframe offset : %lu \n", slotframe_offset);
         if ((slotframe_offset == 0)) {
           //TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
+          
           flash_new_schedule_table();
           tsch_update_schedule_table();
         }
       }
 #endif /* WITH_CENTRALIZED_TASA */
+
+#if WITH_BLACKLIST
+      if((black_temp_asn = getBlackASN())) {
+        uint32_t temp;
+        if ((black_temp_asn-1) < tsch_current_asn.ls4b) {
+          temp = TSCH_SCHEDULE_DEFAULT_LENGTH * 3;
+        } else {
+          temp = (black_temp_asn-1) - tsch_current_asn.ls4b;
+          if (temp < TSCH_SCHEDULE_DEFAULT_LENGTH) temp = TSCH_SCHEDULE_DEFAULT_LENGTH;
+        }
+        black_slotframeOffset = temp / TSCH_SCHEDULE_DEFAULT_LENGTH;
+        printf("black_slotframe : %lu\n",black_slotframeOffset);
+      }
+
+
+      if (black_slotframeOffset > 0 && current_link->timeslot == 0) {
+        black_slotframeOffset = black_slotframeOffset - 1;
+        printf("Count Down the black slotframe offset : %lu \n", black_slotframeOffset);
+        if ((black_slotframeOffset == 0)) {
+          printf("blacklist changed : \n");
+          black_change();
+        }
+      }
+
+#endif /* WITH_BLACKLIST  */
 
 
       int is_active_slot;

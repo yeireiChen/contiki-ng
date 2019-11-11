@@ -115,6 +115,7 @@
 #if WITH_BLACKLIST
 
 #define TSCH_BLACK_CHANGE_CHANNEL black_changeChannel
+#define TSCH_BLACK_WAIT_CHANGE black_wait_asn_change
 
 #endif
 
