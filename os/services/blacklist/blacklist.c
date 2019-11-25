@@ -12,6 +12,12 @@
 #define LOG_MODULE "TSCH BLACK"
 #define LOG_LEVEL LOG_LEVEL_DBG
 
+#if ROUTING_CONF_RPL_LITE
+#include "net/routing/rpl-lite/rpl.h"
+#elif ROUTING_CONF_RPL_CLASSIC
+#include "net/routing/rpl-classic/rpl.h"
+#endif
+
 uint32_t black_backup_temp_asn = 0;
 
 
@@ -35,6 +41,9 @@ black_changeChannel(uint8_t ch1, uint8_t ch2,uint8_t ch3){
 
 void
 black_change(void){
+
+	LOG_INFO("channel list change first \n");
+	tsch_channel_print(1);
 
 	memcpy(tsch_hopping_sequence, tsch_black_hopping_sequence, sizeof(tsch_black_hopping_sequence));
   	//TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_length, sizeof(tsch_black_hopping_sequence));
