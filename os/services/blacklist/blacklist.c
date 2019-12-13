@@ -19,12 +19,16 @@
 #endif
 
 uint32_t black_backup_temp_asn = 0;
+uint8_t channel_size_before = 0;
+uint8_t channel_size_after = 0;
 
 
 void 
 black_changeChannel(uint8_t ch1, uint8_t ch2,uint8_t ch3){
 
 	uint8_t changed[] = {ch1,ch2,ch3};
+	channel_size_before = sizeof(tsch_hopping_sequence);
+	channel_size_after = sizeof(changed);
 
 	/* Initialize blacklist hopping sequence test*/
   	memcpy(tsch_black_hopping_sequence, changed, sizeof(changed));
@@ -44,15 +48,17 @@ black_change(void){
 
 	LOG_INFO("channel list change first \n");
 	tsch_channel_print(1);
+	LOG_INFO("channellist change: val:%u\n",tsch_hopping_sequence_length.val);
+	LOG_INFO("channellist change: remainder:%u\n",tsch_hopping_sequence_length.asn_ms1b_remainder);
 
 	memcpy(tsch_hopping_sequence, tsch_black_hopping_sequence, sizeof(tsch_black_hopping_sequence));
-  	//TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_length, sizeof(tsch_black_hopping_sequence));
-  	LOG_INFO("balcklist change: divisor_init val:%u\n",tsch_hopping_sequence_length.val);
+  	TSCH_ASN_DIVISOR_INIT(tsch_hopping_sequence_length, channel_size_after);
   	
-
-  	LOG_INFO("asn_ms1b_remainder : %u\n",tsch_black_hopping_sequence_length.asn_ms1b_remainder);
   	LOG_INFO("channel list change after \n");
   	tsch_channel_print(1);
+  	LOG_INFO("channellist change: val:%u\n",tsch_hopping_sequence_length.val);
+	LOG_INFO("channellist change: remainder:%u\n",tsch_hopping_sequence_length.asn_ms1b_remainder);
+
 }
 
 uint32_t 
