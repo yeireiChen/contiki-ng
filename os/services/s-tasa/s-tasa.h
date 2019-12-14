@@ -65,7 +65,7 @@ void s_tasa_wait_asn_update_schedule(uint32_t temp_asn);
 void s_tasa_cache_schedule_table(uint8_t timeslot, uint8_t channel_offset, uint8_t linkoptions);
 
 /* count down trigger to flush new schedule table */
-void flash_new_schedule_table(void);
+void flash_new_schedule_table(int flag);
 
 uint32_t getTempASN(void);
 

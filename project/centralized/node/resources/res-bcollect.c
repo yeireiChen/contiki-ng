@@ -66,7 +66,6 @@ static uint8_t packet_priority = 0;
 
 static uint8_t local_queue = 1;
 
-static int count = 0;
 
 #include "net/mac/tsch/tsch.h"
 extern struct tsch_asn_t tsch_current_asn;
@@ -92,7 +91,8 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     uint32_t end_asn; // 8 9 10 11
     uint32_t event_counter; // 12 13 14 15
     uint8_t event_threshold; // 16
-    // padding 3 int8_t and int16_t
+    uint8_t changed_parent;
+    // padding 2 int16_t
     uint32_t event_threshold_last_change; 
     uint32_t packet_counter;
     unsigned char parent_address[2]; // uint8[0] , uint8[1]
@@ -111,6 +111,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
   message.end_flag[1] = 0xff;
 
   message.local_queue = local_queue;
+  message.changed_parent = tsch_get_mote_changed_parent_count();
 
   message.event_counter = event_counter;
   message.event_threshold = event_threshold;
@@ -227,18 +228,13 @@ res_periodic_handler()
   if(event_counter % event_threshold == 0) {
 #if WITH_CENTRALIZED_TASA
     if (coap_has_observers("res/bcollect")) {
-      if (tsch_get_schedule_table_event()) {
+      if (tsch_get_schedule_table_event() || 1) {
         //PRINTF("Numbers of Observe : %u \n", coap_has_observer_numbers());
         ++packet_counter;
         //PRINTF("Generate a new packet! , %08x. \n",tsch_current_asn.ls4b);
         /* Notify the registered observers which will trigger the res_get_handler to create the response. */
         coap_notify_observers(&res_bcollect);
-      } else {
-        count = count + 1;
-        if(count == 3) {
-          tsch_update_schedule_table();
-          count = 0;
-        }
+      
       }
     }
 #else

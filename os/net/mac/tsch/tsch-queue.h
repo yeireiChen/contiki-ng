@@ -187,6 +187,7 @@ void pkt_priority_sorting(struct tsch_neighbor *n,struct tsch_packet *p);
 void tsch_queue_disable_coap_flag_control(uip_ipaddr_t * addr);
 void tsch_update_schedule_table(void);
 int tsch_get_schedule_table_event(void);
+uint8_t tsch_get_mote_changed_parent_count(void);
 
 list_t tsch_get_nbr_list_from_queue(void);
 

@@ -67,7 +67,7 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
     option = (uint8_t)atoi(option_c);
     //LOG_INFO("Got the Option : %u \n",option);
     if (option == 2) {
-#if WITH_CENTRALIZED_TASA
+#if WITH_CENTRALIZED_TASA && 0
       TSCH_S_TASA_DEL_SLOT();
 #endif
     }

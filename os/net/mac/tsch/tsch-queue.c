@@ -88,9 +88,11 @@ LIST(neighbor_list);
 uint8_t data_tcflow;
 //uint8_t localqueue;
 uip_ipaddr_t *backup_addr;
+uint8_t change_count = 0;
 
 int save_timeslot = 0;
 int tsch_schedule_table = 1;
+static int temp_count = 0;
 
 /* Broadcast and EB virtual neighbors */
 struct tsch_neighbor *n_broadcast;
@@ -287,7 +289,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
                 ((uint8_t *)queuebuf_dataptr(p->qb))[dataLen - 3] == 0xff )
             {
               // localqueue = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_STASA); 
-              // printf("CoAP Packet In TSCH queue frome attr : %02x\n" ,localqueue);
+              // LOG_INFO("CoAP Packet In TSCH queue frome attr : %02x\n" ,localqueue);
               /*Get tcflow frome attribute*/
               data_tcflow = (uint8_t)queuebuf_attr(p->qb,PACKETBUF_ATTR_TCFLOW); 
               LOG_DBG("Traffic classes In TSCH queue frome attr : %02x\n" ,data_tcflow);
@@ -313,6 +315,7 @@ tsch_queue_add_packet(const linkaddr_t *addr, uint8_t max_transmissions,
   if(!tsch_is_locked()) {
     /* Flush queue */
     tsch_queue_flush_nbr_queue(n);
+    tsch_update_schedule_table();
     /* Reset backoff exponent */
     //tsch_queue_backoff_reset(n);
   }
@@ -563,38 +566,40 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
              (coap_has_observers("res/bcollect") || coap_has_observers("res/bcollect_2")) &&
              queuebuf_datalen(n->tx_array[get_index]->qb) > 100) {
               if (tsch_schedule_table) { // correct new schedule table.
-                //int flag = 0;
+                int flag = 0;
                 if(link->timeslot > 9 ) {
                   
-                  // uint16_t * slots_list;
-                  // slots_list = getTimeslots();
-                  // int i = 0;
+                   uint16_t * slots_list;
+                   slots_list = getTimeslots();
+                   int i = 0;
 
-                  // if (link->timeslot > 9 && save_timeslot != link->timeslot) {
-                  //   for (i=0;i<20;i++) {
-                  //     LOG_INFO("slots_list : %d , current_timeslot : %d \n", *(slots_list + i), link->timeslot);
-                  //     if (*(slots_list + i) == link->timeslot) {
-                  //       save_timeslot = link->timeslot;
-                  //       flag = 1;
-                  //       break;
-                  //     } else if (*(slots_list + i) == 0) break;
-                  //   }
-                  // }
-                  // LOG_INFO("Flag  :  %d \n",flag);
-                  // if (flag != 1) {
-                  //   if (save_timeslot == link->timeslot) save_timeslot = 0;
-                  //   return NULL;
-                  // }
+                   if (link->timeslot > 9 && save_timeslot != link->timeslot) {
+                     for (i=0;i<20;i++) {
+                       LOG_INFO("slots_list : %d , current_timeslot : %d \n", *(slots_list + i), link->timeslot);
+                       if (*(slots_list + i) == link->timeslot) {
+                         save_timeslot = link->timeslot;
+                         flag = 1;
+                         break;
+                       } else if (*(slots_list + i) == 0) break;
+                     }
+                   }
+                   LOG_INFO("Flag  :  %d \n",flag);
+                   if (flag != 1) {
+                     if (save_timeslot == link->timeslot) save_timeslot = 0;
+                     return NULL;
+                   }
                   LOG_INFO("CoAP Flag : %d, ringbufindex : %d \n", localqueue, ringbufindex_elements(&n->tx_ringbuf));
                   LOG_INFO("Send out packet... slotframe : %d , timeslot : %d.\n",link->slotframe_handle, link->timeslot);
 
                 } else {
-                  LOG_INFO("slotframe not correct timeslot : %d.\n", link->timeslot);
+                  //LOG_INFO("slotframe not correct timeslot : %d.\n", link->timeslot);
                   return NULL;
                 }
                 //if (flag && ringbufindex_elements(&n->tx_ringbuf) == 1) save_timeslot = 0;
               } else {
-                LOG_INFO("Watting New schedule table : %d , slotframe not correct timeslot : %d.\n",tsch_schedule_table ,link->timeslot);
+                
+                temp_count = temp_count + 1;
+                if(link->timeslot > 9 ) LOG_INFO("Watting New schedule table : %d , slotframe not correct timeslot : %d.\n",tsch_schedule_table ,link->timeslot);
                 return NULL;
               }
         }
@@ -702,8 +707,9 @@ tsch_queue_disable_coap_flag_control(uip_ipaddr_t * addr)
     backup_addr = addr;
   }
   if (addr != NULL && backup_addr != addr){
+    change_count = change_count + 1;
     backup_addr = addr; // first check.
-    tsch_schedule_table = 0;
+    if(tsch_schedule_table) tsch_schedule_table = 0;
     LOG_INFO("Waitting New schedule table .... \n");
   }
 }
@@ -725,6 +731,12 @@ list_t
 tsch_get_nbr_list_from_queue(void)
 {
   return neighbor_list;
+}
+
+uint8_t
+tsch_get_mote_changed_parent_count(void)
+{
+  return change_count;
 }
 
 
