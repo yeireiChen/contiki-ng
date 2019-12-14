@@ -25,7 +25,7 @@
 /* Log configuration */
 #include "sys/log.h"
 #define LOG_MODULE "App"
-#define LOG_LEVEL LOG_LEVEL_DBG
+#define LOG_LEVEL LOG_LEVEL_APP
 
 
 static void res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
@@ -67,7 +67,7 @@ res_post_slotframe_handler(coap_message_t *request, coap_message_t *response, ui
     option = (uint8_t)atoi(option_c);
     //LOG_INFO("Got the Option : %u \n",option);
     if (option == 2) {
-#if WITH_CENTRALIZED_TASA && 0
+#if WITH_CENTRALIZED_TASA
       TSCH_S_TASA_DEL_SLOT();
 #endif
     }
