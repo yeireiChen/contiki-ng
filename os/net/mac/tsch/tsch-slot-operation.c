@@ -177,6 +177,7 @@ static struct tsch_neighbor *current_neighbor = NULL;
 static int burst_link_scheduled = 0;
 /* Counts the length of the current burst */
 int tsch_current_burst_count = 0;
+static int flag = 0;
 
 uint32_t got_temp_asn = 0;
 uint32_t slotframe_offset = 0;
@@ -571,7 +572,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
               //LOG_PRINT("current timeslot %u, current channelOfSet %u\n",current_link->timeslot,current_link->channel_offset);
 
               channelTx[tsch_current_channel-phyRange]++;
-              //LOG_PRINT("current phyChannel %u,phyChannelCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
+              LOG_PRINT("current phyChannel %u,phyChannelCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
 
               uint8_t ackbuf[TSCH_PACKET_MAX_LEN];
               int ack_len;
@@ -992,8 +993,10 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       if((got_temp_asn = getTempASN())) {
         uint32_t test;
         if ((got_temp_asn-1) < tsch_current_asn.ls4b) {
+          flag = 0;
           test = TSCH_SCHEDULE_DEFAULT_LENGTH * 3;
         } else {
+          flag = 1;
           test = (got_temp_asn-1) - tsch_current_asn.ls4b;
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
         }
@@ -1009,7 +1012,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         if ((slotframe_offset == 0)) {
           //TSCH_S_TASA_FLUSH_NEW_SCHEDULE_TABLE();
           
-          flash_new_schedule_table();
+          flash_new_schedule_table(flag);
           tsch_update_schedule_table();
         }
       }

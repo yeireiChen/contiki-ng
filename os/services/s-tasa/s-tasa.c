@@ -99,7 +99,7 @@ s_tasa_add_slots_of_slotframe(uint16_t timeslot, uint16_t channel_offset, int sl
     if(!tsch_is_locked()){
       for(i=0 ; i<slot_numbers ; i++){
         tsch_schedule_add_link(sf_cent,
-        linkoptions | LINK_OPTION_SHARED,
+        linkoptions,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         timeslot+i, channel_offset);
         LOG_INFO("TSCH add link %u to current slotframe was successful.\n", linkoptions);
@@ -127,6 +127,7 @@ s_tasa_del_slots_of_slotframe()
 
   if (sf_cent) {
     if(!tsch_is_locked()) {
+      tsch_schedule_remove_slotframe(sf_cent);
       LOG_INFO("Remove the slotframe : %s \n",tsch_schedule_remove_slotframe(sf_cent)? "YES": "NO" );
       sf_cent = NULL;
     } else {
@@ -155,15 +156,18 @@ s_tasa_cache_schedule_table(uint8_t timeslot, uint8_t channel_offset, uint8_t li
 }
 
 void 
-flash_new_schedule_table()
+flash_new_schedule_table(int flag)
 {
   tsch_new_table *table;
   table = find_table(ID);
+  if(flag){
+    s_tasa_del_slots_of_slotframe();
+  }
   while (table != NULL) {
     LOG_INFO("Timeslot : %u ,",table->timeslot);
     LOG_INFO("Channel_offset : %u ,",table->channel_offset);
     LOG_INFO("linkoptions : %u .\n",table->linkoptions);
-    //printf("flush_temp_sch_table data : %s \n", (char *)table->sche_payload);
+    //LOG_INFO("flush_temp_sch_table data : %s \n", (char *)table->sche_payload);
     s_tasa_add_slots_of_slotframe(table->timeslot, table->channel_offset, 1,table->linkoptions);
     table_list_remove(table);
     ID = ID - 1;

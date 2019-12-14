@@ -346,7 +346,7 @@ coap_observe_handler(coap_resource_t *resource, coap_message_t *coap_req,
         } else {
           coap_res->code = SERVICE_UNAVAILABLE_5_03;
           coap_set_payload(coap_res, "TooManyObservers", 16);
-          coap_remove_observer(old_ob);
+          //coap_remove_observer(old_ob);
           // coap_remove_observer(obs);
         }
       } else if(coap_req->observe == 1) {
