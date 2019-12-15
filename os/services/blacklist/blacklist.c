@@ -24,18 +24,43 @@ uint8_t channel_size_after = 0;
 
 
 void 
-black_changeChannel(uint8_t ch1, uint8_t ch2,uint8_t ch3){
+black_changeChannel(const uint8_t *payload){
 
-	uint8_t changed[] = {ch1,ch2,ch3};
+	
+	uint8_t channelSize = 0;
+ 	char *pch;
+	int index = 0;
+	uint8_t temp = 0;
+	
+	pch = strtok((char *)payload, "[':] ");
+	channelSize = (uint8_t)atoi(pch);
+	//LOG_INFO("size is %d\n",channelSize);
+
 	channel_size_before = sizeof(tsch_hopping_sequence);
-	channel_size_after = sizeof(changed);
+	while(pch != NULL) {
+		if(index==0){
+			index++;
+			pch = strtok(NULL, "[':] ");
+			continue;
+		}
+		//LOG_INFO("channel is %s\n",pch);
+		
+		temp = (uint8_t)atoi(pch);
+		//LOG_INFO("channel is %d,%d\n",index,temp);
+		tsch_black_hopping_sequence[index-1] = temp;
+		pch = strtok(NULL, "[':] ");
+		index++;
+	}
+	TSCH_ASN_DIVISOR_INIT(tsch_black_hopping_sequence_length, channelSize);
+	channel_size_after = channelSize;
 
-	/* Initialize blacklist hopping sequence test*/
-  	memcpy(tsch_black_hopping_sequence, changed, sizeof(changed));
-  	TSCH_ASN_DIVISOR_INIT(tsch_black_hopping_sequence_length, sizeof(changed));
-  	LOG_INFO("balcklist get blacklist: divisor_init val:%u\n",tsch_black_hopping_sequence_length.val);
+	/*uint8_t i=0;
+	for(i=0;i<channelSize;i++){
+		LOG_INFO("channel is %d\n",tsch_black_hopping_sequence[i]);
+	}*/
 
-  	LOG_INFO("array size : %u\n",sizeof(changed));
+	
+  	LOG_INFO("array size : %d\n",channelSize);
   	LOG_INFO("asn_ms1b_remainder : %u\n",tsch_black_hopping_sequence_length.asn_ms1b_remainder);
 
   	LOG_INFO("channel list first \n");

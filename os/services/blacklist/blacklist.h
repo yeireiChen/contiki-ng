@@ -7,7 +7,7 @@
 
 
 /* change channel list*/
-void black_changeChannel(uint8_t ch1, uint8_t ch2,uint8_t ch3);
+void black_changeChannel(const uint8_t *payload); //uint8_t ch1, uint8_t ch2,uint8_t ch3 -const uint8_t *payload
 
 void black_change(void);
 uint32_t getBlackASN(void);

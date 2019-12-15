@@ -157,7 +157,7 @@ frequency hopping for enhanced reliability.
 #endif /* BUILD_WITH_BLACK*/
 
 #ifdef TSCH_BLACK_CHANGE_CHANNEL
-void TSCH_BLACK_CHANGE_CHANNEL(uint8_t ch1, uint8_t ch2, uint8_t ch3);
+void TSCH_BLACK_CHANGE_CHANNEL(const uint8_t *payload);
 #endif
 
 #ifdef TSCH_BLACK_CHANGE

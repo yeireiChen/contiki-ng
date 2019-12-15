@@ -1028,15 +1028,15 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
           if (temp < TSCH_SCHEDULE_DEFAULT_LENGTH) temp = TSCH_SCHEDULE_DEFAULT_LENGTH;
         }
         black_slotframeOffset = temp / TSCH_SCHEDULE_DEFAULT_LENGTH;
-        printf("black_slotframe : %lu\n",black_slotframeOffset);
+        LOG_DBG("black_slotframe : %lu\n",black_slotframeOffset);
       }
 
 
       if (black_slotframeOffset > 0 && current_link->timeslot == 0) {
         black_slotframeOffset = black_slotframeOffset - 1;
-        printf("Count Down the black slotframe offset : %lu \n", black_slotframeOffset);
+        LOG_DBG("Count Down the black slotframe offset : %lu \n", black_slotframeOffset);
         if ((black_slotframeOffset == 0)) {
-          printf("blacklist changed : \n");
+          LOG_DBG("blacklist changed : \n");
           black_change();
         }
       }

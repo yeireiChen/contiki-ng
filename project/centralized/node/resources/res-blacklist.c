@@ -44,35 +44,23 @@ static void
 res_post_blacklist_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
   const char *asn_t = NULL;
-  const char *channel1_t = NULL;
-  const char *channel2_t = NULL;
-  const char *channel3_t = NULL;
+  const uint8_t *request_content = NULL;
   uint32_t asn = 0;
-  uint8_t channel1 = 0;
-  uint8_t channel2 = 0;
-  uint8_t channel3 = 0;
-
 
   if(coap_get_query_variable(request, "asn", &asn_t)) {
     asn = (uint32_t)atoi(asn_t);
   }
 
-  if(coap_get_query_variable(request, "first", &channel1_t)) {
-    channel1 = (uint8_t)atoi(channel1_t);
+  unsigned int accept = -1;
+  coap_get_header_accept(request, &accept);
+  if (accept == -1) {
+    //LOG_INFO("it's here\n");
+    coap_get_payload(request, &request_content);
+    black_changeChannel(request_content);
   }
+  //LOG_INFO("%s\n",request_content);
 
-  if(coap_get_query_variable(request, "two", &channel2_t)) {
-    channel2 = (uint8_t)atoi(channel2_t);
-  }
-
-  if(coap_get_query_variable(request, "three", &channel3_t)) {
-    channel3 = (uint8_t)atoi(channel3_t);
-  }
-
-  LOG_PRINT(" asn:%s, ch1:%s, ch2:%s, ch3:%s\n",asn_t,channel1_t,channel2_t,channel3_t);
-  LOG_PRINT(" asn:%lu, ch1:%u, ch2:%u, ch3:%u\n",asn,channel1,channel2,channel3);
-
-  TSCH_BLACK_CHANGE_CHANNEL(channel1,channel2,channel3);
+  
 
   TSCH_BLACK_WAIT_CHANGE(asn);
 }
