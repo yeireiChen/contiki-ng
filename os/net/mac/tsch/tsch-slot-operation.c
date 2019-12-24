@@ -58,6 +58,7 @@
 #if CONTIKI_TARGET_COOJA
 #include "lib/simEnvChange.h"
 #include "sys/cooja_mt.h"
+#include "stdlib.h"
 #endif /* CONTIKI_TARGET_COOJA */
 
 #include "sys/log.h"
@@ -199,14 +200,16 @@ static PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t));
 
 /* blackList */
 
-#define channelBlock 17
+#define channelBlock 20
+
+
 
 uint32_t global_tx_count=0;
 
-uint8_t phyRange = 11;
+uint8_t phyRange = 11; //for array index
 uint8_t badChannel = 0;
-uint8_t channelTx[channelBlock] = {0};
-uint8_t channelTxAck[channelBlock] = {0};
+static uint16_t channelTx[16] = {0};
+static uint16_t channelTxAck[16] = {0};
 
 /*---------------------------------------------------------------------------*/
 /* TSCH locking system. TSCH is locked during slot operations */
@@ -505,6 +508,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
              && tsch_current_burst_count + 1 < TSCH_BURST_MAX_LEN
              && tsch_queue_packet_count(&current_neighbor->addr) > 1) {
         burst_link_requested = 1;
+        LOG_INFO("got extra slot\n");
         tsch_packet_set_frame_pending(packet, packet_len);
       }
       /* read seqno from payload */
@@ -553,8 +557,32 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           /* delay before TX */
           TSCH_SCHEDULE_AND_YIELD(pt, t, current_slot_start, tsch_timing[tsch_ts_tx_offset] - RADIO_DELAY_BEFORE_TX, "TxBeforeTx");
           TSCH_DEBUG_TX_EVENT();
+
+#if WITH_FAKE_FAILURE
+          if(!is_broadcast){
+            srand((unsigned)tsch_current_asn.ls4b);
+            if( tsch_current_channel == channelBlock){
+              uint8_t random=rand()%10;
+              if(random<3){
+                LOG_INFO("current fake success,%u\n",random);
+                mac_tx_status = RADIO_TX_OK;
+              }
+              else{
+                LOG_INFO("current fake fail,%u\n",random);
+                mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
+              }
+
+            }else{ //not fake channel
+              LOG_INFO("current not fake channel %u\n",tsch_current_channel);
+              mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
+            }
+          }else{ //is broadcast
+            mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
+          }
+#else
           /* send packet already in radio tx buffer */
           mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
+#endif
           /* Save tx timestamp */
           tx_start_time = current_slot_start + tsch_timing[tsch_ts_tx_offset];
           /* calculate TX duration based on sent packet len */
@@ -566,13 +594,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           
           if(mac_tx_status == RADIO_TX_OK) {
             if(!is_broadcast) {
-
-              global_tx_count++;
-              //LOG_PRINT("unicast_TX_COUNT: %d\n",global_tx_count);
-              //LOG_PRINT("current timeslot %u, current channelOfSet %u\n",current_link->timeslot,current_link->channel_offset);
-
               channelTx[tsch_current_channel-phyRange]++;
-              //LOG_PRINT("current phyChannel %u,phyChannelCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
 
               uint8_t ackbuf[TSCH_PACKET_MAX_LEN];
               int ack_len;
@@ -666,27 +688,31 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                   tsch_schedule_keepalive();
                 }
                 mac_tx_status = MAC_TX_OK;
-
                 channelTxAck[tsch_current_channel-phyRange]++;
-                //LOG_PRINT("current phyChannel %u,current phyChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange]);
+                LOG_INFO("current here,got ack,pakcet seq %u\n",seqno);
+                LOG_INFO("current phyChannel %u,current phyChannelCOunt %u,phChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange],channelTxAck[tsch_current_channel-phyRange]);
 
                 /* We requested an extra slot and got an ack. This means
                 the extra slot will be scheduled at the received */
                 if(burst_link_requested) {
                   burst_link_scheduled = 1;
                 }
-              } else {
+              } else {  //ack_len != 0
                 mac_tx_status = MAC_TX_NOACK;
+                LOG_INFO("current here,Down no ack,pakcet seq %u\n",seqno);
+                LOG_INFO("current phyChannel %u,current phyChannelCOunt %u,phChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange],channelTxAck[tsch_current_channel-phyRange]);
               }
-            } else {
+            } else {  //!is_broadcast
               mac_tx_status = MAC_TX_OK;
+              //LOG_INFO("current here,brocast\n");
             }
-          } else {
+          } else {  //mac_tx_status == RADIO_TX_OK
             mac_tx_status = MAC_TX_ERR;
           }
         }
       }
     }
+
 
     tsch_radio_off(TSCH_RADIO_CMD_OFF_END_OF_TIMESLOT);
 
@@ -1216,3 +1242,13 @@ tsch_slot_operation_sync(rtimer_clock_t next_slot_start,
 }
 /*---------------------------------------------------------------------------*/
 /** @} */
+
+/*blacklist*/
+
+uint16_t *txCount(void){
+  return channelTx;
+}
+
+uint16_t *txAckCount(void){
+  return channelTxAck;
+}

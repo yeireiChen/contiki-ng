@@ -93,7 +93,7 @@ res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     uint8_t event_threshold; // 16
     uint8_t changed_parent;
     // padding 2 int16_t
-    uint32_t event_threshold_last_change; 
+    uint32_t event_threshold_last_change;
     uint32_t packet_counter;
     unsigned char parent_address[2]; // uint8[0] , uint8[1]
     uint16_t rank;

@@ -111,3 +111,8 @@ uint8_t tsch_slot_operation_getDirtyChannel(void);
 
 #endif /* __TSCH_SLOT_OPERATION_H__ */
 /** @} */
+
+
+/*blacklist*/
+uint16_t *txCount(void);
+uint16_t *txAckCount(void);

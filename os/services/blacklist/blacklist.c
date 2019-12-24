@@ -21,6 +21,7 @@
 uint32_t black_backup_temp_asn = 0;
 uint8_t channel_size_before = 0;
 uint8_t channel_size_after = 0;
+static uint8_t channel[16]={0};
 
 
 void 
@@ -99,4 +100,22 @@ black_wait_asn_change(uint32_t temp_asn){
 
 	black_backup_temp_asn = temp_asn;
 	LOG_INFO("Got ASN IN blacklist : %lu\n", black_backup_temp_asn);
+}
+
+uint16_t
+channel_size(void){
+	uint16_t temp;
+	temp = tsch_hopping_sequence_length.val;
+
+	return temp;
+}
+
+uint8_t *channels(void){
+
+	uint8_t count=0;
+	for(count=0;count<tsch_hopping_sequence_length.val;count++){
+		channel[count] = tsch_hopping_sequence[count];
+	}
+
+	return channel;
 }

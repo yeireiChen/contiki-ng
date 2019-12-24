@@ -12,6 +12,8 @@ void black_changeChannel(const uint8_t *payload); //uint8_t ch1, uint8_t ch2,uin
 void black_change(void);
 uint32_t getBlackASN(void);
 void black_wait_asn_change(uint32_t temp_asn);
+uint16_t channel_size(void);
+uint8_t *channels(void);
 
 
 #endif /* __BlACK_CONF_H__ */

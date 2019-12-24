@@ -475,6 +475,7 @@ tsch_queue_packet_sent(struct tsch_neighbor *n, struct tsch_packet *p,
     if(p->transmissions >= p->max_transmissions) {
       /* Drop packet */
       tsch_queue_remove_packet_from_queue(n);
+      LOG_INFO("current fail,drop packet\n");
       in_queue = 0;
     }
     /* Update CSMA state in the unicast case */
@@ -575,7 +576,7 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
 
                    if (link->timeslot > 9 && save_timeslot != link->timeslot) {
                      for (i=0;i<20;i++) {
-                       LOG_INFO("slots_list : %d , current_timeslot : %d \n", *(slots_list + i), link->timeslot);
+                       //LOG_INFO("slots_list : %d , current_timeslot : %d \n", *(slots_list + i), link->timeslot);
                        if (*(slots_list + i) == link->timeslot) {
                          save_timeslot = link->timeslot;
                          flag = 1;
