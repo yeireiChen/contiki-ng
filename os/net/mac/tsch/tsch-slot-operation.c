@@ -84,7 +84,7 @@
 #endif
 
 #define LOG_MODULE "TSCH SlotOP"
-#define LOG_LEVEL LOG_LEVEL_DBG
+#define LOG_LEVEL LOG_LEVEL_MAC
 
 /* Check if TSCH_MAX_INCOMING_PACKETS is power of two */
 #if (TSCH_MAX_INCOMING_PACKETS & (TSCH_MAX_INCOMING_PACKETS - 1)) != 0
@@ -182,8 +182,10 @@ int tsch_current_burst_count = 0;
 uint32_t got_temp_asn = 0;
 uint32_t slotframe_offset = 0;
 uint32_t black_temp_asn = 0;
+uint32_t black_asn = 0;
 uint32_t black_slotframeOffset = 0;
 uint8_t temp_queue = 0;
+uint8_t scheduleStart = 50;
 static int flag = 0;
 
 
@@ -200,7 +202,7 @@ static PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t));
 
 /* blackList */
 
-#define channelBlock 20
+#define channelBlock 22
 
 
 
@@ -564,16 +566,31 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
             if( tsch_current_channel == channelBlock){
               uint8_t random=rand()%10;
               if(random<3){
-                LOG_INFO("current fake success,%u\n",random);
+                if(current_link->timeslot >= scheduleStart){
+                  LOG_INFO("current timeslot %u\n",current_link->timeslot);
+                  LOG_INFO("current link option %u\n",current_link->link_options);
+                  LOG_INFO("current link type %u\n",current_link->link_type);
+                  LOG_INFO("current fake success,%u\n",random);
+                }
                 mac_tx_status = RADIO_TX_OK;
               }
               else{
-                LOG_INFO("current fake fail,%u\n",random);
+                if(current_link->timeslot >= scheduleStart){
+                  LOG_INFO("current timeslot %u\n",current_link->timeslot);
+                  LOG_INFO("current link option %u\n",current_link->link_options);
+                  LOG_INFO("current link type %u\n",current_link->link_type);
+                  LOG_INFO("current fake fail,%u\n",random);
+                }
                 mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
               }
 
             }else{ //not fake channel
-              LOG_INFO("current not fake channel %u\n",tsch_current_channel);
+              if(current_link->timeslot >= scheduleStart){
+                LOG_INFO("current timeslot %u\n",current_link->timeslot);
+                LOG_INFO("current link option %u\n",current_link->link_options);
+                LOG_INFO("current link type %u\n",current_link->link_type);
+                LOG_INFO("current not fake channel %u\n",tsch_current_channel);
+              }
               mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
             }
           }else{ //is broadcast
@@ -581,6 +598,12 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           }
 #else
           /* send packet already in radio tx buffer */
+          if(current_link->timeslot >= scheduleStart){
+            LOG_INFO("current timeslot %u\n",current_link->timeslot);
+            LOG_INFO("current link option %u\n",current_link->link_options);
+            LOG_INFO("current link type %u\n",current_link->link_type);
+            LOG_INFO("current channel %u\n",tsch_current_channel);
+          }
           mac_tx_status = NETSTACK_RADIO.transmit(packet_len);
 #endif
           /* Save tx timestamp */
@@ -594,7 +617,8 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           
           if(mac_tx_status == RADIO_TX_OK) {
             if(!is_broadcast) {
-              channelTx[tsch_current_channel-phyRange]++;
+              if(current_link->timeslot >= scheduleStart)
+                channelTx[tsch_current_channel-phyRange]++;
 
               uint8_t ackbuf[TSCH_PACKET_MAX_LEN];
               int ack_len;
@@ -688,10 +712,11 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                   tsch_schedule_keepalive();
                 }
                 mac_tx_status = MAC_TX_OK;
-                channelTxAck[tsch_current_channel-phyRange]++;
-                LOG_INFO("current here,got ack,pakcet seq %u\n",seqno);
-                LOG_INFO("current phyChannel %u,current phyChannelCOunt %u,phChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange],channelTxAck[tsch_current_channel-phyRange]);
-
+                if(current_link->timeslot >= scheduleStart){
+                  channelTxAck[tsch_current_channel-phyRange]++;
+                  LOG_INFO("current here,got ack,pakcet seq %u\n",seqno);
+                  LOG_INFO("current phyChannel %u,current phyChannelCOunt %u,phChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange],channelTxAck[tsch_current_channel-phyRange]);
+                }
                 /* We requested an extra slot and got an ack. This means
                 the extra slot will be scheduled at the received */
                 if(burst_link_requested) {
@@ -699,8 +724,10 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                 }
               } else {  //ack_len != 0
                 mac_tx_status = MAC_TX_NOACK;
-                LOG_INFO("current here,Down no ack,pakcet seq %u\n",seqno);
-                LOG_INFO("current phyChannel %u,current phyChannelCOunt %u,phChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange],channelTxAck[tsch_current_channel-phyRange]);
+                if(current_link->timeslot >= scheduleStart){
+                  LOG_INFO("current here,Down no ack,pakcet seq %u\n",seqno);
+                  LOG_INFO("current phyChannel %u,current phyChannelCOunt %u,phChannelAckCOunt %u\n",tsch_current_channel,channelTx[tsch_current_channel-phyRange],channelTxAck[tsch_current_channel-phyRange]);
+                }
               }
             } else {  //!is_broadcast
               mac_tx_status = MAC_TX_OK;
@@ -1027,6 +1054,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
           if (test < TSCH_SCHEDULE_DEFAULT_LENGTH) test = TSCH_SCHEDULE_DEFAULT_LENGTH;
         }
         slotframe_offset = test / TSCH_SCHEDULE_DEFAULT_LENGTH;
+        LOG_INFO("tasa test \n");
         // printf("IN slot_operation got the asn : %lu \n", got_temp_asn);
         // printf("IN slot_operation next trigger asn : %lu \n", test);
         // printf("Got the slotframe offset : %d \n", slotframe_offset);
@@ -1045,7 +1073,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
 #endif /* WITH_CENTRALIZED_TASA */
 
 #if WITH_BLACKLIST
-      if((black_temp_asn = getBlackASN())) {
+      /*if((black_temp_asn = getBlackASN())) {
         uint32_t temp;
         if ((black_temp_asn-1) < tsch_current_asn.ls4b) {
           temp = TSCH_SCHEDULE_DEFAULT_LENGTH * 3;
@@ -1065,7 +1093,34 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
           LOG_DBG("blacklist changed : \n");
           black_change();
         }
+      }*/
+
+      if((black_temp_asn = getBlackASN())){
+        LOG_DBG("Up Now Got Asn\n");
+        LOG_DBG("Up Now is %u\n",tsch_current_asn.ls4b);
+        LOG_DBG("Up Now BlackAsn is %u\n",black_temp_asn);
+        black_asn = black_temp_asn;
       }
+
+      if ( (black_asn >= tsch_current_asn.ls4b ) && (current_link->timeslot == 0) ) { //(black_temp_asn >=tsch_current_asn.ls4b ) && 
+        
+        //LOG_DBG("Count Down : %lu \n", tsch_current_asn.ls4b);
+        LOG_DBG("Now Got Asn\n");
+        LOG_DBG("Now is %u\n",tsch_current_asn.ls4b);
+        LOG_DBG("Now BlackAsn is %u\n",black_asn);
+        if(black_asn == tsch_current_asn.ls4b){
+          LOG_DBG("blacklist changed : \n");
+          black_change();
+          black_asn = 0;
+        }
+      }
+
+      if ( black_asn < tsch_current_asn.ls4b &&  black_asn != 0 ){  //late for catch packet, update now
+        LOG_DBG("late to update, update now\n");
+        black_change();
+      }
+
+
 
 #endif /* WITH_BLACKLIST  */
 
