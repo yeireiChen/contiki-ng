@@ -94,6 +94,9 @@ int save_timeslot = 0;
 int tsch_schedule_table = 1;
 static int temp_count = 0;
 
+//slotframe start
+uint8_t slotframe_start = 50;
+
 /* Broadcast and EB virtual neighbors */
 struct tsch_neighbor *n_broadcast;
 struct tsch_neighbor *n_eb;
@@ -576,7 +579,7 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
 
                    if (link->timeslot > 9 && save_timeslot != link->timeslot) {
                      for (i=0;i<20;i++) {
-                       //LOG_INFO("slots_list : %d , current_timeslot : %d \n", *(slots_list + i), link->timeslot);
+                       LOG_INFO("slots_list : %d , current_timeslot : %d \n", *(slots_list + i), link->timeslot);
                        if (*(slots_list + i) == link->timeslot) {
                          save_timeslot = link->timeslot;
                          flag = 1;
@@ -600,7 +603,7 @@ tsch_queue_get_packet_for_nbr(const struct tsch_neighbor *n, struct tsch_link *l
               } else {
                 
                 temp_count = temp_count + 1;
-                if(link->timeslot > 9 ) LOG_INFO("Watting New schedule table : %d , slotframe not correct timeslot : %d.\n",tsch_schedule_table ,link->timeslot);
+                if(link->timeslot > slotframe_start ) LOG_INFO("Watting New schedule table : %d , slotframe not correct timeslot : %d.\n",tsch_schedule_table ,link->timeslot);
                 return NULL;
               }
         }
